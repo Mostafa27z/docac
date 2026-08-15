@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LMS API Documentation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0b0f19;
+            --bg-secondary: #111827;
+            --bg-card: #1f2937;
+            --text-primary: #f3f4f6;
+            --text-secondary: #9ca3af;
+            --accent: #4f46e5;
+            --accent-hover: #6366f1;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            display: flex;
+            min-height: 100vh;
+        }
+        aside {
+            width: 300px;
+            background-color: var(--bg-secondary);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 2rem 1.5rem;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        aside h2 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            background: linear-gradient(to right, #818cf8, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        aside ul {
+            list-style: none;
+        }
+        aside li {
+            margin-bottom: 0.75rem;
+        }
+        aside a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s ease;
+            display: block;
+            padding: 0.5rem;
+            border-radius: 6px;
+        }
+        aside a:hover {
+            color: var(--text-primary);
+            background-color: rgba(255, 255, 255, 0.03);
+        }
+        main {
+            margin-left: 300px;
+            flex-grow: 1;
+            padding: 3rem;
+            max-width: 1000px;
+        }
+        header {
+            margin-bottom: 3rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 2rem;
+        }
+        header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+        .section-title {
+            font-size: 1.75rem;
+            margin-top: 3rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 0.5rem;
+        }
+        .endpoint-card {
+            background-color: var(--bg-secondary);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .endpoint-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        .badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 0.85rem;
+        }
+        .badge.post { background-color: var(--accent); color: white; }
+        .badge.get { background-color: var(--success); color: white; }
+        .endpoint-url {
+            font-family: monospace;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .endpoint-desc {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+        }
+        h4 {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            margin-top: 1rem;
+        }
+        pre {
+            background-color: var(--bg-primary);
+            padding: 1rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            font-family: monospace;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+        code {
+            color: #f472b6;
+        }
+    </style>
+</head>
+<body>
+    <aside>
+        <h2>LMS API Docs</h2>
+        <ul>
+            <li><a href="#auth">1. Authentication</a></li>
+            <li><a href="#courses">2. Courses</a></li>
+            <li><a href="#lessons">3. Lessons & Progress</a></li>
+            <li><a href="#quizzes">4. Quizzes & MCQs</a></li>
+            <li><a href="#live">5. Live & Chat</a></li>
+        </ul>
+    </aside>
+
+    <main>
+        <header>
+            <h1>LMS V1 API Documentation</h1>
+            <p>Interactive Mobile-First API specification. All authenticated endpoints require a <code>Bearer Token</code> in the <code>Authorization</code> header.</p>
+        </header>
+
+        <section id="auth">
+            <h2 class="section-title">1. Authentication</h2>
+            
+            <div class="endpoint-card">
+                <div class="endpoint-header">
+                    <span class="badge post">POST</span>
+                    <span class="endpoint-url">/api/v1/auth/register</span>
+                </div>
+                <div class="endpoint-desc">Registers a new student profile on the LMS platform.</div>
+                
+                <h4>Request Payload</h4>
+                <pre><code>{
+  "name": "Mohamed",
+  "email": "student@lms.com",
+  "phone": "+201012345678",
+  "password": "password123",
+  "password_confirmation": "password123"
+}</code></pre>
+
+                <h4>Response (201 Created)</h4>
+                <pre><code>{
+  "success": true,
+  "message": "Registration successful.",
+  "token": "1|sanctum_token_plain_text",
+  "data": {
+    "id": 1,
+    "name": "Mohamed",
+    "email": "student@lms.com",
+    "role": "student",
+    "status": "active"
+  }
+}</code></pre>
+            </div>
+
+            <div class="endpoint-card">
+                <div class="endpoint-header">
+                    <span class="badge post">POST</span>
+                    <span class="endpoint-url">/api/v1/auth/login</span>
+                </div>
+                <div class="endpoint-desc">Authenticates user and issues Sanctum access token. Validates unique device registration for students.</div>
+                
+                <h4>Request Payload</h4>
+                <pre><code>{
+  "email": "student@lms.com",
+  "password": "password123",
+  "device_uuid": "device_a_123"
+}</code></pre>
+
+                <h4>Response (200 OK)</h4>
+                <pre><code>{
+  "success": true,
+  "message": "Login successful.",
+  "token": "2|sanctum_token_plain_text",
+  "data": {
+    "id": 1,
+    "name": "Mohamed",
+    "email": "student@lms.com",
+    "role": "student",
+    "status": "active",
+    "active_device_id": "device_a_123"
+  }
+}</code></pre>
+            </div>
+        </section>
+
+        <section id="courses">
+            <h2 class="section-title">2. Courses</h2>
+            
+            <div class="endpoint-card">
+                <div class="endpoint-header">
+                    <span class="badge get">GET</span>
+                    <span class="endpoint-url">/api/v1/courses</span>
+                </div>
+                <div class="endpoint-desc">Fetch catalog listing of all published courses. Supports search and filters.</div>
+                
+                <h4>Query Parameters</h4>
+                <pre><code>?search=cardiology  # Searches titles and descriptions
+?type=recorded      # Filters by: recorded, live, mixed</code></pre>
+
+                <h4>Response (200 OK)</h4>
+                <pre><code>{
+  "data": [
+    {
+      "id": 1,
+      "title": "Electrocardiogram (ECG) Interpretation",
+      "slug": "electrocardiogram-ecg-interpretation",
+      "description": "Learn how to read and interpret ECGs like a professional physician.",
+      "thumbnail": "courses/thumbnails/course_1.jpg",
+      "type": "recorded",
+      "status": "published",
+      "published_at": "2026-08-11T16:03:54Z"
+    }
+  ],
+  "success": true,
+  "message": "Courses retrieved successfully."
+}</code></pre>
+            <div class="endpoint-card">
+                <div class="endpoint-header">
+                    <span class="badge get">GET</span>
+                    <span class="endpoint-url">/api/v1/courses/{course}</span>
+                </div>
+                <div class="endpoint-desc">Retrieve a specific course details along with its lessons and sections list.</div>
+
+                <h4>Response (200 OK)</h4>
+                <pre><code>{
+  "success": true,
+  "message": "Course details retrieved successfully.",
+  "data": {
+    "id": 1,
+    "title": "Electrocardiogram (ECG) Interpretation",
+    "slug": "electrocardiogram-ecg-interpretation",
+    "description": "Learn how to read and interpret ECGs like a professional physician.",
+    "thumbnail": "courses/thumbnails/course_1.jpg",
+    "type": "recorded",
+    "status": "published",
+    "published_at": "2026-08-11T16:03:54Z",
+    "sections": [
+      {
+        "id": 1,
+        "title": "Section 1: ECG Introduction",
+        "sort_order": 1,
+        "lessons": [
+          {
+            "id": 1,
+            "title": "Lesson 1: Introduction to Cardiac Cycles",
+            "type": "video",
+            "video_duration_seconds": 600,
+            "sort_order": 1,
+            "is_preview": true
+          }
+        ]
+      }
+    ]
+  }
+}</code></pre>
+            </div>
+
+            <div class="endpoint-card">
+                <div class="endpoint-header">
+                    <span class="badge post">POST</span>
+                    <span class="endpoint-url">/api/v1/courses/{course}/activation-code</span>
+                </div>
+                <div class="endpoint-desc">Generates a unique activation code for the course. (Only accessible by Admin and the Course Instructor).</div>
+
+                <h4>Response (201 Created)</h4>
+                <pre><code>{
+  "success": true,
+  "message": "Activation code generated successfully.",
+  "data": {
+    "code": "ELEC-ABCD-EFGH",
+    "course_id": 1,
+    "is_used": false
+  }
+}</code></pre>
+            </div>
+
+            <div class="endpoint-card">
+                <div class="endpoint-header">
+                    <span class="badge post">POST</span>
+                    <span class="endpoint-url">/api/v1/courses/activate-with-code</span>
+                </div>
+                <div class="endpoint-desc">Activates and subscribes a student to a course using a valid activation code.</div>
+
+                <h4>Request Payload</h4>
+                <pre><code>{
+  "code": "ELEC-ABCD-EFGH"
+}</code></pre>
+
+                <h4>Response (200 OK)</h4>
+                <pre><code>{
+  "success": true,
+  "message": "Course activated successfully. You are now enrolled.",
+  "data": {
+    "course_id": 1,
+    "course_title": "Electrocardiogram (ECG) Interpretation"
+  }
+}</code></pre>
+            </div>
+        </section>
+
+        <section id="lessons">
+            <h2 class="section-title">3. Lessons & Progress</h2>
+
+            <div class="endpoint-card">
+                <div class="endpoint-header">
+                    <span class="badge get">GET</span>
+                    <span class="endpoint-url">/api/v1/lessons/{lesson}</span>
+                </div>
+                <div class="endpoint-desc">Fetch lesson details. Videos return a signed URL from Bunny CDN dynamically if the student is enrolled.</div>
+
+                <h4>Response (200 OK)</h4>
+                <pre><code>{
+  "data": {
+    "id": 1,
+    "title": "Lesson 1: Introduction to Cardiac Cycles",
+    "description": "Basics of cardiac contraction and electrical impulse pathways.",
+    "type": "video",
+    "video_duration_seconds": 600,
+    "sort_order": 1,
+    "is_preview": true,
+    "video_url": "https://cdn.test.com/courses/videos/lecture1.mp4?token=abc123xyz&expires=1786523600",
+    "progress": {
+      "watched_seconds": 50,
+      "percentage": 8.33,
+      "last_position_seconds": 50,
+      "completed_at": null
+    }
+  },
+  "success": true,
+  "message": "Lesson details retrieved successfully."
+}</code></pre>
+            </div>
+
+            <div class="endpoint-card">
+                <div class="endpoint-header">
+                    <span class="badge post">POST</span>
+                    <span class="endpoint-url">/api/v1/lessons/{lesson}/progress</span>
+                </div>
+                <div class="endpoint-desc">Track and save video watching progress percentage. Updates overall course completion percentage automatically.</div>
+
+                <h4>Request Payload</h4>
+                <pre><code>{
+  "watched_seconds": 550,
+  "last_position_seconds": 550
+}</code></pre>
+
+                <h4>Response (200 OK)</h4>
+                <pre><code>{
+  "success": true,
+  "message": "Progress tracked successfully.",
+  "data": {
+    "watched_seconds": 550,
+    "percentage": "91.67",
+    "last_position_seconds": 550,
+    "completed_at": "2026-08-11T16:15:00Z"
+  }
+}</code></pre>
+            </div>
+        </section>
+
+        <section id="quizzes">
+            <h2 class="section-title">4. Quizzes & MCQs</h2>
+
+            <div class="endpoint-card">
+                <div class="endpoint-header">
+                    <span class="badge get">GET</span>
+                    <span class="endpoint-url">/api/v1/quizzes/{quiz}</span>
+                </div>
+                <div class="endpoint-desc">Fetch quiz questions. Option outputs hide key answer data from payload for exam security.</div>
+
+                <h4>Response (200 OK)</h4>
+                <pre><code>{
+  "success": true,
+  "message": "Quiz retrieved successfully.",
+  "data": {
+    "id": 1,
+    "title": "ECG Reading Basics MCQ Quiz",
+    "questions": [
+      {
+        "id": 1,
+        "question_text": "What does the P-wave represent on an ECG?",
+        "options": [
+          { "id": 1, "option_text": "Atrial depolarization" },
+          { "id": 2, "option_text": "Ventricular depolarization" }
+        ]
+      }
+    ]
+  }
+}</code></pre>
+            </div>
+
+            <div class="endpoint-card">
+                <div class="endpoint-header">
+                    <span class="badge post">POST</span>
+                    <span class="endpoint-url">/api/v1/quiz-attempts/{attempt}/submit</span>
+                </div>
+                <div class="endpoint-desc">Evaluate attempt responses. Marks lesson complete if passed.</div>
+
+                <h4>Request Payload</h4>
+                <pre><code>{
+  "answers": [
+    {
+      "question_id": 1,
+      "selected_option_id": 1
+    }
+  ]
+}</code></pre>
+
+                <h4>Response (200 OK)</h4>
+                <pre><code>{
+  "success": true,
+  "message": "Quiz attempt submitted successfully.",
+  "data": {
+    "attempt_id": 5,
+    "score": 100.00,
+    "passed": true,
+    "total_questions": 1,
+    "correct_answers": 1
+  }
+}</code></pre>
+            </div>
+        </section>
+
+        <section id="live">
+            <h2 class="section-title">5. Live & Chat</h2>
+
+            <div class="endpoint-card">
+                <div class="endpoint-header">
+                    <span class="badge post">POST</span>
+                    <span class="endpoint-url">/api/v1/live-sessions/{session}/join</span>
+                </div>
+                <div class="endpoint-desc">Initiates attendance tracker session and outputs integration links (e.g. Zoom).</div>
+
+                <h4>Response (200 OK)</h4>
+                <pre><code>{
+  "success": true,
+  "message": "Live session joined successfully.",
+  "data": {
+    "attendance_id": 2,
+    "meeting_url": "https://zoom.us/j/9876543210",
+    "meeting_id": "987 654 3210"
+  }
+}</code></pre>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

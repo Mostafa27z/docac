@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+
+<html lang="ar"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Doc Academy - Financials</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts: Be Vietnam Pro -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "tertiary-fixed": "#d9e3f9",
+                      "surface-container-high": "#e5e9eb",
+                      "surface-container-highest": "#e0e3e5",
+                      "secondary-container": "#dde2f3",
+                      "primary": "#904d00",
+                      "error-container": "#ffdad6",
+                      "surface-container-low": "#f1f4f6",
+                      "primary-fixed-dim": "#ffb77d",
+                      "background": "#f7fafc",
+                      "inverse-primary": "#ffb77d",
+                      "on-secondary": "#ffffff",
+                      "on-tertiary": "#ffffff",
+                      "tertiary-container": "#a0aabf",
+                      "on-tertiary-container": "#353f50",
+                      "tertiary-fixed-dim": "#bdc7dc",
+                      "surface": "#f7fafc",
+                      "surface-container-lowest": "#ffffff",
+                      "on-tertiary-fixed": "#121c2c",
+                      "on-surface-variant": "#564334",
+                      "outline-variant": "#ddc1ae",
+                      "on-primary-fixed": "#2f1500",
+                      "inverse-surface": "#2d3133",
+                      "surface-container": "#ebeef0",
+                      "on-secondary-container": "#5e6473",
+                      "on-error": "#ffffff",
+                      "primary-container": "#ff8c00",
+                      "on-error-container": "#93000a",
+                      "secondary-fixed-dim": "#c1c6d7",
+                      "on-tertiary-fixed-variant": "#3d4759",
+                      "on-primary-fixed-variant": "#6e3900",
+                      "surface-dim": "#d7dadc",
+                      "secondary-fixed": "#dde2f3",
+                      "error": "#ba1a1a",
+                      "secondary": "#585e6c",
+                      "primary-fixed": "#ffdcc3",
+                      "surface-variant": "#e0e3e5",
+                      "on-secondary-fixed": "#161c27",
+                      "on-primary-container": "#623200",
+                      "on-background": "#181c1e",
+                      "outline": "#897362",
+                      "on-primary": "#ffffff",
+                      "surface-bright": "#f7fafc",
+                      "on-secondary-fixed-variant": "#414754",
+                      "on-surface": "#181c1e",
+                      "inverse-on-surface": "#eef1f3",
+                      "tertiary": "#555f71",
+                      "surface-tint": "#904d00"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "stack-sm": "8px",
+                      "topbar_height": "72px",
+                      "stack-md": "16px",
+                      "gutter": "24px",
+                      "margin-page": "32px",
+                      "sidebar_width": "260px",
+                      "stack-lg": "24px"
+              },
+              "fontFamily": {
+                      "headline-lg": [
+                              "Be Vietnam Pro"
+                      ],
+                      "headline-md": [
+                              "Be Vietnam Pro"
+                      ],
+                      "label-sm": [
+                              "Be Vietnam Pro"
+                      ],
+                      "body-lg": [
+                              "Be Vietnam Pro"
+                      ],
+                      "body-md": [
+                              "Be Vietnam Pro"
+                      ],
+                      "headline-sm": [
+                              "Be Vietnam Pro"
+                      ],
+                      "body-sm": [
+                              "Be Vietnam Pro"
+                      ],
+                      "headline-lg-mobile": [
+                              "Be Vietnam Pro"
+                      ],
+                      "label-md": [
+                              "Be Vietnam Pro"
+                      ]
+              },
+              "fontSize": {
+                      "headline-lg": [
+                              "30px",
+                              {
+                                      "lineHeight": "38px",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "label-sm": [
+                              "12px",
+                              {
+                                      "lineHeight": "14px",
+                                      "letterSpacing": "0.04em",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "26px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-sm": [
+                              "20px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-sm": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-lg-mobile": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "label-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "16px",
+                                      "letterSpacing": "0.02em",
+                                      "fontWeight": "600"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .icon-fill {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-md antialiased h-screen overflow-hidden">
+<!-- Shared Component: SideNavBar -->
+<nav class="bg-on-background text-primary font-body-md text-body-md fixed left-0 top-0 h-screen w-[260px] flex flex-col py-stack-lg z-20">
+<!-- Header -->
+<div class="px-stack-lg mb-8 flex items-center gap-3">
+<div class="w-10 h-10 rounded bg-primary-container flex items-center justify-center shrink-0">
+<img alt="Doc Academy Logo" class="w-6 h-6 object-contain" data-alt="A clean, minimalist 2D logo mark for an educational platform called Doc Academy. The logo features a stylized open book blending into a graduation cap, rendered in vibrant primary orange against a white background. The aesthetic is modern, professional, and scalable, suitable for a web application header." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDzHJhVAXGFDO7eYs4PvDjwU4cTscSEDJevq9-Kqz4bvyZXeAnBwbgioboSAJCEOA_aicRRxyJInb3jKlCBlU_C2gNwZoD9EBm-VuAmquys1t1W8nRLlTIV0w_FYcB_LZnLydPyMvdtTxbcWvlPrdbZG91XTgpkeJy6-XF2RJtYKIBOfS2CiSkxMdfgtzxwYGJcjVF7VbYz-R3qXnh5EBcEPJrLGIE_cIxiDdmMoH6KFVf1UW-4VpZx"/>
+</div>
+<div>
+<h1 class="text-headline-md font-headline-md font-bold text-primary">Doc Academy</h1>
+<p class="text-label-sm font-label-sm text-surface-variant">Admin Console</p>
+</div>
+</div>
+<!-- Navigation Links -->
+<ul class="flex flex-col flex-1 w-full gap-2 px-4">
+<li>
+<a class="flex items-center gap-3 px-4 py-3 rounded-DEFAULT transition-all duration-200 ease-in-out text-primary font-bold border-r-4 border-primary bg-on-secondary-fixed-variant/10" href="#">
+<span class="material-symbols-outlined text-[20px]">dashboard</span>
+<span class="font-label-md text-label-md">Overview</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-3 rounded-DEFAULT transition-all duration-200 ease-in-out text-surface-variant hover:text-white hover:bg-on-secondary-fixed-variant/5" href="#">
+<span class="material-symbols-outlined text-[20px]">group</span>
+<span class="font-label-md text-label-md">Students</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-3 rounded-DEFAULT transition-all duration-200 ease-in-out text-surface-variant hover:text-white hover:bg-on-secondary-fixed-variant/5" href="#">
+<span class="material-symbols-outlined text-[20px]">school</span>
+<span class="font-label-md text-label-md">Teachers</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-3 rounded-DEFAULT transition-all duration-200 ease-in-out text-surface-variant hover:text-white hover:bg-on-secondary-fixed-variant/5" href="#">
+<span class="material-symbols-outlined text-[20px]">settings_accessibility</span>
+<span class="font-label-md text-label-md">Permissions</span>
+</a>
+</li>
+</ul>
+</nav>
+<!-- Shared Component: TopAppBar -->
+<header class="bg-surface text-primary font-headline-sm text-headline-sm docked full-width top-0 h-[72px] border-b border-outline-variant flex justify-between items-center w-full px-margin-page ml-[260px] max-w-[calc(100%-260px)] fixed z-10">
+<!-- Search (on_left in LTR structural context) -->
+<div class="flex-1 max-w-md">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-surface-container-low border border-outline-variant rounded-full text-body-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all" placeholder="Search..." type="text"/>
+</div>
+</div>
+<!-- Actions -->
+<div class="flex items-center gap-4">
+<button class="p-2 rounded-full text-on-surface-variant hover:bg-surface-container-high transition-colors duration-150">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 rounded-full text-on-surface-variant hover:bg-surface-container-high transition-colors duration-150">
+<span class="material-symbols-outlined">help</span>
+</button>
+<div class="w-9 h-9 rounded-full overflow-hidden border border-outline-variant cursor-pointer ml-2">
+<img alt="Admin Profile" class="w-full h-full object-cover" data-alt="A professional headshot of a female administrator, late 30s, wearing glasses and a smart casual blazer. The background is a soft, blurred modern office environment with neutral tones. The lighting is bright and even, conveying competence and approachability in a light-mode corporate setting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDjFE3843z6lkIAqazvmmdlX3CKyjK7HxQucu_I2MybP9k2sWrBNEua-_vfv2yXn7pcFTnI74WxEN2U_BJQrEjwQ1rv2u_gQyx8l0EBknYhuJYnvEH4DLY4AuEA9p2z7fDFAhdwAs5Q38-qJf27qX-BMFQgr1n5xraQsvFcyNExq2Q4jW_ThuFggCl4rTP9yvCBFvdRXdcVth-Rz8D8rlbDUfaJ6pJi2X9_pOgAb9k-ZsqsuphRuVAo"/>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas (RTL for Arabic content) -->
+<main class="ml-[260px] mt-[72px] h-[calc(100vh-72px)] overflow-y-auto p-margin-page bg-background text-on-surface" dir="rtl">
+<div class="max-w-[1200px] mx-auto">
+<!-- Page Header -->
+<div class="flex justify-between items-center mb-stack-lg">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">الماليات والاشتراكات</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">نظرة عامة على الإيرادات ومدفوعات المعلمين.</p>
+</div>
+<button class="flex items-center gap-2 bg-primary-container text-on-primary font-label-md text-label-md px-6 py-3 rounded-lg hover:bg-primary transition-colors">
+<span class="material-symbols-outlined text-[18px]">download</span>
+                    تصدير التقرير
+                </button>
+</div>
+<!-- Stats Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-gutter mb-stack-lg">
+<!-- Total Revenue Card -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-lg flex flex-col justify-between">
+<div class="flex justify-between items-start mb-4">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">إجمالي الإيرادات</span>
+<div class="w-10 h-10 rounded-full bg-primary-container/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary-container">account_balance_wallet</span>
+</div>
+</div>
+<div>
+<h3 class="font-headline-lg text-headline-lg text-primary-container">$124,500.00</h3>
+<div class="flex items-center gap-1 mt-2 text-surface-tint font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[14px]">trending_up</span>
+<span>+12.5% منذ الشهر الماضي</span>
+</div>
+</div>
+</div>
+<!-- Teacher Payouts Card -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-lg flex flex-col justify-between">
+<div class="flex justify-between items-start mb-4">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">مدفوعات المعلمين</span>
+<div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">payments</span>
+</div>
+</div>
+<div>
+<h3 class="font-headline-lg text-headline-lg text-primary-container">$87,150.00</h3>
+<div class="flex items-center gap-1 mt-2 text-surface-tint font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[14px]">trending_up</span>
+<span>+8.2% منذ الشهر الماضي</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Transaction Table -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden">
+<div class="px-stack-lg py-4 border-b border-outline-variant bg-surface">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">سجل المعاملات</h3>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-right border-collapse">
+<thead>
+<tr class="bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wide border-b border-outline-variant">
+<th class="px-6 py-4 font-medium">رقم المعاملة</th>
+<th class="px-6 py-4 font-medium">اسم الطالب</th>
+<th class="px-6 py-4 font-medium">الدورة</th>
+<th class="px-6 py-4 font-medium">المبلغ</th>
+<th class="px-6 py-4 font-medium">التاريخ</th>
+<th class="px-6 py-4 font-medium">نسبة الأرباح (الأكاديمية / المعلم)</th>
+</tr>
+</thead>
+<tbody class="font-body-sm text-body-sm divide-y divide-outline-variant/50">
+<tr class="hover:bg-background transition-colors">
+<td class="px-6 py-4 text-on-surface font-mono text-xs">TRX-9921A</td>
+<td class="px-6 py-4 text-on-surface font-medium">أحمد محمود</td>
+<td class="px-6 py-4 text-on-surface-variant">مقدمة في علوم الحاسب</td>
+<td class="px-6 py-4 font-medium text-on-surface">$150.00</td>
+<td class="px-6 py-4 text-on-surface-variant">24 أكتوبر 2023</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<div class="px-2 py-1 bg-surface-container-high rounded text-xs font-medium text-on-surface">30% ($45)</div>
+<span class="text-outline-variant">/</span>
+<div class="px-2 py-1 bg-primary/10 rounded text-xs font-medium text-primary">70% ($105)</div>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-background transition-colors">
+<td class="px-6 py-4 text-on-surface font-mono text-xs">TRX-9922B</td>
+<td class="px-6 py-4 text-on-surface font-medium">سارة علي</td>
+<td class="px-6 py-4 text-on-surface-variant">الرياضيات المتقدمة</td>
+<td class="px-6 py-4 font-medium text-on-surface">$200.00</td>
+<td class="px-6 py-4 text-on-surface-variant">23 أكتوبر 2023</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<div class="px-2 py-1 bg-surface-container-high rounded text-xs font-medium text-on-surface">30% ($60)</div>
+<span class="text-outline-variant">/</span>
+<div class="px-2 py-1 bg-primary/10 rounded text-xs font-medium text-primary">70% ($140)</div>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-background transition-colors">
+<td class="px-6 py-4 text-on-surface font-mono text-xs">TRX-9923C</td>
+<td class="px-6 py-4 text-on-surface font-medium">عمر خالد</td>
+<td class="px-6 py-4 text-on-surface-variant">تصميم واجهات المستخدم</td>
+<td class="px-6 py-4 font-medium text-on-surface">$120.00</td>
+<td class="px-6 py-4 text-on-surface-variant">22 أكتوبر 2023</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<div class="px-2 py-1 bg-surface-container-high rounded text-xs font-medium text-on-surface">30% ($36)</div>
+<span class="text-outline-variant">/</span>
+<div class="px-2 py-1 bg-primary/10 rounded text-xs font-medium text-primary">70% ($84)</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</main>
+</body></html>

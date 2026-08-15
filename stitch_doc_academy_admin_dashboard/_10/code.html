@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="ar"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>إعدادات المنصة - Doc Academy</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                            "tertiary-container": "#a0aabf",
+                            "surface-container-highest": "#e0e3e5",
+                            "tertiary-fixed-dim": "#bdc7dc",
+                            "on-secondary-fixed-variant": "#414754",
+                            "error-container": "#ffdad6",
+                            "on-error-container": "#93000a",
+                            "primary-container": "#ff8c00",
+                            "secondary-container": "#dde2f3",
+                            "on-surface-variant": "#564334",
+                            "primary-fixed-dim": "#ffb77d",
+                            "outline": "#897362",
+                            "outline-variant": "#ddc1ae",
+                            "on-primary-fixed": "#2f1500",
+                            "secondary-fixed-dim": "#c1c6d7",
+                            "on-background": "#181c1e",
+                            "on-tertiary-fixed-variant": "#3d4759",
+                            "surface-container-low": "#f1f4f6",
+                            "primary": "#904d00",
+                            "inverse-on-surface": "#eef1f3",
+                            "on-surface": "#181c1e",
+                            "surface-container": "#ebeef0",
+                            "error": "#ba1a1a",
+                            "primary-fixed": "#ffdcc3",
+                            "inverse-primary": "#ffb77d",
+                            "on-error": "#ffffff",
+                            "on-secondary": "#ffffff",
+                            "surface": "#f7fafc",
+                            "surface-container-lowest": "#ffffff",
+                            "surface-variant": "#e0e3e5",
+                            "on-secondary-container": "#5e6473",
+                            "surface-bright": "#f7fafc",
+                            "on-primary-fixed-variant": "#6e3900",
+                            "on-primary-container": "#623200",
+                            "surface-dim": "#d7dadc",
+                            "secondary-fixed": "#dde2f3",
+                            "background": "#f7fafc",
+                            "on-primary": "#ffffff",
+                            "on-tertiary-container": "#353f50",
+                            "secondary": "#585e6c",
+                            "surface-tint": "#904d00",
+                            "on-secondary-fixed": "#161c27",
+                            "on-tertiary": "#ffffff",
+                            "tertiary-fixed": "#d9e3f9",
+                            "surface-container-high": "#e5e9eb",
+                            "inverse-surface": "#2d3133",
+                            "on-tertiary-fixed": "#121c2c",
+                            "tertiary": "#555f71"
+                    },
+                    "borderRadius": {
+                            "DEFAULT": "0.25rem",
+                            "lg": "0.5rem",
+                            "xl": "0.75rem",
+                            "full": "9999px"
+                    },
+                    "spacing": {
+                            "stack-sm": "8px",
+                            "margin-page": "32px",
+                            "stack-md": "16px",
+                            "topbar_height": "72px",
+                            "stack-lg": "24px",
+                            "gutter": "24px",
+                            "sidebar_width": "260px"
+                    },
+                    "fontFamily": {
+                            "headline-md": ["Be Vietnam Pro"],
+                            "headline-sm": ["Be Vietnam Pro"],
+                            "label-md": ["Be Vietnam Pro"],
+                            "body-sm": ["Be Vietnam Pro"],
+                            "headline-lg-mobile": ["Be Vietnam Pro"],
+                            "label-sm": ["Be Vietnam Pro"],
+                            "headline-lg": ["Be Vietnam Pro"],
+                            "body-lg": ["Be Vietnam Pro"],
+                            "body-md": ["Be Vietnam Pro"]
+                    },
+                    "fontSize": {
+                            "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                            "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                            "label-md": ["14px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600"}],
+                            "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                            "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                            "label-sm": ["12px", {"lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "500"}],
+                            "headline-lg": ["30px", {"lineHeight": "38px", "fontWeight": "700"}],
+                            "body-lg": ["18px", {"lineHeight": "26px", "fontWeight": "400"}],
+                            "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Be Vietnam Pro', sans-serif; }
+    </style>
+</head>
+<body class="bg-background min-h-screen text-on-background">
+<!-- Sidebar Navigation (Desktop) -->
+<aside class="hidden md:flex flex-col h-full py-stack-lg bg-on-background text-primary font-body-md text-body-md fixed right-0 top-0 h-screen w-[260px] transition-all duration-200 ease-in-out z-20">
+<div class="px-gutter mb-stack-lg">
+<h1 class="text-headline-md font-headline-md font-bold text-primary">Doc Academy</h1>
+<p class="font-body-sm text-body-sm text-surface-variant mt-1">Admin Console</p>
+</div>
+<nav class="flex-1 flex flex-col gap-1 px-4">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-surface-variant hover:text-white transition-colors hover:bg-on-secondary-fixed-variant/5" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span>Overview</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-surface-variant hover:text-white transition-colors hover:bg-on-secondary-fixed-variant/5" href="#">
+<span class="material-symbols-outlined">group</span>
+<span>Students</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-surface-variant hover:text-white transition-colors hover:bg-on-secondary-fixed-variant/5" href="#">
+<span class="material-symbols-outlined">school</span>
+<span>Teachers</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-primary font-bold border-l-4 border-primary bg-on-secondary-fixed-variant/10" href="#">
+<span class="material-symbols-outlined">settings_accessibility</span>
+<span>Permissions</span>
+</a>
+</nav>
+</aside>
+<!-- Top App Bar -->
+<header class="flex justify-between items-center w-full px-margin-page mr-[260px] max-w-[calc(100%-260px)] bg-surface border-b border-outline-variant h-[72px] docked full-width top-0 z-10 sticky transition-colors duration-150">
+<div class="flex items-center gap-4">
+<div class="relative w-64 hidden md:block">
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full bg-surface-container-low border border-outline-variant rounded-lg py-2 pr-10 pl-4 focus:outline-none focus:border-primary-container focus:ring-2 focus:ring-primary-container/20 transition-all text-body-sm font-body-sm" dir="rtl" placeholder="البحث..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 rounded-full text-on-surface-variant hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 rounded-full text-on-surface-variant hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined">help</span>
+</button>
+<div class="h-8 w-8 rounded-full bg-surface-container-highest overflow-hidden border border-outline-variant ml-2">
+<img alt="Admin Profile" class="w-full h-full object-cover" data-alt="A professional headshot of an administrator in a well-lit, modern office environment. The lighting is soft and natural, emphasizing a clean, corporate aesthetic aligned with a light-mode admin dashboard." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCj6WcAy_yl6s681CUksgnpuRobQAv-r3Wxc02CRzFosQbebqUzghzdkyAtTBAun-p4H6dDnYR4yQeRJClcJZIDcvAZKtaZJVf7ekPFf7inquyQ-rGi0dPsSdDUOidRs0Q8wopTJtUYxHcfj7U0WATDtCeOVZi-cyOiL6puQ7yFu4XzKojZz-hyvXJM5G29MhAcmHFzULPTzdZj93Jk-avYGeSm7mHvYmyclUivvbhyS1I6biBaJ9Yv"/>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="md:mr-[260px] p-margin-page max-w-5xl mx-auto">
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-stack-lg gap-4">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-2">إعدادات المنصة</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">إدارة المعلومات الأساسية والروابط والسياسات الخاصة بمنصتك.</p>
+</div>
+<button class="bg-primary-container text-on-primary hover:bg-primary-container/90 transition-colors h-12 px-6 rounded-lg font-label-md text-label-md flex items-center gap-2 shadow-sm whitespace-nowrap">
+<span class="material-symbols-outlined text-[20px]">save</span>
+                حفظ التغييرات
+            </button>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter">
+<!-- Left Column: Settings Cards -->
+<div class="lg:col-span-2 space-y-stack-lg">
+<!-- General Info Card -->
+<div class="bg-surface-container-lowest rounded-xl border border-surface-variant shadow-sm overflow-hidden">
+<div class="bg-surface-container-low px-6 py-4 border-b border-surface-variant flex items-center gap-3">
+<span class="material-symbols-outlined text-primary-container">info</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">المعلومات العامة</h3>
+</div>
+<div class="p-6 space-y-stack-md">
+<div>
+<label class="block font-label-md text-label-md text-on-surface-variant mb-2">اسم المنصة</label>
+<input class="w-full bg-surface border border-outline-variant rounded-lg py-2 px-4 focus:outline-none focus:border-primary-container focus:ring-2 focus:ring-primary-container/20 transition-all text-body-md font-body-md text-on-surface" type="text" value="Doc Academy"/>
+</div>
+<div>
+<label class="block font-label-md text-label-md text-on-surface-variant mb-2">شعار المنصة</label>
+<div class="flex items-start gap-6">
+<div class="w-24 h-24 rounded-lg bg-surface-container border border-dashed border-outline-variant flex items-center justify-center overflow-hidden shrink-0">
+<span class="material-symbols-outlined text-surface-variant text-[40px]">image</span>
+</div>
+<div class="flex-1">
+<div class="border-2 border-dashed border-outline-variant rounded-lg p-6 text-center bg-surface hover:bg-surface-container-low transition-colors cursor-pointer">
+<span class="material-symbols-outlined text-primary-container mb-2">cloud_upload</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-1">اسحب وأفلت الصورة هنا، أو انقر للتصفح</p>
+<p class="font-label-sm text-label-sm text-tertiary">PNG, JPG حتى 5MB</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Social Media Card -->
+<div class="bg-surface-container-lowest rounded-xl border border-surface-variant shadow-sm overflow-hidden">
+<div class="bg-surface-container-low px-6 py-4 border-b border-surface-variant flex items-center gap-3">
+<span class="material-symbols-outlined text-primary-container">share</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">وسائل التواصل الاجتماعي</h3>
+</div>
+<div class="p-6 space-y-stack-md">
+<div class="relative">
+<label class="block font-label-md text-label-md text-on-surface-variant mb-2">فيسبوك (Facebook)</label>
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute right-3 text-on-surface-variant">public</span>
+<input class="w-full bg-surface border border-outline-variant rounded-lg py-2 pr-10 pl-4 focus:outline-none focus:border-primary-container focus:ring-2 focus:ring-primary-container/20 transition-all text-body-md font-body-md text-on-surface text-left" dir="ltr" placeholder="https://facebook.com/..." type="url"/>
+</div>
+</div>
+<div class="relative">
+<label class="block font-label-md text-label-md text-on-surface-variant mb-2">تويتر (Twitter)</label>
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute right-3 text-on-surface-variant">public</span>
+<input class="w-full bg-surface border border-outline-variant rounded-lg py-2 pr-10 pl-4 focus:outline-none focus:border-primary-container focus:ring-2 focus:ring-primary-container/20 transition-all text-body-md font-body-md text-on-surface text-left" dir="ltr" placeholder="https://twitter.com/..." type="url"/>
+</div>
+</div>
+<div class="relative">
+<label class="block font-label-md text-label-md text-on-surface-variant mb-2">انستغرام (Instagram)</label>
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute right-3 text-on-surface-variant">public</span>
+<input class="w-full bg-surface border border-outline-variant rounded-lg py-2 pr-10 pl-4 focus:outline-none focus:border-primary-container focus:ring-2 focus:ring-primary-container/20 transition-all text-body-md font-body-md text-on-surface text-left" dir="ltr" placeholder="https://instagram.com/..." type="url"/>
+</div>
+</div>
+</div>
+</div>
+<!-- Policies Card -->
+<div class="bg-surface-container-lowest rounded-xl border border-surface-variant shadow-sm overflow-hidden">
+<div class="bg-surface-container-low px-6 py-4 border-b border-surface-variant flex items-center gap-3">
+<span class="material-symbols-outlined text-primary-container">gavel</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">السياسات والأحكام</h3>
+</div>
+<div class="p-6 space-y-stack-md">
+<div>
+<label class="block font-label-md text-label-md text-on-surface-variant mb-2">شروط الاستخدام</label>
+<textarea class="w-full bg-surface border border-outline-variant rounded-lg py-3 px-4 focus:outline-none focus:border-primary-container focus:ring-2 focus:ring-primary-container/20 transition-all text-body-sm font-body-sm text-on-surface resize-y" placeholder="أدخل شروط استخدام المنصة هنا..." rows="4"></textarea>
+</div>
+<div>
+<label class="block font-label-md text-label-md text-on-surface-variant mb-2">سياسة الخصوصية</label>
+<textarea class="w-full bg-surface border border-outline-variant rounded-lg py-3 px-4 focus:outline-none focus:border-primary-container focus:ring-2 focus:ring-primary-container/20 transition-all text-body-sm font-body-sm text-on-surface resize-y" placeholder="أدخل سياسة الخصوصية هنا..." rows="4"></textarea>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column: Context/Status -->
+<div class="space-y-stack-lg">
+<div class="bg-surface-container-low rounded-xl p-6 border border-surface-variant">
+<h4 class="font-headline-sm text-headline-sm text-on-surface mb-4">حالة النظام</h4>
+<div class="space-y-4">
+<div class="flex justify-between items-center">
+<span class="font-body-md text-body-md text-on-surface-variant">آخر تحديث</span>
+<span class="font-label-md text-label-md text-on-surface">اليوم، 10:45 ص</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="font-body-md text-body-md text-on-surface-variant">بواسطة</span>
+<span class="font-label-md text-label-md text-on-surface">أحمد مدير</span>
+</div>
+<div class="pt-4 border-t border-outline-variant mt-4">
+<div class="flex items-center gap-2 text-primary-container">
+<span class="material-symbols-outlined text-[20px]">check_circle</span>
+<span class="font-label-md text-label-md">جميع الأنظمة تعمل بشكل طبيعي</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Mobile Bottom Nav (Visible only on < 768px) -->
+<nav class="md:hidden fixed bottom-0 w-full bg-surface border-t border-outline-variant flex justify-around py-3 pb-safe z-50">
+<a class="flex flex-col items-center gap-1 text-on-surface-variant" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-sm text-[10px]">Overview</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-on-surface-variant" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-label-sm text-[10px]">Students</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-on-surface-variant" href="#">
+<span class="material-symbols-outlined">school</span>
+<span class="font-label-sm text-[10px]">Teachers</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-primary" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">settings_accessibility</span>
+<span class="font-label-sm text-[10px] font-bold">Permissions</span>
+</a>
+</nav>
+</body></html>

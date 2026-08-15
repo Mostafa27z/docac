@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="ar"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Doc Academy - إدارة المدرسين</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface": "#f7fafc",
+                        "on-surface": "#181c1e",
+                        "on-tertiary-container": "#353f50",
+                        "secondary-container": "#dde2f3",
+                        "surface-container-highest": "#e0e3e5",
+                        "error-container": "#ffdad6",
+                        "on-secondary-fixed-variant": "#414754",
+                        "outline": "#897362",
+                        "primary": "#904d00",
+                        "tertiary": "#555f71",
+                        "on-primary-fixed-variant": "#6e3900",
+                        "surface-container": "#ebeef0",
+                        "inverse-primary": "#ffb77d",
+                        "primary-fixed": "#ffdcc3",
+                        "on-tertiary-fixed-variant": "#3d4759",
+                        "secondary-fixed-dim": "#c1c6d7",
+                        "outline-variant": "#ddc1ae",
+                        "primary-fixed-dim": "#ffb77d",
+                        "on-background": "#181c1e",
+                        "on-secondary-fixed": "#161c27",
+                        "surface-tint": "#904d00",
+                        "error": "#ba1a1a",
+                        "primary-container": "#ff8c00",
+                        "on-primary-container": "#623200",
+                        "on-error-container": "#93000a",
+                        "on-secondary-container": "#5e6473",
+                        "on-surface-variant": "#564334",
+                        "on-primary-fixed": "#2f1500",
+                        "secondary-fixed": "#dde2f3",
+                        "tertiary-fixed": "#d9e3f9",
+                        "on-secondary": "#ffffff",
+                        "tertiary-container": "#a0aabf",
+                        "on-tertiary-fixed": "#121c2c",
+                        "on-error": "#ffffff",
+                        "tertiary-fixed-dim": "#bdc7dc",
+                        "on-tertiary": "#ffffff",
+                        "surface-variant": "#e0e3e5",
+                        "surface-container-lowest": "#ffffff",
+                        "inverse-surface": "#2d3133",
+                        "secondary": "#585e6c",
+                        "surface-container-low": "#f1f4f6",
+                        "surface-dim": "#d7dadc",
+                        "surface-container-high": "#e5e9eb",
+                        "background": "#f7fafc",
+                        "inverse-on-surface": "#eef1f3",
+                        "surface-bright": "#f7fafc",
+                        "on-primary": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-sm": "8px",
+                        "sidebar_width": "260px",
+                        "gutter": "24px",
+                        "stack-md": "16px",
+                        "stack-lg": "24px",
+                        "margin-page": "32px",
+                        "topbar_height": "72px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Be Vietnam Pro", "sans-serif"],
+                        "body-md": ["Be Vietnam Pro", "sans-serif"],
+                        "label-md": ["Be Vietnam Pro", "sans-serif"],
+                        "headline-sm": ["Be Vietnam Pro", "sans-serif"],
+                        "headline-md": ["Be Vietnam Pro", "sans-serif"],
+                        "headline-lg-mobile": ["Be Vietnam Pro", "sans-serif"],
+                        "label-sm": ["Be Vietnam Pro", "sans-serif"],
+                        "headline-lg": ["Be Vietnam Pro", "sans-serif"],
+                        "body-sm": ["Be Vietnam Pro", "sans-serif"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", { "lineHeight": "26px", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "label-md": ["14px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" }],
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "label-sm": ["12px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "500" }],
+                        "headline-lg": ["30px", { "lineHeight": "38px", "fontWeight": "700" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Be Vietnam Pro', sans-serif; }
+    </style>
+</head>
+<body class="bg-background text-on-surface flex min-h-screen">
+<!-- SideNavBar -->
+<nav class="hidden md:flex bg-on-background dark:bg-on-background fixed right-0 top-0 h-screen w-[260px] flex-col h-full py-stack-lg z-20">
+<div class="px-gutter mb-stack-lg flex items-center gap-stack-sm">
+<div class="w-10 h-10 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-headline-md">
+                D
+            </div>
+<div>
+<h1 class="text-headline-md font-headline-md font-bold text-primary">Doc Academy</h1>
+<p class="font-body-sm text-body-sm text-surface-variant">Admin Console</p>
+</div>
+</div>
+<ul class="flex-1 px-stack-sm space-y-stack-sm">
+<li>
+<a class="flex items-center gap-gutter px-gutter py-stack-md rounded-lg text-surface-variant hover:text-white transition-colors hover:bg-on-secondary-fixed-variant/5" href="#">
+<span class="material-symbols-outlined" data-weight="fill" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="font-label-md text-label-md">Overview</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-gutter px-gutter py-stack-md rounded-lg text-surface-variant hover:text-white transition-colors hover:bg-on-secondary-fixed-variant/5" href="#">
+<span class="material-symbols-outlined" data-weight="fill" style="font-variation-settings: 'FILL' 1;">group</span>
+<span class="font-label-md text-label-md">Students</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-gutter px-gutter py-stack-md rounded-lg text-primary font-bold border-l-4 border-primary bg-on-secondary-fixed-variant/10" href="#">
+<span class="material-symbols-outlined" data-weight="fill" style="font-variation-settings: 'FILL' 1;">school</span>
+<span class="font-label-md text-label-md">Teachers</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-gutter px-gutter py-stack-md rounded-lg text-surface-variant hover:text-white transition-colors hover:bg-on-secondary-fixed-variant/5" href="#">
+<span class="material-symbols-outlined" data-weight="fill" style="font-variation-settings: 'FILL' 1;">settings_accessibility</span>
+<span class="font-label-md text-label-md">Permissions</span>
+</a>
+</li>
+</ul>
+</nav>
+<!-- Main Content Area -->
+<div class="flex-1 md:mr-[260px] flex flex-col min-w-0">
+<!-- TopAppBar -->
+<header class="bg-surface dark:bg-surface-dim docked full-width top-0 h-[72px] border-b border-outline-variant flex justify-between items-center w-full px-margin-page sticky z-10">
+<div class="flex items-center gap-gutter">
+<button class="md:hidden p-stack-sm rounded-full text-on-surface-variant hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<h2 class="font-headline-sm text-headline-sm text-primary">المدرسين</h2>
+</div>
+<div class="flex items-center gap-gutter">
+<button class="p-stack-sm rounded-full text-on-surface-variant hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-stack-sm rounded-full text-on-surface-variant hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined">help</span>
+</button>
+<div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center overflow-hidden border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of an administrator in a well-lit modern office setting. The lighting is bright and clean, fitting a modern light-mode corporate aesthetic. The administrator looks approachable yet authoritative." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAQ_QVF0adxg-vIm6Wgyx7KudLODuJBoS6A_IufNlUj_aLlGnU0LtBTBCKqcRrY9IIspbe1wYuPGBemKV5KPJZ-80fIUATaabVmqUlArd9tOVT9rqSAE1jy82EXbowRGK6YP0MejXKb6ranlodRVKypH0RzTLAVE0IVSrS3ijcZEO7f5UVvdyzpPKqWt1dKrkj-IYw6tQiJgbuh5xyWZpZQwAJTD2sSyGL0CRu5Xu6zhM3OVDqFLfnE"/>
+</div>
+</div>
+</header>
+<!-- Dashboard Canvas -->
+<main class="flex-1 p-margin-page bg-surface">
+<!-- Page Header & CTA -->
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-margin-page gap-stack-md">
+<div>
+<h3 class="font-headline-lg text-headline-lg text-on-surface">إدارة المدرسين</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mt-stack-sm">عرض وتعديل بيانات هيئة التدريس.</p>
+</div>
+<button class="bg-primary-container text-on-primary font-label-md text-label-md px-stack-lg py-[12px] rounded-lg flex items-center gap-stack-sm hover:opacity-90 transition-opacity shadow-sm">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">add</span>
+                    إضافة مدرس جديد
+                </button>
+</div>
+<!-- Bento Grid Stats (Optional but good for layout) -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter mb-margin-page">
+<div class="bg-white border border-[#E2E8F0] rounded-xl p-stack-lg flex flex-col justify-between">
+<div class="flex justify-between items-start">
+<span class="font-label-md text-label-md text-on-surface-variant">إجمالي المدرسين</span>
+<div class="p-stack-sm rounded-lg bg-surface-container-low text-primary">
+<span class="material-symbols-outlined">school</span>
+</div>
+</div>
+<div class="mt-stack-md">
+<span class="font-headline-lg text-headline-lg text-primary-container">42</span>
+</div>
+</div>
+<div class="bg-white border border-[#E2E8F0] rounded-xl p-stack-lg flex flex-col justify-between">
+<div class="flex justify-between items-start">
+<span class="font-label-md text-label-md text-on-surface-variant">الطلاب المسجلين</span>
+<div class="p-stack-sm rounded-lg bg-surface-container-low text-tertiary">
+<span class="material-symbols-outlined">group</span>
+</div>
+</div>
+<div class="mt-stack-md">
+<span class="font-headline-lg text-headline-lg text-on-surface">1,204</span>
+</div>
+</div>
+<div class="bg-white border border-[#E2E8F0] rounded-xl p-stack-lg flex flex-col justify-between">
+<div class="flex justify-between items-start">
+<span class="font-label-md text-label-md text-on-surface-variant">متوسط العمولات</span>
+<div class="p-stack-sm rounded-lg bg-surface-container-low text-tertiary">
+<span class="material-symbols-outlined">payments</span>
+</div>
+</div>
+<div class="mt-stack-md">
+<span class="font-headline-lg text-headline-lg text-on-surface">22.5%</span>
+</div>
+</div>
+</div>
+<!-- Teachers Data Table -->
+<div class="bg-white border border-[#E2E8F0] rounded-xl overflow-hidden shadow-sm">
+<div class="p-stack-md border-b border-[#E2E8F0] flex justify-between items-center bg-[#EDF2F7]">
+<h4 class="font-headline-sm text-headline-sm text-on-surface">قائمة المدرسين</h4>
+<div class="relative w-64">
+<span class="material-symbols-outlined absolute right-stack-sm top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full pl-stack-sm pr-[36px] py-[8px] rounded-lg border border-[#E2E8F0] font-body-sm text-body-sm focus:border-primary-container focus:ring-2 focus:ring-primary-container/20 outline-none transition-all" placeholder="بحث..." type="text"/>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-right">
+<thead class="bg-[#EDF2F7] border-b border-[#E2E8F0]">
+<tr>
+<th class="py-stack-md px-stack-lg font-label-md text-label-md text-on-surface-variant">الاسم</th>
+<th class="py-stack-md px-stack-lg font-label-md text-label-md text-on-surface-variant">المادة</th>
+<th class="py-stack-md px-stack-lg font-label-md text-label-md text-on-surface-variant">نسبة العمولة</th>
+<th class="py-stack-md px-stack-lg font-label-md text-label-md text-on-surface-variant">إجمالي الطلاب</th>
+<th class="py-stack-md px-stack-lg font-label-md text-label-md text-on-surface-variant">إجراءات</th>
+</tr>
+</thead>
+<tbody class="font-body-md text-body-md text-on-surface">
+<tr class="border-b border-[#E2E8F0] hover:bg-[#F7FAFC] transition-colors">
+<td class="py-stack-md px-stack-lg flex items-center gap-stack-md">
+<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-primary font-label-md">أ.م</div>
+<span class="font-medium">أحمد محمد</span>
+</td>
+<td class="py-stack-md px-stack-lg text-on-surface-variant">رياضيات</td>
+<td class="py-stack-md px-stack-lg">
+<span class="inline-flex items-center px-stack-sm py-1 rounded-full text-primary-container bg-primary-container/10 font-label-sm text-label-sm">
+                                        20%
+                                    </span>
+</td>
+<td class="py-stack-md px-stack-lg">150</td>
+<td class="py-stack-md px-stack-lg">
+<div class="flex items-center gap-stack-sm">
+<button class="p-2 rounded-lg text-tertiary hover:bg-surface-container-high transition-colors" title="تعديل">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+<button class="p-2 rounded-lg text-error hover:bg-error-container/20 transition-colors" title="حذف">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<tr class="border-b border-[#E2E8F0] hover:bg-[#F7FAFC] transition-colors">
+<td class="py-stack-md px-stack-lg flex items-center gap-stack-md">
+<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-primary font-label-md">س.ع</div>
+<span class="font-medium">سارة علي</span>
+</td>
+<td class="py-stack-md px-stack-lg text-on-surface-variant">فيزياء</td>
+<td class="py-stack-md px-stack-lg">
+<span class="inline-flex items-center px-stack-sm py-1 rounded-full text-primary-container bg-primary-container/10 font-label-sm text-label-sm">
+                                        25%
+                                    </span>
+</td>
+<td class="py-stack-md px-stack-lg">210</td>
+<td class="py-stack-md px-stack-lg">
+<div class="flex items-center gap-stack-sm">
+<button class="p-2 rounded-lg text-tertiary hover:bg-surface-container-high transition-colors" title="تعديل">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+<button class="p-2 rounded-lg text-error hover:bg-error-container/20 transition-colors" title="حذف">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-[#F7FAFC] transition-colors">
+<td class="py-stack-md px-stack-lg flex items-center gap-stack-md">
+<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-primary font-label-md">م.ح</div>
+<span class="font-medium">محمود حسن</span>
+</td>
+<td class="py-stack-md px-stack-lg text-on-surface-variant">كيمياء</td>
+<td class="py-stack-md px-stack-lg">
+<span class="inline-flex items-center px-stack-sm py-1 rounded-full text-primary-container bg-primary-container/10 font-label-sm text-label-sm">
+                                        15%
+                                    </span>
+</td>
+<td class="py-stack-md px-stack-lg">85</td>
+<td class="py-stack-md px-stack-lg">
+<div class="flex items-center gap-stack-sm">
+<button class="p-2 rounded-lg text-tertiary hover:bg-surface-container-high transition-colors" title="تعديل">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+<button class="p-2 rounded-lg text-error hover:bg-error-container/20 transition-colors" title="حذف">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</main>
+</div>
+</body></html>

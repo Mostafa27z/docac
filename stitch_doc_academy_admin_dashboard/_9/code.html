@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="ar"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>مراقبة المحادثات - Doc Academy</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-container": "#a0aabf",
+                        "surface-container-highest": "#e0e3e5",
+                        "tertiary-fixed-dim": "#bdc7dc",
+                        "on-secondary-fixed-variant": "#414754",
+                        "error-container": "#ffdad6",
+                        "on-error-container": "#93000a",
+                        "primary-container": "#ff8c00",
+                        "secondary-container": "#dde2f3",
+                        "on-surface-variant": "#564334",
+                        "primary-fixed-dim": "#ffb77d",
+                        "outline": "#897362",
+                        "outline-variant": "#ddc1ae",
+                        "on-primary-fixed": "#2f1500",
+                        "secondary-fixed-dim": "#c1c6d7",
+                        "on-background": "#181c1e",
+                        "on-tertiary-fixed-variant": "#3d4759",
+                        "surface-container-low": "#f1f4f6",
+                        "primary": "#904d00",
+                        "inverse-on-surface": "#eef1f3",
+                        "on-surface": "#181c1e",
+                        "surface-container": "#ebeef0",
+                        "error": "#ba1a1a",
+                        "primary-fixed": "#ffdcc3",
+                        "inverse-primary": "#ffb77d",
+                        "on-error": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "surface": "#f7fafc",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-variant": "#e0e3e5",
+                        "on-secondary-container": "#5e6473",
+                        "surface-bright": "#f7fafc",
+                        "on-primary-fixed-variant": "#6e3900",
+                        "on-primary-container": "#623200",
+                        "surface-dim": "#d7dadc",
+                        "secondary-fixed": "#dde2f3",
+                        "background": "#f7fafc",
+                        "on-primary": "#ffffff",
+                        "on-tertiary-container": "#353f50",
+                        "secondary": "#585e6c",
+                        "surface-tint": "#904d00",
+                        "on-secondary-fixed": "#161c27",
+                        "on-tertiary": "#ffffff",
+                        "tertiary-fixed": "#d9e3f9",
+                        "surface-container-high": "#e5e9eb",
+                        "inverse-surface": "#2d3133",
+                        "on-tertiary-fixed": "#121c2c",
+                        "tertiary": "#555f71"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-sm": "8px",
+                        "margin-page": "32px",
+                        "stack-md": "16px",
+                        "topbar_height": "72px",
+                        "stack-lg": "24px",
+                        "gutter": "24px",
+                        "sidebar_width": "260px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Be Vietnam Pro"],
+                        "headline-sm": ["Be Vietnam Pro"],
+                        "label-md": ["Be Vietnam Pro"],
+                        "body-sm": ["Be Vietnam Pro"],
+                        "headline-lg-mobile": ["Be Vietnam Pro"],
+                        "label-sm": ["Be Vietnam Pro"],
+                        "headline-lg": ["Be Vietnam Pro"],
+                        "body-lg": ["Be Vietnam Pro"],
+                        "body-md": ["Be Vietnam Pro"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "label-md": ["14px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "label-sm": ["12px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "500" }],
+                        "headline-lg": ["30px", { "lineHeight": "38px", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "26px", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background font-body-md text-on-surface antialiased overflow-hidden selection:bg-primary-container selection:text-on-primary-container flex h-screen">
+<!-- SideNavBar -->
+<nav class="fixed right-0 top-0 h-screen w-sidebar_width bg-on-background dark:bg-on-background flex flex-col h-full py-stack-lg z-50 transition-all duration-200 ease-in-out md:flex hidden z-40">
+<div class="px-margin-page mb-stack-lg">
+<h1 class="text-headline-md font-headline-md font-bold text-primary">Doc Academy</h1>
+<p class="text-surface-variant font-label-md mt-1">Admin Console</p>
+</div>
+<ul class="flex-1 overflow-y-auto space-y-2 mt-stack-md">
+<li>
+<a class="flex items-center gap-stack-md px-margin-page py-3 text-surface-variant hover:text-white hover:bg-on-secondary-fixed-variant/5 transition-colors" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">dashboard</span>
+<span class="font-label-md">Overview</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-stack-md px-margin-page py-3 text-surface-variant hover:text-white hover:bg-on-secondary-fixed-variant/5 transition-colors" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">group</span>
+<span class="font-label-md">Students</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-stack-md px-margin-page py-3 text-surface-variant hover:text-white hover:bg-on-secondary-fixed-variant/5 transition-colors" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">school</span>
+<span class="font-label-md">Teachers</span>
+</a>
+</li>
+<!-- Active Tab Placeholder based on general intent, though not exactly matching labels -->
+<li>
+<a class="flex items-center gap-stack-md px-margin-page py-3 text-primary font-bold border-l-4 border-primary bg-on-secondary-fixed-variant/10 transition-colors" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">forum</span>
+<span class="font-label-md">مراقبة المحادثات</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-stack-md px-margin-page py-3 text-surface-variant hover:text-white hover:bg-on-secondary-fixed-variant/5 transition-colors" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">settings_accessibility</span>
+<span class="font-label-md">Permissions</span>
+</a>
+</li>
+</ul>
+</nav>
+<!-- Main Content Wrapper -->
+<div class="flex-1 flex flex-col mr-[0px] md:mr-[260px] max-w-full md:max-w-[calc(100%-260px)] h-screen overflow-hidden bg-background">
+<!-- TopAppBar -->
+<header class="docked full-width top-0 h-topbar_height bg-surface dark:bg-surface-dim border-b border-outline-variant flex justify-between items-center w-full px-margin-page z-30 transition-colors duration-150">
+<div class="flex items-center gap-stack-md">
+<!-- Mobile Menu Button -->
+<button class="md:hidden text-on-surface hover:bg-surface-container-high p-2 rounded-full transition-colors duration-150">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<h2 class="font-headline-sm text-headline-sm text-on-surface hidden md:block">مراقبة المحادثات</h2>
+</div>
+<div class="flex items-center gap-stack-md">
+<div class="relative hidden sm:block">
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="pl-4 pr-10 py-2 rounded-full border border-outline-variant bg-surface-container-lowest focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 text-body-sm font-body-sm w-64 transition-all" dir="rtl" placeholder="بحث عن مستخدم أو دورة..." type="text"/>
+</div>
+<button class="text-on-surface-variant hover:bg-surface-container-high p-2 rounded-full transition-colors duration-150">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">notifications</span>
+</button>
+<button class="text-on-surface-variant hover:bg-surface-container-high p-2 rounded-full transition-colors duration-150">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">help</span>
+</button>
+<img alt="Admin Profile" class="w-10 h-10 rounded-full object-cover border border-outline-variant ml-2" data-alt="A highly detailed professional headshot of an administrator in a corporate setting. Clean lighting, modern office background. High quality, photorealistic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCice1g1Ic0oNhasynIi-jyFl0cEmdIq9VqDJzCUBdSUnM5GYQqFJRkViByGkTx3wM1MZzsOv29paTwwvror-jdjLEIBQCFgBFjuwrKGapiiklk84mrLYCJsyOs7-XCae9qJ6Ub0GUZxAO8iJsbaLokfbvtu1TKwARKs-e4M61V9vCaPpjZqEHrNDxrzfTs_Wr235JRmt162U3i9ivNy1Ng756z4kA9uIVNKHO22TQqFJnPX_Ra5rtj"/>
+</div>
+</header>
+<!-- Main Dashboard Canvas -->
+<main class="flex-1 p-margin-page overflow-hidden flex gap-gutter">
+<!-- Conversations List -->
+<aside class="w-full md:w-1/3 bg-surface-container-lowest border border-outline-variant rounded-xl flex flex-col overflow-hidden h-full">
+<div class="p-stack-md border-b border-outline-variant bg-surface flex justify-between items-center">
+<h3 class="font-label-md text-label-md text-on-surface">المحادثات النشطة</h3>
+<span class="bg-primary-container text-on-primary-container font-label-sm text-label-sm px-2 py-1 rounded-full">12</span>
+</div>
+<div class="flex-1 overflow-y-auto">
+<!-- Conversation Item 1 (Active) -->
+<div class="p-stack-md border-b border-surface-container-highest bg-surface-container cursor-pointer hover:bg-surface-container transition-colors relative">
+<div class="absolute right-0 top-0 bottom-0 w-1 bg-primary"></div>
+<div class="flex justify-between items-start mb-1">
+<h4 class="font-label-md text-label-md text-on-surface">رياضيات متقدمة - 101</h4>
+<span class="font-label-sm text-label-sm text-on-surface-variant">الآن</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant truncate">د. أحمد: هل راجعت الفصل الرابع؟</p>
+<div class="flex gap-2 mt-2">
+<span class="bg-secondary-container text-on-secondary-container font-label-sm text-label-sm px-2 py-0.5 rounded-full">طالب: يوسف</span>
+<span class="bg-tertiary-container text-on-tertiary-container font-label-sm text-label-sm px-2 py-0.5 rounded-full">معلم: د. أحمد</span>
+</div>
+</div>
+<!-- Conversation Item 2 -->
+<div class="p-stack-md border-b border-surface-container-highest cursor-pointer hover:bg-surface-container transition-colors">
+<div class="flex justify-between items-start mb-1">
+<h4 class="font-label-md text-label-md text-on-surface">مقدمة في البرمجة</h4>
+<span class="font-label-sm text-label-sm text-on-surface-variant">قبل 5 دقائق</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant truncate">سارة: أواجه مشكلة في الكود البرمجي...</p>
+<div class="flex gap-2 mt-2">
+<span class="bg-secondary-container text-on-secondary-container font-label-sm text-label-sm px-2 py-0.5 rounded-full">طالب: سارة</span>
+<span class="bg-tertiary-container text-on-tertiary-container font-label-sm text-label-sm px-2 py-0.5 rounded-full">معلم: م. خالد</span>
+</div>
+</div>
+<!-- Conversation Item 3 -->
+<div class="p-stack-md border-b border-surface-container-highest cursor-pointer hover:bg-surface-container transition-colors">
+<div class="flex justify-between items-start mb-1">
+<h4 class="font-label-md text-label-md text-on-surface">فيزياء عامة</h4>
+<span class="font-label-sm text-label-sm text-on-surface-variant">قبل 15 دقيقة</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant truncate">د. ليلى: تم تأجيل موعد التسليم.</p>
+<div class="flex gap-2 mt-2">
+<span class="bg-secondary-container text-on-secondary-container font-label-sm text-label-sm px-2 py-0.5 rounded-full">طالب: عمر</span>
+<span class="bg-tertiary-container text-on-tertiary-container font-label-sm text-label-sm px-2 py-0.5 rounded-full">معلم: د. ليلى</span>
+</div>
+</div>
+</div>
+</aside>
+<!-- Chat Window -->
+<section class="hidden md:flex flex-1 bg-surface-container-lowest border border-outline-variant rounded-xl flex-col overflow-hidden h-full relative">
+<div class="p-stack-md border-b border-outline-variant bg-surface flex justify-between items-center z-10">
+<div>
+<h3 class="font-label-md text-label-md text-on-surface">رياضيات متقدمة - 101</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">المشاركون: يوسف (طالب), د. أحمد (معلم)</p>
+</div>
+<div class="flex gap-2">
+<button class="text-on-surface-variant hover:bg-surface-container-high p-2 rounded-full transition-colors duration-150" title="إيقاف المحادثة">
+<span class="material-symbols-outlined text-error">block</span>
+</button>
+<button class="text-on-surface-variant hover:bg-surface-container-high p-2 rounded-full transition-colors duration-150" title="تفاصيل">
+<span class="material-symbols-outlined">info</span>
+</button>
+</div>
+</div>
+<!-- Messages Area -->
+<div class="flex-1 p-stack-md overflow-y-auto bg-background/50 flex flex-col gap-4 relative">
+<!-- Read Only Overlay -->
+<div class="absolute inset-0 bg-surface/10 pointer-events-none z-0 flex items-center justify-center">
+<span class="text-surface-variant/20 font-headline-lg text-headline-lg select-none rotate-[-15deg]">وضع القراءة فقط</span>
+</div>
+<!-- Message from Teacher -->
+<div class="flex flex-col items-start w-full max-w-2xl self-start z-10">
+<div class="flex items-center gap-2 mb-1">
+<img alt="Teacher Profile" class="w-6 h-6 rounded-full object-cover" data-alt="A highly detailed professional portrait of a male teacher in a classroom setting. Warm lighting, realistic. High quality, photorealistic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBP_2T89HA0JEQdX22HHnOgaxpqSoIQwiS4AFehAFxCNzDDd9btv0Gar-J9CfYZmOeFFSBFPxBjSAHlYGJxHsSxanZKgthDEvSmo77PZBwV0yYfsEOYnsoWPD1sGfN-zZ4Viz9YRULKyZOQmf0aLSXJvEos06_4rU6J8q7GSiW0lRDSSLfSeMGlN85lTRkDD1PpC3aX0T9g7cvPyoUy8bBUjeeDNMEeAV77SJ1713YLjeeUBYvK3X24"/>
+<span class="font-label-sm text-label-sm text-on-surface">د. أحمد</span>
+<span class="bg-tertiary-container text-on-tertiary-container font-label-sm text-[10px] px-2 py-0.5 rounded-full">معلم</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant text-xs ml-auto">10:00 ص</span>
+</div>
+<div class="bg-surface-container-highest border border-outline-variant rounded-2xl rounded-tr-none p-3 text-on-surface font-body-sm text-body-sm">
+                            مرحباً يوسف، هل واجهت أي صعوبة في حل الواجب الأخير المتعلق بالمعادلات التفاضلية؟
+                        </div>
+</div>
+<!-- Message from Student -->
+<div class="flex flex-col items-end w-full max-w-2xl self-end z-10">
+<div class="flex items-center justify-end gap-2 mb-1 flex-row-reverse">
+<img alt="Student Profile" class="w-6 h-6 rounded-full object-cover" data-alt="A highly detailed portrait of a male university student studying in a library. Bright, focused lighting. High quality, photorealistic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCFuHBmxKGTFdupOIwsNiPV9Lpmzpy4UQC72VRtwNiTtcmT0kqB91lSnx5YqHWfPwcJn7pHamojgkcMuekM2gxib1vomiVRDJ2NiAzgJhJCKvqW9x2hOL6cvLqJzxspTeug-OeG5kJLmtzMXP94a-FCwq7YQRPj8pRxZ9Iwg91le6uW1zfebq3ebga7wP4djY7mLHt_Nk5CrdG0iUGH2hQByRT0M2NleLAaA8jOVh6C0uV4ec975xg2"/>
+<span class="font-label-sm text-label-sm text-on-surface">يوسف</span>
+<span class="bg-secondary-container text-on-secondary-container font-label-sm text-[10px] px-2 py-0.5 rounded-full">طالب</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant text-xs mr-auto">10:05 ص</span>
+</div>
+<div class="bg-primary/10 border border-primary/20 rounded-2xl rounded-tl-none p-3 text-on-surface font-body-sm text-body-sm text-right">
+                            أهلاً دكتور. نعم، واجهت بعض الصعوبة في السؤال الثالث. لم أتمكن من إيجاد التكامل المناسب.
+                        </div>
+</div>
+<!-- Message from Teacher -->
+<div class="flex flex-col items-start w-full max-w-2xl self-start z-10">
+<div class="flex items-center gap-2 mb-1">
+<img alt="Teacher Profile" class="w-6 h-6 rounded-full object-cover" data-alt="A highly detailed professional portrait of a male teacher in a classroom setting. Warm lighting, realistic. High quality, photorealistic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBdLecMSTCZBowsQFzPziuMGnhBzgdnXuxwQNZZj4OvQ_fvTDlYPoZItB0qAkMdjJc6BEf8oiUfYziIqGqduNH2XYhkCkriFAdaxjmkZIaVz-u374cRbLixuSmD_tqt-BcBwUtgtE06G0I4tRQM-EaXGaa5_NIbD-jbyL4snTanOfM4eZySBwz8G5a0W5sJl3NUMzvix8RG3DHSrI3xrXB0sRWDew1dhV8q_eTGoGjlaDux98Kta5qR"/>
+<span class="font-label-sm text-label-sm text-on-surface">د. أحمد</span>
+<span class="bg-tertiary-container text-on-tertiary-container font-label-sm text-[10px] px-2 py-0.5 rounded-full">معلم</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant text-xs ml-auto">10:08 ص</span>
+</div>
+<div class="bg-surface-container-highest border border-outline-variant rounded-2xl rounded-tr-none p-3 text-on-surface font-body-sm text-body-sm">
+                            لا بأس. حاول استخدام طريقة التكامل بالتجزئة. هل تتذكر القاعدة الأساسية لها؟
+                        </div>
+</div>
+</div>
+<!-- Read Only Indicator Footer -->
+<div class="p-4 border-t border-outline-variant bg-surface flex justify-center items-center gap-2 text-on-surface-variant z-10">
+<span class="material-symbols-outlined text-sm">visibility</span>
+<span class="font-label-sm text-label-sm">أنت تشاهد هذه المحادثة كمسؤول. لا يمكنك إرسال رسائل.</span>
+</div>
+</section>
+</main>
+</div>
+</body></html>

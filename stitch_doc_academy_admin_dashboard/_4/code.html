@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="ar"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Doc Academy - Admins &amp; Roles</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts: Be Vietnam Pro -->
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface": "#f7fafc",
+                      "on-surface": "#181c1e",
+                      "on-tertiary-container": "#353f50",
+                      "secondary-container": "#dde2f3",
+                      "surface-container-highest": "#e0e3e5",
+                      "error-container": "#ffdad6",
+                      "on-secondary-fixed-variant": "#414754",
+                      "outline": "#897362",
+                      "primary": "#904d00",
+                      "tertiary": "#555f71",
+                      "on-primary-fixed-variant": "#6e3900",
+                      "surface-container": "#ebeef0",
+                      "inverse-primary": "#ffb77d",
+                      "primary-fixed": "#ffdcc3",
+                      "on-tertiary-fixed-variant": "#3d4759",
+                      "secondary-fixed-dim": "#c1c6d7",
+                      "outline-variant": "#ddc1ae",
+                      "primary-fixed-dim": "#ffb77d",
+                      "on-background": "#181c1e",
+                      "on-secondary-fixed": "#161c27",
+                      "surface-tint": "#904d00",
+                      "error": "#ba1a1a",
+                      "primary-container": "#ff8c00",
+                      "on-primary-container": "#623200",
+                      "on-error-container": "#93000a",
+                      "on-secondary-container": "#5e6473",
+                      "on-surface-variant": "#564334",
+                      "on-primary-fixed": "#2f1500",
+                      "secondary-fixed": "#dde2f3",
+                      "tertiary-fixed": "#d9e3f9",
+                      "on-secondary": "#ffffff",
+                      "tertiary-container": "#a0aabf",
+                      "on-tertiary-fixed": "#121c2c",
+                      "on-error": "#ffffff",
+                      "tertiary-fixed-dim": "#bdc7dc",
+                      "on-tertiary": "#ffffff",
+                      "surface-variant": "#e0e3e5",
+                      "surface-container-lowest": "#ffffff",
+                      "inverse-surface": "#2d3133",
+                      "secondary": "#585e6c",
+                      "surface-container-low": "#f1f4f6",
+                      "surface-dim": "#d7dadc",
+                      "surface-container-high": "#e5e9eb",
+                      "background": "#f7fafc",
+                      "inverse-on-surface": "#eef1f3",
+                      "surface-bright": "#f7fafc",
+                      "on-primary": "#ffffff"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "stack-sm": "8px",
+                      "sidebar_width": "260px",
+                      "gutter": "24px",
+                      "stack-md": "16px",
+                      "stack-lg": "24px",
+                      "margin-page": "32px",
+                      "topbar_height": "72px"
+              },
+              "fontFamily": {
+                      "body-lg": ["Be Vietnam Pro"],
+                      "body-md": ["Be Vietnam Pro"],
+                      "label-md": ["Be Vietnam Pro"],
+                      "headline-sm": ["Be Vietnam Pro"],
+                      "headline-md": ["Be Vietnam Pro"],
+                      "headline-lg-mobile": ["Be Vietnam Pro"],
+                      "label-sm": ["Be Vietnam Pro"],
+                      "headline-lg": ["Be Vietnam Pro"],
+                      "body-sm": ["Be Vietnam Pro"]
+              },
+              "fontSize": {
+                      "body-lg": ["18px", {"lineHeight": "26px", "fontWeight": "400"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "label-md": ["14px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600"}],
+                      "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                      "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                      "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                      "label-sm": ["12px", {"lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "500"}],
+                      "headline-lg": ["30px", {"lineHeight": "38px", "fontWeight": "700"}],
+                      "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}]
+              }
+            }
+          }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md text-body-md antialiased min-h-screen flex">
+<!-- SideNavBar -->
+<!-- JSON mapped styles: style_component_shape, style_bg_color, style_shell_layout -->
+<nav class="fixed left-0 top-0 h-screen w-[260px] bg-on-background dark:bg-on-background flex flex-col h-full py-stack-lg z-50 overflow-y-auto" dir="ltr">
+<div class="px-gutter mb-stack-lg">
+<div class="flex items-center gap-stack-sm mb-stack-sm">
+<!-- Brand Anchor -->
+<span class="material-symbols-outlined text-primary text-[32px]" data-weight="fill" style="font-variation-settings: 'FILL' 1;">menu_book</span>
+<!-- JSON mapped styles: style_brand_logo -->
+<h1 class="text-headline-md font-headline-md font-bold text-primary">Doc Academy</h1>
+</div>
+<!-- JSON content -->
+<p class="text-surface-variant font-label-sm text-label-sm uppercase tracking-wider">Admin Console</p>
+</div>
+<ul class="flex flex-col flex-1 gap-1 px-stack-sm">
+<!-- Inactive Tab 1 -->
+<li>
+<a class="flex items-center gap-stack-md px-stack-md py-stack-sm rounded-lg text-surface-variant hover:text-white transition-colors duration-200 ease-in-out hover:bg-on-secondary-fixed-variant/5" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md">Overview</span>
+</a>
+</li>
+<!-- Inactive Tab 2 -->
+<li>
+<a class="flex items-center gap-stack-md px-stack-md py-stack-sm rounded-lg text-surface-variant hover:text-white transition-colors duration-200 ease-in-out hover:bg-on-secondary-fixed-variant/5" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-label-md text-label-md">Students</span>
+</a>
+</li>
+<!-- Inactive Tab 3 -->
+<li>
+<a class="flex items-center gap-stack-md px-stack-md py-stack-sm rounded-lg text-surface-variant hover:text-white transition-colors duration-200 ease-in-out hover:bg-on-secondary-fixed-variant/5" href="#">
+<span class="material-symbols-outlined">school</span>
+<span class="font-label-md text-label-md">Teachers</span>
+</a>
+</li>
+<!-- Active Tab 4 -->
+<li>
+<a class="flex items-center gap-stack-md px-stack-md py-stack-sm rounded-lg text-primary font-bold border-r-4 border-primary bg-on-secondary-fixed-variant/10 transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-weight="fill" style="font-variation-settings: 'FILL' 1;">settings_accessibility</span>
+<span class="font-label-md text-label-md">Permissions</span>
+</a>
+</li>
+</ul>
+<div class="mt-auto px-gutter pt-stack-lg border-t border-on-surface-variant/20">
+<div class="flex items-center gap-stack-sm">
+<img alt="Admin Profile" class="w-10 h-10 rounded-full object-cover border-2 border-surface-variant/30" data-alt="A small circular profile picture of an administrator in a modern office setting, bright and professional lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBgR9iOSJWqLyTU1ZA93aEbvYKKissOPdcjTslvChf0PaJY1gBcf0cS3GUeYnjfmNp1BiDYeGYEsEwspPKt2VG8nelL7rqQ4sx-LoeR3vIpY61kjTLenAucafRfjEeuBg7LeXNvj492UP5nH6MggPz5wOdo1DdWAPoH1_COOOSjUSTjYXy5Ou4_V45opY6L9hvC8AQhRFApbHRI7azqSlbPiSG5-t12WuBDvboqOrJEoIVdqMsNOlo5"/>
+<div>
+<p class="font-label-md text-label-md text-white">Admin User</p>
+<p class="font-label-sm text-label-sm text-surface-variant">System Administrator</p>
+</div>
+</div>
+</div>
+</nav>
+<!-- Main Workspace Container -->
+<div class="flex-1 ml-[260px] flex flex-col min-h-screen w-full bg-background" dir="rtl">
+<!-- TopAppBar -->
+<!-- JSON mapped styles: style_component_shape, style_bg_color, style_separation_logic, style_shell_layout -->
+<header class="docked full-width top-0 h-[72px] bg-surface dark:bg-surface-dim border-b border-outline-variant flex justify-between items-center w-full px-margin-page sticky z-40 transition-colors duration-150">
+<div class="flex items-center gap-gutter">
+<!-- Search Bar (JSON: on_left - translated to RTL logic, it stays on the starting side) -->
+<div class="relative hidden md:block w-72">
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full bg-surface-container-low border border-surface-variant rounded-full py-2 pr-10 pl-4 font-body-sm text-body-sm text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all" placeholder="البحث في النظام..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-stack-md" dir="ltr">
+<!-- Trailing Icon Actions from JSON -->
+<button class="p-2 rounded-full text-on-surface-variant hover:bg-surface-container-high transition-colors duration-150 flex items-center justify-center relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-1 right-2 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<button class="p-2 rounded-full text-on-surface-variant hover:bg-surface-container-high transition-colors duration-150 flex items-center justify-center">
+<span class="material-symbols-outlined">help</span>
+</button>
+</div>
+</header>
+<!-- Page Content Canvas -->
+<main class="flex-1 p-margin-page">
+<!-- Header Section -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-stack-lg gap-stack-md">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-1">المشرفون والأدوار</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">إدارة حسابات المشرفين وتحديد صلاحيات الوصول للنظام.</p>
+</div>
+<!-- Primary Action Button -->
+<button class="bg-primary-container hover:bg-primary text-on-primary-container hover:text-white font-label-md text-label-md px-6 py-3 rounded-full flex items-center gap-2 shadow-sm transition-all">
+<span class="material-symbols-outlined text-[20px]">add</span>
+                    إضافة مشرف
+                </button>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+<!-- Quick Stats (Glassmorphism inspired light cards) -->
+<div class="lg:col-span-12 grid grid-cols-1 md:grid-cols-3 gap-gutter mb-stack-sm">
+<div class="bg-surface border border-surface-variant rounded-xl p-stack-lg shadow-sm flex items-center gap-stack-md">
+<div class="w-12 h-12 rounded-full bg-primary-fixed flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[24px]">shield_person</span>
+</div>
+<div>
+<p class="font-label-sm text-label-sm text-on-surface-variant mb-1">إجمالي المشرفين</p>
+<h3 class="font-headline-md text-headline-md text-on-surface">12</h3>
+</div>
+</div>
+<div class="bg-surface border border-surface-variant rounded-xl p-stack-lg shadow-sm flex items-center gap-stack-md">
+<div class="w-12 h-12 rounded-full bg-secondary-container flex items-center justify-center text-on-tertiary-container">
+<span class="material-symbols-outlined text-[24px]">key</span>
+</div>
+<div>
+<p class="font-label-sm text-label-sm text-on-surface-variant mb-1">الأدوار النشطة</p>
+<h3 class="font-headline-md text-headline-md text-on-surface">5</h3>
+</div>
+</div>
+<div class="bg-surface border border-surface-variant rounded-xl p-stack-lg shadow-sm flex items-center gap-stack-md">
+<div class="w-12 h-12 rounded-full bg-error-container flex items-center justify-center text-on-error-container">
+<span class="material-symbols-outlined text-[24px]">history</span>
+</div>
+<div>
+<p class="font-label-sm text-label-sm text-on-surface-variant mb-1">تحديثات الصلاحيات</p>
+<h3 class="font-headline-md text-headline-md text-on-surface">24 س</h3>
+</div>
+</div>
+</div>
+<!-- Moderators Table -->
+<div class="lg:col-span-8 bg-surface border border-surface-variant rounded-xl shadow-sm flex flex-col overflow-hidden">
+<div class="p-stack-lg border-b border-surface-variant flex justify-between items-center bg-surface-bright">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">قائمة المشرفين</h3>
+<button class="text-primary font-label-md text-label-md hover:bg-primary-fixed-dim/20 px-3 py-1.5 rounded-lg transition-colors">
+                            عرض الكل
+                        </button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-right border-collapse">
+<thead>
+<tr class="bg-surface-container-low border-b border-surface-variant">
+<th class="py-4 px-6 font-label-sm text-label-sm text-on-surface-variant">المشرف</th>
+<th class="py-4 px-6 font-label-sm text-label-sm text-on-surface-variant">الدور</th>
+<th class="py-4 px-6 font-label-sm text-label-sm text-on-surface-variant">الحالة</th>
+<th class="py-4 px-6 font-label-sm text-label-sm text-on-surface-variant">الإجراءات</th>
+</tr>
+</thead>
+<tbody class="font-body-sm text-body-sm">
+<tr class="border-b border-surface-variant hover:bg-surface-container-low/50 transition-colors">
+<td class="py-4 px-6">
+<div class="flex items-center gap-3">
+<img alt="Ahmed Ali" class="w-10 h-10 rounded-full object-cover bg-surface-dim" data-alt="A professional headshot of a Middle Eastern man in business casual attire, well-lit modern corporate environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA2JYCvmUWKUmEUH66nSMbJL3HB1ZPgu4xaBD8tkjuKE_yqddiZyhaF1siFiQTozcxQD4tfyti5bX4R6EXE1R7HMOTFksUgmh2GiitzTbGdUwlxy9WJFCMnfYT00flJNExUYuC4wTuJnZi-iAqj20ACFGULLLqAcKnPzj4A6ExiyOlibtA8f7yU1GBZ0mpoAFmPZwl-GogiB2EN4iWNxmfQzUovtOaUzIp_Vu8db1s5BWVeXGNWZ7uW"/>
+<div>
+<p class="font-label-md text-label-md text-on-surface">أحمد علي</p>
+<p class="text-on-surface-variant text-xs">ahmed@docacademy.com</p>
+</div>
+</div>
+</td>
+<td class="py-4 px-6">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full font-label-sm text-label-sm bg-secondary-container text-on-tertiary-container border border-secondary-fixed-dim">
+                                            مدير نظام
+                                        </span>
+</td>
+<td class="py-4 px-6">
+<div class="flex items-center gap-1.5 text-primary">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+                                            نشط
+                                        </div>
+</td>
+<td class="py-4 px-6">
+<button class="text-on-surface-variant hover:text-primary transition-colors p-1">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+</td>
+</tr>
+<tr class="border-b border-surface-variant hover:bg-surface-container-low/50 transition-colors">
+<td class="py-4 px-6">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-tertiary-fixed flex items-center justify-center font-headline-sm text-on-tertiary-fixed">
+                                                س
+                                            </div>
+<div>
+<p class="font-label-md text-label-md text-on-surface">سارة محمد</p>
+<p class="text-on-surface-variant text-xs">sara@docacademy.com</p>
+</div>
+</div>
+</td>
+<td class="py-4 px-6">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full font-label-sm text-label-sm bg-surface-container-high text-on-surface-variant border border-surface-dim">
+                                            دعم فني
+                                        </span>
+</td>
+<td class="py-4 px-6">
+<div class="flex items-center gap-1.5 text-on-surface-variant">
+<span class="w-2 h-2 rounded-full bg-on-surface-variant/50"></span>
+                                            غير متصل
+                                        </div>
+</td>
+<td class="py-4 px-6">
+<button class="text-on-surface-variant hover:text-primary transition-colors p-1">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Roles Definition Interface -->
+<div class="lg:col-span-4 bg-surface border border-surface-variant rounded-xl shadow-sm p-stack-lg flex flex-col h-full">
+<div class="mb-stack-md flex items-center justify-between">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">تحديد الصلاحيات</h3>
+<span class="material-symbols-outlined text-outline">tune</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-stack-lg">اختر الصلاحيات المخصصة للدور الجديد أو المعدل.</p>
+<div class="space-y-4 flex-1">
+<!-- Checkbox Item -->
+<label class="flex items-start gap-3 cursor-pointer group p-3 rounded-lg hover:bg-surface-container-low transition-colors border border-transparent hover:border-surface-variant">
+<div class="relative flex items-center mt-0.5">
+<input checked="" class="peer h-5 w-5 rounded border-outline-variant text-primary focus:ring-primary focus:ring-2 bg-surface transition-all" type="checkbox"/>
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface group-hover:text-primary transition-colors">التقارير المالية</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 text-xs">عرض وتصدير الإيرادات والمصروفات.</p>
+</div>
+</label>
+<!-- Checkbox Item -->
+<label class="flex items-start gap-3 cursor-pointer group p-3 rounded-lg hover:bg-surface-container-low transition-colors border border-transparent hover:border-surface-variant">
+<div class="relative flex items-center mt-0.5">
+<input checked="" class="peer h-5 w-5 rounded border-outline-variant text-primary focus:ring-primary focus:ring-2 bg-surface transition-all" type="checkbox"/>
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface group-hover:text-primary transition-colors">الدعم الفني</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 text-xs">إدارة تذاكر الدعم ومساعدة المستخدمين.</p>
+</div>
+</label>
+<!-- Checkbox Item -->
+<label class="flex items-start gap-3 cursor-pointer group p-3 rounded-lg hover:bg-surface-container-low transition-colors border border-transparent hover:border-surface-variant">
+<div class="relative flex items-center mt-0.5">
+<input class="peer h-5 w-5 rounded border-outline-variant text-primary focus:ring-primary focus:ring-2 bg-surface transition-all" type="checkbox"/>
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface group-hover:text-primary transition-colors">إدارة الطلاب والمعلمين</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 text-xs">إضافة، تعديل، وحذف حسابات المستخدمين.</p>
+</div>
+</label>
+</div>
+<div class="mt-stack-lg pt-stack-md border-t border-surface-variant">
+<button class="w-full bg-surface-container border border-primary text-primary font-label-md text-label-md py-2.5 rounded-lg hover:bg-primary hover:text-white transition-all shadow-sm">
+                            حفظ التعديلات
+                        </button>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="ar"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>سجل نشاط النظام - Doc Academy</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-container": "#a0aabf",
+                        "surface-container-highest": "#e0e3e5",
+                        "tertiary-fixed-dim": "#bdc7dc",
+                        "on-secondary-fixed-variant": "#414754",
+                        "error-container": "#ffdad6",
+                        "on-error-container": "#93000a",
+                        "primary-container": "#ff8c00",
+                        "secondary-container": "#dde2f3",
+                        "on-surface-variant": "#564334",
+                        "primary-fixed-dim": "#ffb77d",
+                        "outline": "#897362",
+                        "outline-variant": "#ddc1ae",
+                        "on-primary-fixed": "#2f1500",
+                        "secondary-fixed-dim": "#c1c6d7",
+                        "on-background": "#181c1e",
+                        "on-tertiary-fixed-variant": "#3d4759",
+                        "surface-container-low": "#f1f4f6",
+                        "primary": "#904d00",
+                        "inverse-on-surface": "#eef1f3",
+                        "on-surface": "#181c1e",
+                        "surface-container": "#ebeef0",
+                        "error": "#ba1a1a",
+                        "primary-fixed": "#ffdcc3",
+                        "inverse-primary": "#ffb77d",
+                        "on-error": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "surface": "#f7fafc",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-variant": "#e0e3e5",
+                        "on-secondary-container": "#5e6473",
+                        "surface-bright": "#f7fafc",
+                        "on-primary-fixed-variant": "#6e3900",
+                        "on-primary-container": "#623200",
+                        "surface-dim": "#d7dadc",
+                        "secondary-fixed": "#dde2f3",
+                        "background": "#f7fafc",
+                        "on-primary": "#ffffff",
+                        "on-tertiary-container": "#353f50",
+                        "secondary": "#585e6c",
+                        "surface-tint": "#904d00",
+                        "on-secondary-fixed": "#161c27",
+                        "on-tertiary": "#ffffff",
+                        "tertiary-fixed": "#d9e3f9",
+                        "surface-container-high": "#e5e9eb",
+                        "inverse-surface": "#2d3133",
+                        "on-tertiary-fixed": "#121c2c",
+                        "tertiary": "#555f71"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-sm": "8px",
+                        "margin-page": "32px",
+                        "stack-md": "16px",
+                        "topbar_height": "72px",
+                        "stack-lg": "24px",
+                        "gutter": "24px",
+                        "sidebar_width": "260px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Be Vietnam Pro"],
+                        "headline-sm": ["Be Vietnam Pro"],
+                        "label-md": ["Be Vietnam Pro"],
+                        "body-sm": ["Be Vietnam Pro"],
+                        "headline-lg-mobile": ["Be Vietnam Pro"],
+                        "label-sm": ["Be Vietnam Pro"],
+                        "headline-lg": ["Be Vietnam Pro"],
+                        "body-lg": ["Be Vietnam Pro"],
+                        "body-md": ["Be Vietnam Pro"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "label-md": ["14px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "label-sm": ["12px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "500" }],
+                        "headline-lg": ["30px", { "lineHeight": "38px", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "26px", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex">
+<!-- SideNavBar -->
+<aside class="fixed right-0 top-0 h-screen w-sidebar_width bg-on-background dark:bg-on-background text-primary flex flex-col py-stack-lg transition-all duration-200 ease-in-out z-20 md:flex hidden">
+<div class="px-gutter mb-stack-lg flex items-center gap-stack-md">
+<div class="w-10 h-10 rounded-lg bg-surface-container-highest flex items-center justify-center overflow-hidden">
+<img alt="Doc Academy Logo" class="w-full h-full object-cover" data-alt="A stylized, modern geometric logo representing education and technology. The logo uses deep navy and bright orange colors. The style is flat, minimalist, and suitable for a corporate dashboard context." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBNuYmYJ1A60MnrXfF-dTGZI4feeoQFTjYCoA5QA1ouTOz6-_IbF7eIQj0vAnVmr7dSvPhBe3HB4j8Etfd2kSK7iaLj6Ep39IR7q3FEvnqr12VEDcJUpf2sOktZgWM1p6gk5Mt86c_5mBKjGv26sWMZ4eqj7DM8bu5ydDU5AXaN-_DCxumiUqr8ECwcF-ZYgv5LlpSan04Y9t-sKfoPKn3SjUEMqzPR8fhvVczfCF_pgUJZ0fwB4h4Z"/>
+</div>
+<div>
+<h1 class="text-headline-md font-headline-md font-bold text-primary">Doc Academy</h1>
+<p class="text-label-sm font-label-sm text-surface-variant">Admin Console</p>
+</div>
+</div>
+<nav class="flex-1 px-stack-sm flex flex-col gap-stack-sm">
+<a class="flex items-center gap-stack-md px-stack-md py-stack-md rounded-l-full text-surface-variant hover:text-white hover:bg-on-secondary-fixed-variant/5 transition-colors" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">dashboard</span>
+<span class="font-label-md text-label-md">Overview</span>
+</a>
+<a class="flex items-center gap-stack-md px-stack-md py-stack-md rounded-l-full text-surface-variant hover:text-white hover:bg-on-secondary-fixed-variant/5 transition-colors" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">group</span>
+<span class="font-label-md text-label-md">Students</span>
+</a>
+<a class="flex items-center gap-stack-md px-stack-md py-stack-md rounded-l-full text-surface-variant hover:text-white hover:bg-on-secondary-fixed-variant/5 transition-colors" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">school</span>
+<span class="font-label-md text-label-md">Teachers</span>
+</a>
+<a class="flex items-center gap-stack-md px-stack-md py-stack-md rounded-l-full text-primary font-bold border-l-4 border-primary bg-on-secondary-fixed-variant/10" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">settings_accessibility</span>
+<span class="font-label-md text-label-md">Permissions</span>
+</a>
+</nav>
+</aside>
+<!-- Main Content Wrapper -->
+<div class="flex-1 flex flex-col md:mr-[260px] w-full max-w-full md:max-w-[calc(100%-260px)]">
+<!-- TopAppBar -->
+<header class="bg-surface dark:bg-surface-dim docked full-width top-0 h-[72px] border-b border-outline-variant flex justify-between items-center w-full px-margin-page transition-colors duration-150 sticky z-10">
+<div class="flex items-center gap-stack-md">
+<button class="md:hidden text-on-surface-variant p-2 rounded-full hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<h2 class="text-headline-sm font-headline-sm text-primary">سجل نشاط النظام</h2>
+</div>
+<div class="flex items-center gap-stack-md">
+<div class="relative hidden sm:block">
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="pl-4 pr-10 py-2 bg-surface-container-low border border-outline-variant rounded-full text-body-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 w-64 transition-all" placeholder="بحث..." type="text"/>
+</div>
+<button class="text-on-surface-variant p-2 rounded-full hover:bg-surface-container-high transition-colors relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<button class="text-on-surface-variant p-2 rounded-full hover:bg-surface-container-high transition-colors hidden sm:block">
+<span class="material-symbols-outlined">help</span>
+</button>
+<div class="w-10 h-10 rounded-full border-2 border-surface-variant overflow-hidden cursor-pointer hover:border-primary transition-colors">
+<img alt="Admin Profile" class="w-full h-full object-cover" data-alt="A professional headshot of a female administrator with a warm smile. She is wearing modern business casual attire in a well-lit office setting. The lighting is bright and clean, fitting a professional dashboard interface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAE-tZ86zD0VC7UrpFPQSPzYB0fBl-Awwmhdo2GVy61t5ULMd1141eIGwn2f4g1njVZKRbRZHc60ZjNe05-9LZvIDgeEk0iq9HZ0vnqj6wrW7F2Q-Iu7JmLQWFcb-q24n6nSXeBlUjanxyhTmQ4AqFxrxR6Qkha1jsQNGVDR_mZgdT7LcGstJBDJ5f5kxVTIbQweWqAsPGphpYtEXgvQVePGqPXBPPxVBulYKXk-UDl8E5DOBwPUppd"/>
+</div>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="flex-1 p-margin-page overflow-y-auto">
+<div class="mb-stack-lg flex flex-col sm:flex-row justify-between items-start sm:items-center gap-stack-md">
+<div>
+<h2 class="text-headline-lg font-headline-lg text-on-background md:block hidden">سجل نشاط النظام</h2>
+<h2 class="text-headline-lg-mobile font-headline-lg-mobile text-on-background md:hidden block">سجل نشاط النظام</h2>
+<p class="text-body-md font-body-md text-secondary mt-1">مراقبة وتتبع جميع الإجراءات الإدارية للحفاظ على أمان النظام.</p>
+</div>
+<div class="flex gap-stack-sm w-full sm:w-auto">
+<button class="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 border border-primary text-primary rounded-lg hover:bg-primary/5 transition-colors font-label-md text-label-md bg-surface-container-lowest">
+<span class="material-symbols-outlined text-[18px]">download</span>
+                        تصدير التقرير
+                    </button>
+</div>
+</div>
+<!-- Filters Area -->
+<div class="bg-surface-container-lowest border border-surface-variant rounded-xl p-stack-md mb-stack-lg flex flex-wrap gap-stack-md items-end">
+<div class="flex-1 min-w-[200px]">
+<label class="block text-label-sm font-label-sm text-on-surface-variant mb-2">تاريخ النشاط</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant">calendar_today</span>
+<input class="w-full pl-4 pr-10 py-2 bg-surface border border-outline-variant rounded-lg text-body-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-right" placeholder="اختيار النطاق الزمني" type="text"/>
+</div>
+</div>
+<div class="flex-1 min-w-[200px]">
+<label class="block text-label-sm font-label-sm text-on-surface-variant mb-2">المسؤول</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant">person</span>
+<select class="w-full pl-4 pr-10 py-2 bg-surface border border-outline-variant rounded-lg text-body-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all appearance-none">
+<option>جميع المسؤولين</option>
+<option>أحمد محمود</option>
+<option>سارة علي</option>
+<option>خالد حسن</option>
+</select>
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">expand_more</span>
+</div>
+</div>
+<div class="flex-1 min-w-[200px]">
+<label class="block text-label-sm font-label-sm text-on-surface-variant mb-2">نوع الإجراء</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant">category</span>
+<select class="w-full pl-4 pr-10 py-2 bg-surface border border-outline-variant rounded-lg text-body-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all appearance-none">
+<option>جميع الإجراءات</option>
+<option>تعديل بيانات</option>
+<option>حذف</option>
+<option>إضافة</option>
+<option>تسجيل دخول</option>
+</select>
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">expand_more</span>
+</div>
+</div>
+<button class="px-6 py-2 bg-primary-container text-white rounded-lg hover:bg-primary transition-colors font-label-md text-label-md h-[40px] flex items-center justify-center min-w-[120px]">
+                    تطبيق الفلاتر
+                </button>
+</div>
+<!-- Activity Table -->
+<div class="bg-surface-container-lowest border border-surface-variant rounded-xl overflow-hidden shadow-sm">
+<div class="overflow-x-auto">
+<table class="w-full text-right border-collapse">
+<thead>
+<tr class="bg-surface-container-high border-b border-surface-variant text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider">
+<th class="px-stack-md py-stack-sm font-semibold">المسؤول</th>
+<th class="px-stack-md py-stack-sm font-semibold">الإجراء المتخذ</th>
+<th class="px-stack-md py-stack-sm font-semibold">العنصر المستهدف</th>
+<th class="px-stack-md py-stack-sm font-semibold">تفاصيل إضافية</th>
+<th class="px-stack-md py-stack-sm font-semibold">التاريخ والوقت</th>
+<th class="px-stack-md py-stack-sm font-semibold w-16 text-center">أدوات</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-variant text-body-sm">
+<tr class="hover:bg-surface-bright transition-colors group">
+<td class="px-stack-md py-stack-sm">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-surface-variant flex items-center justify-center text-primary font-bold overflow-hidden">
+<img alt="Avatar" class="w-full h-full object-cover" data-alt="A small circular avatar showing a professional man in a dark suit with a light blue shirt. Bright studio lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCqf9M9flS7a0vSScGf8ocomLjMrfz_r6e2Bzy4dn1BJyslXArQ1uovb7wNE9h4_B14z7I-E-Ljkk0xedq14T0jXgv72F1sLBSi8CxgYpdAUMm-omgs3wE-7iBoYvlpA6xlNugfjuphZFEjQVFuzgXR6gL-tG1AxvIXLvLCoNqwuv8n79TMm9S1rwx_1Q3dBx8gCYQgtXxz9ptv1H_ZJ9gqX7PzNrWDYe2sVbfma6Nhw_QNZEIXKbYk"/>
+</div>
+<span class="font-medium text-on-background">أحمد محمود</span>
+</div>
+</td>
+<td class="px-stack-md py-stack-sm">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-error/10 text-error">
+<span class="material-symbols-outlined text-[14px]">delete</span>
+                                        حذف دورة
+                                    </span>
+</td>
+<td class="px-stack-md py-stack-sm font-medium">مقدمة في البرمجة (CS101)</td>
+<td class="px-stack-md py-stack-sm text-secondary">تم طلب الحذف من قبل مدير القسم</td>
+<td class="px-stack-md py-stack-sm whitespace-nowrap text-on-surface-variant" dir="ltr">2023-10-27 14:32</td>
+<td class="px-stack-md py-stack-sm text-center">
+<button class="text-on-surface-variant hover:text-primary transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-surface-bright transition-colors group">
+<td class="px-stack-md py-stack-sm">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center text-primary font-bold">
+                                            س
+                                        </div>
+<span class="font-medium text-on-background">سارة علي</span>
+</div>
+</td>
+<td class="px-stack-md py-stack-sm">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary">
+<span class="material-symbols-outlined text-[14px]">lock_reset</span>
+                                        إعادة تعيين كلمة مرور
+                                    </span>
+</td>
+<td class="px-stack-md py-stack-sm font-medium">حساب طالب (STU-8821)</td>
+<td class="px-stack-md py-stack-sm text-secondary">بناءً على طلب دعم فني #4521</td>
+<td class="px-stack-md py-stack-sm whitespace-nowrap text-on-surface-variant" dir="ltr">2023-10-27 11:15</td>
+<td class="px-stack-md py-stack-sm text-center">
+<button class="text-on-surface-variant hover:text-primary transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-surface-bright transition-colors group">
+<td class="px-stack-md py-stack-sm">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-surface-variant flex items-center justify-center text-primary font-bold overflow-hidden">
+<img alt="Avatar" class="w-full h-full object-cover" data-alt="A small circular avatar showing a professional woman with glasses, looking directly at the camera. Soft, professional lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuABhG78CzirOhci8KbjldDGQJsnggbBMqLgWDD4tCKFhfUvGzjFMhcoCltmfpL3zws-97XK75KFEJlJNayEq-sb_gyq6VVsPKEqIcvC1HgzKTl8lpaTs_74H9_8FUrk1pkYa7DucKnhkVXy-myZVTXIzkamEZk-YNA2G4luudTYfDRftdkcIb36JmqED1c1OF2CU6CCORCuFSAUwxSwclUMbaRLVFnk39ziS33RbQe0Sx64L43xU0l2"/>
+</div>
+<span class="font-medium text-on-background">مريم خالد</span>
+</div>
+</td>
+<td class="px-stack-md py-stack-sm">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-[#10b981]/10 text-[#10b981]">
+<span class="material-symbols-outlined text-[14px]">add_circle</span>
+                                        إضافة مستخدم
+                                    </span>
+</td>
+<td class="px-stack-md py-stack-sm font-medium">مدرس جديد (TCH-902)</td>
+<td class="px-stack-md py-stack-sm text-secondary">قسم الرياضيات</td>
+<td class="px-stack-md py-stack-sm whitespace-nowrap text-on-surface-variant" dir="ltr">2023-10-26 09:45</td>
+<td class="px-stack-md py-stack-sm text-center">
+<button class="text-on-surface-variant hover:text-primary transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-surface-bright transition-colors group">
+<td class="px-stack-md py-stack-sm">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center text-primary font-bold">
+                                            خ
+                                        </div>
+<span class="font-medium text-on-background">خالد حسن</span>
+</div>
+</td>
+<td class="px-stack-md py-stack-sm">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-tertiary/10 text-tertiary">
+<span class="material-symbols-outlined text-[14px]">settings</span>
+                                        تعديل صلاحيات
+                                    </span>
+</td>
+<td class="px-stack-md py-stack-sm font-medium">مجموعة الإدارة المالية</td>
+<td class="px-stack-md py-stack-sm text-secondary">إضافة صلاحية الوصول للتقارير السنوية</td>
+<td class="px-stack-md py-stack-sm whitespace-nowrap text-on-surface-variant" dir="ltr">2023-10-25 16:20</td>
+<td class="px-stack-md py-stack-sm text-center">
+<button class="text-on-surface-variant hover:text-primary transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-surface-bright transition-colors group">
+<td class="px-stack-md py-stack-sm">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-surface-variant flex items-center justify-center text-primary font-bold overflow-hidden">
+<img alt="Avatar" class="w-full h-full object-cover" data-alt="A small circular avatar showing a professional man in a dark suit with a light blue shirt. Bright studio lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD2Ci7QMuLZ2v8dPOR5TY5npz5bu1aCGeO679tsJpt0thuvWKe_Gsmv1SqrlOJhPtSeKfu2C7XGDVF1HmpABXkKQ_c2Gc8j59elnXtW9MRxvbwTQZBSjECUFSNdJdl0hn1-aUo2pGN9bIAStGWU2fpCaLTixesn3lSjd4AowOtxfAtWJmQoT5FsSeCrrGQhKnuis9PHwiQZcfw7I8ZJFpcfJU7denq2Sk6_NAtuXtJdsWOYtWpaBtTl"/>
+</div>
+<span class="font-medium text-on-background">أحمد محمود</span>
+</div>
+</td>
+<td class="px-stack-md py-stack-sm">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-[#3b82f6]/10 text-[#3b82f6]">
+<span class="material-symbols-outlined text-[14px]">login</span>
+                                        تسجيل دخول غير معتاد
+                                    </span>
+</td>
+<td class="px-stack-md py-stack-sm font-medium">نظام الإدارة الرئيسي</td>
+<td class="px-stack-md py-stack-sm text-secondary">تسجيل دخول من عنوان IP خارج النطاق المعتاد</td>
+<td class="px-stack-md py-stack-sm whitespace-nowrap text-on-surface-variant" dir="ltr">2023-10-25 02:14</td>
+<td class="px-stack-md py-stack-sm text-center">
+<button class="text-on-surface-variant hover:text-primary transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="px-stack-md py-3 border-t border-surface-variant flex items-center justify-between bg-surface-container-lowest">
+<span class="text-label-sm text-on-surface-variant">عرض 1 إلى 5 من أصل 124 سجل</span>
+<div class="flex gap-1">
+<button class="w-8 h-8 rounded flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors disabled:opacity-50" disabled="">
+<span class="material-symbols-outlined text-[20px]">chevron_right</span>
+</button>
+<button class="w-8 h-8 rounded flex items-center justify-center bg-primary-container text-white font-label-md">1</button>
+<button class="w-8 h-8 rounded flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors font-label-md">2</button>
+<button class="w-8 h-8 rounded flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors font-label-md">3</button>
+<span class="w-8 h-8 flex items-center justify-center text-on-surface-variant">...</span>
+<button class="w-8 h-8 rounded flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors font-label-md">25</button>
+<button class="w-8 h-8 rounded flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-[20px]">chevron_left</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

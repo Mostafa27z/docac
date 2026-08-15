@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="ar"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>أكاديمية دوك - لوحة القيادة</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-secondary": "#ffffff",
+                      "on-secondary-fixed-variant": "#414754",
+                      "on-secondary-container": "#5e6473",
+                      "surface-container": "#ebeef0",
+                      "inverse-primary": "#ffb77d",
+                      "surface-container-lowest": "#ffffff",
+                      "secondary-fixed-dim": "#c1c6d7",
+                      "outline-variant": "#ddc1ae",
+                      "inverse-on-surface": "#eef1f3",
+                      "secondary": "#585e6c",
+                      "secondary-container": "#dde2f3",
+                      "on-error-container": "#93000a",
+                      "primary-container": "#ff8c00",
+                      "error-container": "#ffdad6",
+                      "on-surface-variant": "#564334",
+                      "on-error": "#ffffff",
+                      "on-primary": "#ffffff",
+                      "primary-fixed-dim": "#ffb77d",
+                      "background": "#f7fafc",
+                      "on-primary-fixed": "#2f1500",
+                      "surface-container-high": "#e5e9eb",
+                      "tertiary-container": "#a0aabf",
+                      "tertiary-fixed-dim": "#bdc7dc",
+                      "on-tertiary-container": "#353f50",
+                      "on-primary-container": "#623200",
+                      "on-tertiary": "#ffffff",
+                      "on-background": "#181c1e",
+                      "surface-container-highest": "#e0e3e5",
+                      "inverse-surface": "#2d3133",
+                      "surface-bright": "#f7fafc",
+                      "error": "#ba1a1a",
+                      "on-tertiary-fixed": "#121c2c",
+                      "surface-container-low": "#f1f4f6",
+                      "on-secondary-fixed": "#161c27",
+                      "on-surface": "#181c1e",
+                      "primary-fixed": "#ffdcc3",
+                      "surface-tint": "#904d00",
+                      "on-tertiary-fixed-variant": "#3d4759",
+                      "tertiary": "#555f71",
+                      "primary": "#904d00",
+                      "tertiary-fixed": "#d9e3f9",
+                      "on-primary-fixed-variant": "#6e3900",
+                      "surface-dim": "#d7dadc",
+                      "outline": "#897362",
+                      "surface-variant": "#e0e3e5",
+                      "secondary-fixed": "#dde2f3",
+                      "surface": "#f7fafc"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "stack-lg": "24px",
+                      "sidebar_width": "260px",
+                      "stack-sm": "8px",
+                      "margin-page": "32px",
+                      "stack-md": "16px",
+                      "gutter": "24px",
+                      "topbar_height": "72px"
+              },
+              "fontFamily": {
+                      "body-sm": [
+                              "Be Vietnam Pro"
+                      ],
+                      "label-sm": [
+                              "Be Vietnam Pro"
+                      ],
+                      "headline-lg": [
+                              "Be Vietnam Pro"
+                      ],
+                      "body-md": [
+                              "Be Vietnam Pro"
+                      ],
+                      "headline-lg-mobile": [
+                              "Be Vietnam Pro"
+                      ],
+                      "label-md": [
+                              "Be Vietnam Pro"
+                      ],
+                      "body-lg": [
+                              "Be Vietnam Pro"
+                      ],
+                      "headline-md": [
+                              "Be Vietnam Pro"
+                      ],
+                      "headline-sm": [
+                              "Be Vietnam Pro"
+                      ]
+              },
+              "fontSize": {
+                      "body-sm": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "label-sm": [
+                              "12px",
+                              {
+                                      "lineHeight": "14px",
+                                      "letterSpacing": "0.04em",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "headline-lg": [
+                              "30px",
+                              {
+                                      "lineHeight": "38px",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-lg-mobile": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "label-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "16px",
+                                      "letterSpacing": "0.02em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "26px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-sm": [
+                              "20px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "600"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+    </script>
+<style>
+        body { font-family: 'Be Vietnam Pro', sans-serif; }
+    </style>
+</head>
+<body class="bg-background text-on-background flex min-h-screen">
+<!-- SideNavBar -->
+<nav class="hidden md:flex flex-col h-screen w-sidebar_width bg-inverse-surface border-l border-outline-variant fixed top-0 right-0 z-20 py-stack-lg">
+<div class="px-stack-lg mb-stack-lg">
+<h1 class="font-headline-md text-headline-md font-bold text-on-primary-fixed">أكاديمية دوك</h1>
+<p class="font-body-sm text-body-sm text-secondary-fixed-dim">لوحة المعلم</p>
+</div>
+<div class="flex-1 px-stack-sm flex flex-col gap-stack-sm">
+<a class="flex items-center gap-stack-md px-stack-md py-stack-sm rounded-lg text-primary-fixed font-bold border-r-4 border-primary-container bg-surface-variant/10 transition-colors scale-98 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label-md text-label-md">لوحة القيادة</span>
+</a>
+<a class="flex items-center gap-stack-md px-stack-md py-stack-sm rounded-lg text-secondary-fixed-dim font-body-md hover:bg-primary/20 hover:text-primary-fixed transition-colors scale-98 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="school">school</span>
+<span class="font-label-md text-label-md">دوراتي</span>
+</a>
+<a class="flex items-center gap-stack-md px-stack-md py-stack-sm rounded-lg text-secondary-fixed-dim font-body-md hover:bg-primary/20 hover:text-primary-fixed transition-colors scale-98 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="video_library">video_library</span>
+<span class="font-label-md text-label-md">بناء المحتوى</span>
+</a>
+<a class="flex items-center gap-stack-md px-stack-md py-stack-sm rounded-lg text-secondary-fixed-dim font-body-md hover:bg-primary/20 hover:text-primary-fixed transition-colors scale-98 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="quiz">quiz</span>
+<span class="font-label-md text-label-md">الاختبارات</span>
+</a>
+<a class="flex items-center gap-stack-md px-stack-md py-stack-sm rounded-lg text-secondary-fixed-dim font-body-md hover:bg-primary/20 hover:text-primary-fixed transition-colors scale-98 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="font-label-md text-label-md">الإحصائيات</span>
+</a>
+</div>
+<div class="px-stack-lg mt-auto">
+<button class="w-full bg-primary-container text-on-primary font-label-md text-label-md py-2 rounded-lg hover:opacity-90 transition-opacity">
+                إنشاء دورة جديدة
+            </button>
+</div>
+<div class="px-stack-sm mt-stack-lg flex flex-col gap-stack-sm">
+<a class="flex items-center gap-stack-md px-stack-md py-stack-sm rounded-lg text-secondary-fixed-dim font-body-md hover:bg-primary/20 hover:text-primary-fixed transition-colors scale-98 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-label-md text-label-md">الإعدادات</span>
+</a>
+<a class="flex items-center gap-stack-md px-stack-md py-stack-sm rounded-lg text-secondary-fixed-dim font-body-md hover:bg-primary/20 hover:text-primary-fixed transition-colors scale-98 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span class="font-label-md text-label-md">تسجيل الخروج</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<div class="flex-1 flex flex-col md:mr-sidebar_width min-w-0">
+<!-- TopAppBar -->
+<header class="flex justify-between items-center w-full px-margin-page h-topbar_height bg-surface border-b border-surface-container-highest sticky top-0 z-10">
+<div class="flex items-center gap-4">
+<!-- Mobile Menu Button -->
+<button class="md:hidden text-on-surface-variant hover:bg-surface-container-high p-2 rounded-full transition-colors">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<span class="font-headline-sm text-headline-sm font-bold text-primary hidden md:block">لوحة القيادة</span>
+</div>
+<div class="flex items-center gap-stack-md">
+<!-- Search (Conceptual placement based on instructions, though not explicitly detailed in UI request, adding a subtle one) -->
+<div class="hidden sm:flex items-center bg-surface-container-low rounded-full px-4 py-2 border border-outline-variant focus-within:border-primary transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant mr-2">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-body-sm w-48 text-right outline-none placeholder-on-surface-variant" dir="rtl" placeholder="بحث..." type="text"/>
+</div>
+<button class="text-on-surface-variant hover:bg-surface-container-high p-2 rounded-full transition-colors relative">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-1 right-1 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<button class="text-on-surface-variant hover:bg-surface-container-high p-2 rounded-full transition-colors">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+</button>
+<div class="w-10 h-10 rounded-full bg-surface-container-highest overflow-hidden border border-outline-variant ml-2 cursor-pointer">
+<img alt="المعلم" class="w-full h-full object-cover" data-alt="A professional headshot of an Arabic male teacher in his 30s, wearing smart casual attire, brightly lit against a neutral light grey background. High resolution, corporate modern aesthetic, clean and trustworthy expression." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDYrj8oDf9vPY_X0BXMb7wpmMgEE_YfZAwJPG6SSQXvY3Zn2GaTQC2Nnh6RmLUkW7CJmJRH2qwg9PH5K_AEbHaa0jcDmVhqJORfOLCeJAUH9_KI9sS1PSR8-XtVZ8FwHWeph8Tq4Q_5jZZgexbDD7Q5qpdVy1W0TkkpHS4hDh7XLQyj_56JaBL8sJzF3zGC0Un5OsjZFCxFZStge7IfJfDShr_HXZszqDNwC0q7qS_2g3aP4h0vFdPD"/>
+</div>
+</div>
+</header>
+<!-- Canvas -->
+<main class="flex-1 p-margin-page overflow-y-auto">
+<div class="mb-stack-lg flex justify-between items-end">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">مرحباً، أستاذ أحمد</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-2">إليك نظرة عامة على نشاط دوراتك اليوم.</p>
+</div>
+<button class="bg-primary-container text-on-primary font-label-md text-label-md px-6 py-2 rounded-lg hover:opacity-90 transition-opacity hidden sm:flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">add</span>
+                    إضافة محتوى
+                </button>
+</div>
+<!-- Stats Grid -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter mb-margin-page">
+<!-- Stat 1: Total Students -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-lg relative overflow-hidden flex flex-col justify-between h-32">
+<div class="flex justify-between items-start z-10">
+<span class="font-body-md text-body-md text-on-surface-variant uppercase">إجمالي الطلاب</span>
+<div class="bg-secondary-container/30 p-2 rounded-full">
+<span class="material-symbols-outlined text-primary">groups</span>
+</div>
+</div>
+<div class="z-10 flex items-baseline gap-2">
+<span class="font-headline-lg text-headline-lg text-primary-container">1,248</span>
+<span class="text-sm text-green-600 flex items-center"><span class="material-symbols-outlined text-xs">trending_up</span> +12% هذا الشهر</span>
+</div>
+<!-- Subtle background decoration -->
+<div class="absolute -bottom-4 -left-4 w-24 h-24 bg-primary-container/5 rounded-full blur-xl z-0"></div>
+</div>
+<!-- Stat 2: Highest Engagement -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-lg relative overflow-hidden flex flex-col justify-between h-32">
+<div class="flex justify-between items-start z-10">
+<span class="font-body-md text-body-md text-on-surface-variant uppercase">الدورة الأكثر تفاعلاً</span>
+<div class="bg-secondary-container/30 p-2 rounded-full">
+<span class="material-symbols-outlined text-primary">trending_up</span>
+</div>
+</div>
+<div class="z-10">
+<span class="font-headline-md text-headline-md text-on-surface line-clamp-1">الرياضيات المتقدمة</span>
+<span class="text-sm text-on-surface-variant block mt-1">92% معدل الإكمال</span>
+</div>
+</div>
+<!-- Stat 3: New Messages -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-lg relative overflow-hidden flex flex-col justify-between h-32 ring-1 ring-primary-container/30 shadow-[0_0_15px_rgba(255,140,0,0.1)]">
+<div class="flex justify-between items-start z-10">
+<span class="font-body-md text-body-md text-on-surface-variant uppercase">رسائل جديدة</span>
+<div class="bg-primary-container/20 p-2 rounded-full relative">
+<span class="material-symbols-outlined text-primary-container">mail</span>
+<span class="absolute top-0 right-0 w-3 h-3 bg-error rounded-full border-2 border-white"></span>
+</div>
+</div>
+<div class="z-10 flex items-baseline gap-2">
+<span class="font-headline-lg text-headline-lg text-primary-container">15</span>
+<span class="text-sm text-on-surface-variant">تحتاج للرد</span>
+</div>
+</div>
+</div>
+<!-- Bento Grid Layout for Main Content -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter">
+<!-- Main Activity Area (Spans 2 cols) -->
+<div class="lg:col-span-2 flex flex-col gap-gutter">
+<!-- Recent Courses Table -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden flex flex-col">
+<div class="p-stack-md border-b border-surface-container-highest bg-surface flex justify-between items-center">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">أداء الدورات الأخيرة</h3>
+<button class="text-primary text-sm font-medium hover:underline">عرض الكل</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-right border-collapse">
+<thead class="bg-inverse-on-surface font-label-md text-label-md text-secondary">
+<tr>
+<th class="py-3 px-4 font-semibold">الدورة</th>
+<th class="py-3 px-4 font-semibold">الطلاب</th>
+<th class="py-3 px-4 font-semibold">التقييم</th>
+<th class="py-3 px-4 font-semibold">الحالة</th>
+</tr>
+</thead>
+<tbody class="font-body-sm text-body-sm text-on-surface">
+<tr class="border-b border-surface-container-highest hover:bg-surface-bright transition-colors">
+<td class="py-3 px-4 font-medium flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-primary-container/20 flex items-center justify-center text-primary-container"><span class="material-symbols-outlined text-sm">calculate</span></div>
+                                            الرياضيات المتقدمة
+                                        </td>
+<td class="py-3 px-4">450</td>
+<td class="py-3 px-4 flex items-center gap-1 text-primary-container"><span class="material-symbols-outlined text-sm" data-weight="fill">star</span> 4.8</td>
+<td class="py-3 px-4">
+<span class="inline-block px-2 py-1 rounded-full bg-green-100 text-green-800 text-xs font-medium">نشط</span>
+</td>
+</tr>
+<tr class="border-b border-surface-container-highest hover:bg-surface-bright transition-colors">
+<td class="py-3 px-4 font-medium flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-blue-100 flex items-center justify-center text-blue-600"><span class="material-symbols-outlined text-sm">science</span></div>
+                                            الفيزياء الأساسية
+                                        </td>
+<td class="py-3 px-4">320</td>
+<td class="py-3 px-4 flex items-center gap-1 text-primary-container"><span class="material-symbols-outlined text-sm" data-weight="fill">star</span> 4.5</td>
+<td class="py-3 px-4">
+<span class="inline-block px-2 py-1 rounded-full bg-green-100 text-green-800 text-xs font-medium">نشط</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-bright transition-colors">
+<td class="py-3 px-4 font-medium flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-purple-100 flex items-center justify-center text-purple-600"><span class="material-symbols-outlined text-sm">menu_book</span></div>
+                                            تاريخ العالم الحديث
+                                        </td>
+<td class="py-3 px-4">120</td>
+<td class="py-3 px-4 flex items-center gap-1 text-primary-container"><span class="material-symbols-outlined text-sm" data-weight="fill">star</span> 4.2</td>
+<td class="py-3 px-4">
+<span class="inline-block px-2 py-1 rounded-full bg-yellow-100 text-yellow-800 text-xs font-medium">مسودة</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<!-- Side Panel (Spans 1 col) -->
+<div class="flex flex-col gap-gutter">
+<!-- Notifications/Messages -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-md flex flex-col h-full">
+<div class="flex justify-between items-center mb-4">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">رسائل الطلاب</h3>
+<span class="bg-error-container text-on-error-container text-xs font-bold px-2 py-1 rounded-full">3 جديدة</span>
+</div>
+<div class="flex flex-col gap-3 flex-1">
+<!-- Message Item -->
+<div class="p-3 rounded-lg bg-surface-bright border border-surface-container-highest cursor-pointer hover:border-primary-container/50 transition-colors">
+<div class="flex justify-between items-start mb-1">
+<span class="font-label-md text-label-md text-on-surface">سارة محمد</span>
+<span class="text-xs text-secondary">منذ 10 د</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">أستاذي، لدي سؤال بخصوص المعادلة في الدرس الثالث، هل يمكننا مراجعتها؟</p>
+</div>
+<!-- Message Item -->
+<div class="p-3 rounded-lg bg-surface-bright border border-surface-container-highest cursor-pointer hover:border-primary-container/50 transition-colors">
+<div class="flex justify-between items-start mb-1">
+<span class="font-label-md text-label-md text-on-surface">عمر خالد</span>
+<span class="text-xs text-secondary">منذ 1 س</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">لقد أكملت الاختبار القصير، متى ستظهر النتائج النهائية؟</p>
+</div>
+</div>
+<button class="w-full mt-4 py-2 text-center text-primary font-label-md hover:bg-surface-container-low rounded transition-colors border border-transparent hover:border-outline-variant">
+                            فتح صندوق الوارد
+                        </button>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

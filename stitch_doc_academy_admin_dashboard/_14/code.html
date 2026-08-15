@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="ar"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>محادثات الطلاب - Doc Academy</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "outline-variant": "#ddc1ae",
+                        "on-primary": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "surface-container-highest": "#e0e3e5",
+                        "on-error-container": "#93000a",
+                        "primary": "#904d00",
+                        "tertiary-fixed-dim": "#bdc7dc",
+                        "tertiary-fixed": "#d9e3f9",
+                        "surface-bright": "#f7fafc",
+                        "inverse-primary": "#ffb77d",
+                        "on-secondary-fixed": "#161c27",
+                        "surface-dim": "#d7dadc",
+                        "tertiary": "#555f71",
+                        "secondary": "#585e6c",
+                        "on-primary-fixed": "#2f1500",
+                        "primary-fixed": "#ffdcc3",
+                        "surface-tint": "#904d00",
+                        "on-surface-variant": "#564334",
+                        "on-surface": "#181c1e",
+                        "surface": "#f7fafc",
+                        "on-background": "#181c1e",
+                        "inverse-on-surface": "#eef1f3",
+                        "on-primary-container": "#623200",
+                        "on-secondary-fixed-variant": "#414754",
+                        "on-secondary-container": "#5e6473",
+                        "secondary-fixed-dim": "#c1c6d7",
+                        "surface-container": "#ebeef0",
+                        "secondary-container": "#dde2f3",
+                        "surface-container-low": "#f1f4f6",
+                        "primary-container": "#ff8c00",
+                        "surface-container-high": "#e5e9eb",
+                        "on-tertiary-container": "#353f50",
+                        "inverse-surface": "#2d3133",
+                        "surface-container-lowest": "#ffffff",
+                        "error": "#ba1a1a",
+                        "secondary-fixed": "#dde2f3",
+                        "on-error": "#ffffff",
+                        "on-primary-fixed-variant": "#6e3900",
+                        "primary-fixed-dim": "#ffb77d",
+                        "surface-variant": "#e0e3e5",
+                        "tertiary-container": "#a0aabf",
+                        "outline": "#897362",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-fixed-variant": "#3d4759",
+                        "on-tertiary-fixed": "#121c2c",
+                        "background": "#f7fafc",
+                        "on-secondary": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-md": "16px",
+                        "stack-sm": "8px",
+                        "stack-lg": "24px",
+                        "margin-page": "32px",
+                        "topbar_height": "72px",
+                        "sidebar_width": "260px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Be Vietnam Pro"],
+                        "label-md": ["Be Vietnam Pro"],
+                        "headline-md": ["Be Vietnam Pro"],
+                        "headline-lg": ["Be Vietnam Pro"],
+                        "headline-sm": ["Be Vietnam Pro"],
+                        "label-sm": ["Be Vietnam Pro"],
+                        "body-sm": ["Be Vietnam Pro"],
+                        "headline-lg-mobile": ["Be Vietnam Pro"],
+                        "body-md": ["Be Vietnam Pro"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", { "lineHeight": "26px", "fontWeight": "400" }],
+                        "label-md": ["14px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "headline-lg": ["30px", { "lineHeight": "38px", "fontWeight": "700" }],
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "label-sm": ["12px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "500" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Be Vietnam Pro', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .icon-fill { font-variation-settings: 'FILL' 1; }
+        
+        /* Custom scrollbar for chat area */
+        .chat-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+        .chat-scroll::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .chat-scroll::-webkit-scrollbar-thumb {
+            background-color: #e0e3e5;
+            border-radius: 20px;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface flex h-screen overflow-hidden">
+<!-- SideNavBar -->
+<nav class="hidden md:flex flex-col h-full py-stack-lg fixed left-0 top-0 h-screen w-[260px] bg-on-background z-20">
+<div class="px-gutter mb-stack-lg flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined">school</span>
+</div>
+<div>
+<h1 class="text-headline-md font-headline-md font-bold text-primary">Doc Academy</h1>
+<p class="text-label-sm font-label-sm text-surface-variant">Admin Console</p>
+</div>
+</div>
+<div class="flex-1 flex flex-col gap-2 mt-4">
+<a class="flex items-center gap-3 px-gutter py-3 text-surface-variant hover:text-white transition-colors hover:bg-on-secondary-fixed-variant/5" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-body-md font-body-md">Overview</span>
+</a>
+<a class="flex items-center gap-3 px-gutter py-3 text-primary font-bold border-l-4 border-primary bg-on-secondary-fixed-variant/10" href="#">
+<span class="material-symbols-outlined icon-fill">group</span>
+<span class="text-body-md font-body-md">Students</span>
+</a>
+<a class="flex items-center gap-3 px-gutter py-3 text-surface-variant hover:text-white transition-colors hover:bg-on-secondary-fixed-variant/5" href="#">
+<span class="material-symbols-outlined">school</span>
+<span class="text-body-md font-body-md">Teachers</span>
+</a>
+<a class="flex items-center gap-3 px-gutter py-3 text-surface-variant hover:text-white transition-colors hover:bg-on-secondary-fixed-variant/5" href="#">
+<span class="material-symbols-outlined">settings_accessibility</span>
+<span class="text-body-md font-body-md">Permissions</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col h-screen md:ml-[260px] w-full max-w-full">
+<!-- TopAppBar -->
+<header class="flex justify-between items-center w-full px-margin-page h-[72px] bg-surface border-b border-outline-variant z-10 shrink-0">
+<div class="flex items-center gap-4">
+<button class="md:hidden text-on-surface">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<div class="flex items-center bg-surface-container-high rounded-full px-4 py-2 w-64 border border-outline-variant focus-within:border-primary-container focus-within:ring-2 focus-within:ring-primary-container/20 transition-all">
+<span class="material-symbols-outlined text-on-surface-variant mr-2">search</span>
+<input class="bg-transparent border-none focus:outline-none text-body-sm font-body-sm w-full placeholder-on-surface-variant" placeholder="بحث عن طالب أو رسالة..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant hover:bg-surface-container-high p-2 rounded-full transition-colors duration-150">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="text-on-surface-variant hover:bg-surface-container-high p-2 rounded-full transition-colors duration-150">
+<span class="material-symbols-outlined">help</span>
+</button>
+<img class="w-10 h-10 rounded-full object-cover border border-outline-variant" data-alt="A professional headshot of an administrator in a modern, well-lit educational office. High quality, realistic portrait lighting. Corporate modern aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDr-rcespatwPhKZ37or4v2coYbJV4-8gQdY1Zrg2iVctgUd5bGOGmBAHGGPfDY2LUecn3AE-wgl5x1qhdk76SM8MpzclHlYO29MjjgIZVyut0ODzZiHXkVbOo9kox3Pl0mkdjKuwSVwVHTUTrLVXOIy1i7uqrvXKIRGuGtKQE3QTXakJ0cA9JT1C4UWe1t0brMqWkVrnKhHpplhVfo6xwUgFsbi48xxsiQi9Zgm9aszRny-CXCxqOH"/>
+</div>
+</header>
+<!-- Chat App Container -->
+<div class="flex-1 flex overflow-hidden bg-surface-container-lowest">
+<!-- Chat Sidebar (Left side visually, but right side logically in RTL) -->
+<aside class="w-[320px] shrink-0 border-l border-outline-variant flex flex-col bg-surface h-full">
+<div class="p-4 border-b border-outline-variant">
+<h2 class="text-headline-sm font-headline-sm text-on-surface">محادثات الطلاب</h2>
+</div>
+<div class="flex-1 overflow-y-auto chat-scroll">
+<!-- Course Group 1 -->
+<div class="mt-2">
+<div class="px-4 py-2 bg-surface-container-low text-label-md font-label-md text-on-surface-variant flex items-center justify-between cursor-pointer">
+<span>الرياضيات المتقدمة (١٠١)</span>
+<span class="material-symbols-outlined text-sm">expand_more</span>
+</div>
+<!-- Active Chat -->
+<div class="flex items-center gap-3 px-4 py-3 bg-primary-container/10 border-r-4 border-primary-container cursor-pointer hover:bg-surface-container transition-colors">
+<div class="relative">
+<div class="w-12 h-12 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container font-headline-sm">أ</div>
+<div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-surface"></div>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-baseline mb-1">
+<h3 class="text-body-md font-body-md font-semibold text-on-surface truncate">أحمد محمود</h3>
+<span class="text-label-sm font-label-sm text-primary">الآن</span>
+</div>
+<p class="text-body-sm font-body-sm text-primary truncate">شكراً أستاذ، فهمت النقطة.</p>
+</div>
+</div>
+<div class="flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-surface-container transition-colors border-r-4 border-transparent">
+<div class="w-12 h-12 rounded-full bg-tertiary-container flex items-center justify-center text-on-tertiary-container font-headline-sm">س</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-baseline mb-1">
+<h3 class="text-body-md font-body-md font-semibold text-on-surface truncate">سارة كمال</h3>
+<span class="text-label-sm font-label-sm text-on-surface-variant">١٠:٤٢ ص</span>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface-variant truncate">هل يمكنني تأجيل التسليم؟</p>
+</div>
+<div class="w-5 h-5 bg-primary-container rounded-full flex items-center justify-center text-on-primary text-xs">١</div>
+</div>
+</div>
+<!-- Course Group 2 -->
+<div class="mt-2">
+<div class="px-4 py-2 bg-surface-container-low text-label-md font-label-md text-on-surface-variant flex items-center justify-between cursor-pointer">
+<span>الفيزياء العامة (٢٠١)</span>
+<span class="material-symbols-outlined text-sm">chevron_left</span>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Chat Area -->
+<div class="flex-1 flex flex-col bg-[#F0F2F5] relative">
+<!-- Chat Header -->
+<div class="h-[68px] bg-surface flex items-center justify-between px-6 border-b border-outline-variant shrink-0 z-10 shadow-sm">
+<div class="flex items-center gap-4">
+<div class="relative">
+<div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container font-headline-sm">أ</div>
+<div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-surface"></div>
+</div>
+<div>
+<h2 class="text-body-lg font-body-lg font-semibold text-on-surface">أحمد محمود</h2>
+<p class="text-label-sm font-label-sm text-on-surface-variant">الرياضيات المتقدمة (١٠١) • متصل الآن</p>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-high rounded-full transition-colors">
+<span class="material-symbols-outlined">search</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-high rounded-full transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</div>
+<!-- Chat Messages -->
+<div class="flex-1 overflow-y-auto chat-scroll p-6 flex flex-col gap-4">
+<!-- Date Separator -->
+<div class="flex justify-center my-4">
+<span class="bg-surface-container px-3 py-1 rounded-lg text-label-sm font-label-sm text-on-surface-variant shadow-sm">اليوم</span>
+</div>
+<!-- Student Message (Left in RTL -> actually Right visually, standard whatsapp: received is on the secondary side) -->
+<!-- In RTL, received messages are usually on the Right, sent on the Left. Let's stick to flex-row-reverse for sent to push it left, and standard for received to keep it right. -->
+<!-- Received Message (Student - Gray) -->
+<div class="flex justify-start">
+<div class="bg-surface max-w-[70%] rounded-2xl rounded-tr-sm p-3 shadow-sm border border-outline-variant/30">
+<p class="text-body-md font-body-md text-on-surface">مرحباً أستاذ، لدي سؤال بخصوص الواجب الأخير في الفصل الثالث. لم أفهم طريقة حل المعادلة التفاضلية.</p>
+<div class="text-left mt-1">
+<span class="text-[11px] text-on-surface-variant">٠٩:١٥ ص</span>
+</div>
+</div>
+</div>
+<!-- Sent Message (Teacher - Orange) -->
+<div class="flex justify-end">
+<div class="bg-primary-container max-w-[70%] rounded-2xl rounded-tl-sm p-3 shadow-sm text-on-primary">
+<p class="text-body-md font-body-md">أهلاً أحمد. بالطبع، المعادلة تعتمد على فصل المتغيرات أولاً.</p>
+<div class="flex justify-end items-center gap-1 mt-1 text-[11px] text-on-primary/80">
+<span>٠٩:٢٠ ص</span>
+<span class="material-symbols-outlined text-[14px]">done_all</span>
+</div>
+</div>
+</div>
+<!-- Sent Message (Teacher - Orange) with image -->
+<div class="flex justify-end">
+<div class="bg-primary-container max-w-[70%] rounded-2xl p-1 shadow-sm">
+<div class="w-full h-48 bg-white/20 rounded-xl mb-1 overflow-hidden">
+<div class="bg-cover bg-center w-full h-full" data-alt="A clean, digital whiteboard showing a complex mathematical differential equation solved step-by-step in clear handwriting. Bright lighting, academic modern aesthetic." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAFO_01Eh5ZcJ_MvltpPQ9YlBXt-Q2vwLvPG1xw8-zhdcAXj3ExpbKYdun6Fb8GxJtBzwBNXJkhw4hlVPkIXfkoRn0glyhu1zU5vDxuaD6oQAVM-OK1Hv3iZ0e371p77W0g56RsnMy8SWjuwI74PRGqQ04HJsAumnisDbj84DdiN6qsR7uWFF1lu-RWY6DbXo6f4ctpdvilmRRUzeLhsjC5kGBWk8x9SjgtAgL24u_L2220DD-nSQ-D')"></div>
+</div>
+<div class="p-2 text-on-primary">
+<p class="text-body-md font-body-md">انظر إلى هذا المثال المرفق، سيساعدك في فهم الخطوة الثانية.</p>
+<div class="flex justify-end items-center gap-1 mt-1 text-[11px] text-on-primary/80">
+<span>٠٩:٢٢ ص</span>
+<span class="material-symbols-outlined text-[14px]">done_all</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Received Message (Student - Gray) -->
+<div class="flex justify-start">
+<div class="bg-surface max-w-[70%] rounded-2xl rounded-tr-sm p-3 shadow-sm border border-outline-variant/30">
+<p class="text-body-md font-body-md text-on-surface">شكراً أستاذ، فهمت النقطة.</p>
+<div class="text-left mt-1">
+<span class="text-[11px] text-on-surface-variant">الآن</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Input Area -->
+<div class="h-[72px] bg-surface flex items-center px-4 gap-3 shrink-0 border-t border-outline-variant">
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-high rounded-full transition-colors flex-shrink-0">
+<span class="material-symbols-outlined">attach_file</span>
+</button>
+<div class="flex-1 bg-surface-container-high rounded-full px-4 py-3 flex items-center border border-transparent focus-within:border-primary-container focus-within:ring-2 focus-within:ring-primary-container/20 transition-all">
+<input class="bg-transparent border-none focus:outline-none w-full text-body-md font-body-md" placeholder="اكتب رسالة..." type="text"/>
+</div>
+<button class="w-12 h-12 bg-primary-container text-on-primary rounded-full flex items-center justify-center hover:bg-primary transition-colors shadow-sm flex-shrink-0">
+<span class="material-symbols-outlined transform -rotate-180 pl-1">send</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+</body></html>

@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="ar"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Doc Academy - Course Review</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed": "#d9e3f9",
+                        "surface-container-high": "#e5e9eb",
+                        "surface-container-highest": "#e0e3e5",
+                        "secondary-container": "#dde2f3",
+                        "primary": "#904d00",
+                        "error-container": "#ffdad6",
+                        "surface-container-low": "#f1f4f6",
+                        "primary-fixed-dim": "#ffb77d",
+                        "background": "#f7fafc",
+                        "inverse-primary": "#ffb77d",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "tertiary-container": "#a0aabf",
+                        "on-tertiary-container": "#353f50",
+                        "tertiary-fixed-dim": "#bdc7dc",
+                        "surface": "#f7fafc",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-fixed": "#121c2c",
+                        "on-surface-variant": "#564334",
+                        "outline-variant": "#ddc1ae",
+                        "on-primary-fixed": "#2f1500",
+                        "inverse-surface": "#2d3133",
+                        "surface-container": "#ebeef0",
+                        "on-secondary-container": "#5e6473",
+                        "on-error": "#ffffff",
+                        "primary-container": "#ff8c00",
+                        "on-error-container": "#93000a",
+                        "secondary-fixed-dim": "#c1c6d7",
+                        "on-tertiary-fixed-variant": "#3d4759",
+                        "on-primary-fixed-variant": "#6e3900",
+                        "surface-dim": "#d7dadc",
+                        "secondary-fixed": "#dde2f3",
+                        "error": "#ba1a1a",
+                        "secondary": "#585e6c",
+                        "primary-fixed": "#ffdcc3",
+                        "surface-variant": "#e0e3e5",
+                        "on-secondary-fixed": "#161c27",
+                        "on-primary-container": "#623200",
+                        "on-background": "#181c1e",
+                        "outline": "#897362",
+                        "on-primary": "#ffffff",
+                        "surface-bright": "#f7fafc",
+                        "on-secondary-fixed-variant": "#414754",
+                        "on-surface": "#181c1e",
+                        "inverse-on-surface": "#eef1f3",
+                        "tertiary": "#555f71",
+                        "surface-tint": "#904d00"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-sm": "8px",
+                        "topbar_height": "72px",
+                        "stack-md": "16px",
+                        "gutter": "24px",
+                        "margin-page": "32px",
+                        "sidebar_width": "260px",
+                        "stack-lg": "24px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Be Vietnam Pro"],
+                        "headline-md": ["Be Vietnam Pro"],
+                        "label-sm": ["Be Vietnam Pro"],
+                        "body-lg": ["Be Vietnam Pro"],
+                        "body-md": ["Be Vietnam Pro"],
+                        "headline-sm": ["Be Vietnam Pro"],
+                        "body-sm": ["Be Vietnam Pro"],
+                        "headline-lg-mobile": ["Be Vietnam Pro"],
+                        "label-md": ["Be Vietnam Pro"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["30px", { "lineHeight": "38px", "fontWeight": "700" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "label-sm": ["12px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "500" }],
+                        "body-lg": ["18px", { "lineHeight": "26px", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "label-md": ["14px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        /* Base overrides to ensure text aligns correctly in RTL while respecting layout directives */
+        body { font-family: 'Be Vietnam Pro', sans-serif; }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen">
+<!-- SideNavBar (Strict JSON implementation forces left position even in RTL) -->
+<aside class="fixed left-0 top-0 h-screen w-[260px] bg-on-background flex flex-col h-full py-stack-lg z-20" dir="ltr">
+<div class="px-gutter mb-stack-lg">
+<h1 class="text-headline-md font-headline-md font-bold text-primary">Doc Academy</h1>
+<p class="font-body-md text-body-md text-surface-variant mt-1">Admin Console</p>
+</div>
+<nav class="flex-1 flex flex-col gap-1 px-4">
+<!-- Active Tab: Overview -->
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-primary font-bold border-r-4 border-primary bg-on-secondary-fixed-variant/10 transition-all duration-200 ease-in-out hover:bg-on-secondary-fixed-variant/5" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-body-md text-body-md">Overview</span>
+</a>
+<!-- Inactive Tabs -->
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-surface-variant hover:text-white transition-colors hover:bg-on-secondary-fixed-variant/5" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="font-body-md text-body-md">Students</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-surface-variant hover:text-white transition-colors hover:bg-on-secondary-fixed-variant/5" href="#">
+<span class="material-symbols-outlined" data-icon="school">school</span>
+<span class="font-body-md text-body-md">Teachers</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-surface-variant hover:text-white transition-colors hover:bg-on-secondary-fixed-variant/5" href="#">
+<span class="material-symbols-outlined" data-icon="settings_accessibility">settings_accessibility</span>
+<span class="font-body-md text-body-md">Permissions</span>
+</a>
+</nav>
+</aside>
+<!-- TopAppBar -->
+<header class="bg-surface border-b border-outline-variant docked full-width top-0 h-[72px] flex justify-between items-center w-full px-margin-page ml-[260px] max-w-[calc(100%-260px)] fixed z-10" dir="ltr">
+<div class="flex items-center gap-4 w-1/3">
+<div class="relative w-full max-w-md">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant" data-icon="search">search</span>
+<input class="w-full pl-10 pr-4 py-2 rounded-full border border-outline-variant bg-surface-container-lowest focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary font-body-sm text-body-sm text-on-surface transition-all" placeholder="Search..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-2 rounded-full text-on-surface-variant hover:bg-surface-container-high transition-colors duration-150">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="p-2 rounded-full text-on-surface-variant hover:bg-surface-container-high transition-colors duration-150">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+</button>
+<div class="w-10 h-10 rounded-full bg-surface-container-high ml-4 overflow-hidden border border-outline-variant">
+<img alt="Admin Profile" class="w-full h-full object-cover" data-alt="A professional headshot of a mature female administrator with short dark hair, wearing glasses and a crisp white blouse, set against a neutral soft-lit office background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC8X8vBTcF4Aom1UVJpiC0BHQwed3mNf70UWg8rWL2K4v9VPM0LtFRMEwx375hVXC_NXR1iSiKRf8VXU_fQstTnNhZ1Sxb7KV0dufidPnna73YPundVu1c793MdwRfpCCymMIshF7iMpyqByTxtdAgEmeU5qLRR2uoOVd6eCJZuASj63bBjUro5mYHIhS-WIyyucS69l1aZ98c6iBxNXa35sq1kK7W7vOVTvxpQWTa6eCGw-hS0x_Rj"/>
+</div>
+</div>
+</header>
+<!-- Main Workspace -->
+<main class="ml-[260px] mt-[72px] p-margin-page min-h-[calc(100vh-72px)] bg-background">
+<!-- Page Header -->
+<div class="flex justify-between items-end mb-8">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-2">مراجعة وإدارة الدورات</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">مراجعة الدورات المقدمة من المعلمين والموافقة عليها أو رفضها.</p>
+</div>
+<div class="flex gap-4">
+<div class="relative">
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm">search</span>
+<input class="pl-4 pr-10 py-2.5 rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary font-body-sm text-body-sm text-on-surface w-64 shadow-sm" placeholder="البحث عن دورة..." type="text"/>
+</div>
+<button class="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface font-label-md text-label-md hover:bg-surface-container-low transition-colors shadow-sm">
+<span class="material-symbols-outlined text-sm">filter_list</span>
+                    تصفية
+                </button>
+</div>
+</div>
+<!-- Table Container (Bento/Card style) -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant overflow-hidden shadow-sm">
+<div class="overflow-x-auto">
+<table class="w-full text-right border-collapse">
+<thead class="bg-surface-container-low border-b border-outline-variant">
+<tr>
+<th class="px-6 py-4 font-label-md text-label-md text-on-surface-variant whitespace-nowrap">اسم الدورة</th>
+<th class="px-6 py-4 font-label-md text-label-md text-on-surface-variant whitespace-nowrap">المعلم</th>
+<th class="px-6 py-4 font-label-md text-label-md text-on-surface-variant whitespace-nowrap">التصنيف</th>
+<th class="px-6 py-4 font-label-md text-label-md text-on-surface-variant whitespace-nowrap">تاريخ الإنشاء</th>
+<th class="px-6 py-4 font-label-md text-label-md text-on-surface-variant whitespace-nowrap">الحالة</th>
+<th class="px-6 py-4 font-label-md text-label-md text-on-surface-variant whitespace-nowrap text-center">الإجراءات</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container-highest">
+<!-- Row 1: Pending -->
+<tr class="hover:bg-surface-bright transition-colors group">
+<td class="px-6 py-4">
+<div class="font-body-md text-body-md text-on-surface font-medium">مقدمة في الذكاء الاصطناعي</div>
+</td>
+<td class="px-6 py-4 font-body-sm text-body-sm text-on-surface-variant">د. أحمد محمود</td>
+<td class="px-6 py-4 font-body-sm text-body-sm text-on-surface-variant">تكنولوجيا</td>
+<td class="px-6 py-4 font-body-sm text-body-sm text-on-surface-variant">12 أكتوبر 2023</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-1 rounded-full bg-primary-fixed text-on-primary-fixed font-label-sm text-label-sm">
+                                    قيد الانتظار
+                                </span>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-1.5 rounded-md text-primary hover:bg-primary-fixed transition-colors" title="قبول">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</button>
+<button class="p-1.5 rounded-md text-error hover:bg-error-container transition-colors" title="رفض">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">cancel</span>
+</button>
+<button class="p-1.5 rounded-md text-on-surface-variant hover:bg-surface-container-high transition-colors" title="إخفاء">
+<span class="material-symbols-outlined text-[20px]">visibility_off</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 2: Approved -->
+<tr class="hover:bg-surface-bright transition-colors group">
+<td class="px-6 py-4">
+<div class="font-body-md text-body-md text-on-surface font-medium">أساسيات التصميم الجرافيكي</div>
+</td>
+<td class="px-6 py-4 font-body-sm text-body-sm text-on-surface-variant">سارة علي</td>
+<td class="px-6 py-4 font-body-sm text-body-sm text-on-surface-variant">فنون وتصميم</td>
+<td class="px-6 py-4 font-body-sm text-body-sm text-on-surface-variant">10 أكتوبر 2023</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-1 rounded-full bg-secondary-fixed text-on-secondary-fixed font-label-sm text-label-sm">
+                                    معتمد
+                                </span>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-1.5 rounded-md text-on-surface-variant hover:bg-surface-container-high transition-colors" title="إخفاء">
+<span class="material-symbols-outlined text-[20px]">visibility_off</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 3: Hidden -->
+<tr class="hover:bg-surface-bright transition-colors group">
+<td class="px-6 py-4">
+<div class="font-body-md text-body-md text-on-surface font-medium text-on-surface-variant opacity-75">الكتابة الإبداعية للمبتدئين</div>
+</td>
+<td class="px-6 py-4 font-body-sm text-body-sm text-on-surface-variant opacity-75">محمد حسن</td>
+<td class="px-6 py-4 font-body-sm text-body-sm text-on-surface-variant opacity-75">لغات وأدب</td>
+<td class="px-6 py-4 font-body-sm text-body-sm text-on-surface-variant opacity-75">08 أكتوبر 2023</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-1 rounded-full bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm">
+                                    مخفي
+                                </span>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-1.5 rounded-md text-primary hover:bg-primary-fixed transition-colors" title="إظهار">
+<span class="material-symbols-outlined text-[20px]">visibility</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 4: Pending -->
+<tr class="hover:bg-surface-bright transition-colors group">
+<td class="px-6 py-4">
+<div class="font-body-md text-body-md text-on-surface font-medium">الرياضيات المتقدمة</div>
+</td>
+<td class="px-6 py-4 font-body-sm text-body-sm text-on-surface-variant">د. يوسف عمر</td>
+<td class="px-6 py-4 font-body-sm text-body-sm text-on-surface-variant">علوم</td>
+<td class="px-6 py-4 font-body-sm text-body-sm text-on-surface-variant">15 أكتوبر 2023</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-1 rounded-full bg-primary-fixed text-on-primary-fixed font-label-sm text-label-sm">
+                                    قيد الانتظار
+                                </span>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-1.5 rounded-md text-primary hover:bg-primary-fixed transition-colors" title="قبول">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</button>
+<button class="p-1.5 rounded-md text-error hover:bg-error-container transition-colors" title="رفض">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">cancel</span>
+</button>
+<button class="p-1.5 rounded-md text-on-surface-variant hover:bg-surface-container-high transition-colors" title="إخفاء">
+<span class="material-symbols-outlined text-[20px]">visibility_off</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination Footer -->
+<div class="px-6 py-4 border-t border-outline-variant bg-surface-container-lowest flex items-center justify-between">
+<span class="font-body-sm text-body-sm text-on-surface-variant">عرض 1 إلى 4 من أصل 24 دورة</span>
+<div class="flex gap-2">
+<button class="px-3 py-1.5 rounded border border-outline-variant text-on-surface-variant font-label-sm text-label-sm hover:bg-surface-container-low disabled:opacity-50" disabled="">السابق</button>
+<button class="px-3 py-1.5 rounded border border-outline-variant text-on-surface font-label-sm text-label-sm hover:bg-surface-container-low">التالي</button>
+</div>
+</div>
+</div>
+</main>
+</body></html>
