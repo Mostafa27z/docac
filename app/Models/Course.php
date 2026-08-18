@@ -14,7 +14,8 @@ class Course extends Model
         'thumbnail',
         'type',
         'status',
-        'published_at'
+        'published_at',
+        'price'
     ];
 
     protected $casts = [

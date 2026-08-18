@@ -20,6 +20,7 @@ Route::prefix('v1')->group(function () {
     // 1. Public Authentication Routes
     Route::post('student/register', [AuthController::class, 'register']);
     Route::post('student/login', [AuthController::class, 'login']);
+    Route::get('contacts', [\App\Http\Controllers\Api\V1\ContactApiController::class, 'index']);
 
     // 2. Protected routes by Sanctum
     Route::middleware('auth:sanctum')->group(function () {

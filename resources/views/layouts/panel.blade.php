@@ -4,173 +4,210 @@
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <title>@yield('title', 'Doc Academy')</title>
+
+    {{-- Tailwind CSS CDN --}}
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+
+    {{-- Inter Font --}}
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+
+    {{-- Phosphor Icons --}}
+    <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css" />
+    <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/light/style.css" />
+
+    {{-- TUS Upload Client --}}
     <script src="https://unpkg.com/tus-js-client@3.1.1/dist/tus.min.js"></script>
-    <script id="tailwind-config">
+
+    <script>
         tailwind.config = {
-            darkMode: "class",
             theme: {
                 extend: {
-                    "colors": {
-                        "surface": "#f7fafc",
-                        "on-surface": "#181c1e",
-                        "on-tertiary-container": "#353f50",
-                        "secondary-container": "#dde2f3",
-                        "surface-container-highest": "#e0e3e5",
-                        "error-container": "#ffdad6",
-                        "on-secondary-fixed-variant": "#414754",
-                        "outline": "#897362",
-                        "primary": "#904d00",
-                        "tertiary": "#555f71",
-                        "on-primary-fixed-variant": "#6e3900",
-                        "surface-container": "#ebeef0",
-                        "inverse-primary": "#ffb77d",
-                        "primary-fixed": "#ffdcc3",
-                        "on-tertiary-fixed-variant": "#3d4759",
-                        "secondary-fixed-dim": "#c1c6d7",
-                        "outline-variant": "#ddc1ae",
-                        "primary-fixed-dim": "#ffb77d",
-                        "on-background": "#181c1e",
-                        "on-secondary-fixed": "#161c27",
-                        "surface-tint": "#904d00",
-                        "error": "#ba1a1a",
-                        "primary-container": "#ff8c00",
-                        "on-primary-container": "#623200",
-                        "on-error-container": "#93000a",
-                        "on-secondary-container": "#5e6473",
-                        "on-surface-variant": "#564334",
-                        "on-primary-fixed": "#2f1500",
-                        "secondary-fixed": "#dde2f3",
-                        "tertiary-fixed": "#d9e3f9",
-                        "on-secondary": "#ffffff",
-                        "tertiary-container": "#a0aabf",
-                        "on-tertiary-fixed": "#121c2c",
-                        "on-error": "#ffffff",
-                        "tertiary-fixed-dim": "#bdc7dc",
-                        "on-tertiary": "#ffffff",
-                        "surface-variant": "#e0e3e5",
-                        "surface-container-lowest": "#ffffff",
-                        "inverse-surface": "#2d3133",
-                        "secondary": "#585e6c",
-                        "surface-container-low": "#f1f4f6",
-                        "surface-dim": "#d7dadc",
-                        "surface-container-high": "#e5e9eb",
-                        "background": "#f7fafc",
-                        "inverse-on-surface": "#eef1f3",
-                        "surface-bright": "#f7fafc",
-                        "on-primary": "#ffffff"
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        "primary":       "#0047AB",
+                        "primary-light": "#0088CC",
+                        "accent":        "#00A896",
+                        "accent-light":  "#2EC4B6",
+                        "bg-base":       "#F8F9FA",
+                        "dark":          "#1A202C",
+                        "muted":         "#718096",
+                        "border-clr":    "#E2E8F0",
+                        "surface":       "#FFFFFF",
                     },
-                    "borderRadius": {
-                        "DEFAULT": "0.25rem",
-                        "lg": "0.5rem",
-                        "xl": "0.75rem",
-                        "full": "9999px"
+                    spacing: {
+                        "sidebar_w": "272px",
+                        "topbar_h":  "72px",
                     },
-                    "spacing": {
-                        "stack-sm": "8px",
-                        "sidebar_width": "260px",
-                        "gutter": "24px",
-                        "stack-md": "16px",
-                        "stack-lg": "24px",
-                        "margin-page": "32px",
-                        "topbar_height": "72px"
+                    borderRadius: {
+                        "2xl": "1rem",
+                        "3xl": "1.25rem",
                     }
                 }
             }
         }
     </script>
     <style>
-        body { font-family: 'Be Vietnam Pro', sans-serif; }
+        body { font-family: 'Inter', sans-serif; }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #CBD5E0; border-radius: 999px; }
+        ::-webkit-scrollbar-thumb:hover { background: #A0AEC0; }
     </style>
+    @stack('head')
 </head>
-<body class="bg-background text-on-surface h-screen overflow-hidden">
+<body class="bg-bg-base text-dark h-screen overflow-hidden">
 
-    <!-- SideNavBar -->
-    <nav class="fixed right-0 top-0 h-screen w-[260px] bg-on-background flex flex-col py-stack-lg z-20">
-        <div class="px-gutter mb-stack-lg flex flex-col items-start">
-            <span class="text-headline-md font-bold text-primary mb-1">Doc Academy</span>
-            <span class="text-label-sm text-surface-variant">@yield('role_title', 'Control Panel')</span>
+    {{-- Sidebar Navigation --}}
+    <nav class="fixed right-0 top-0 h-screen w-[272px] bg-gradient-to-b from-[#0047AB] to-[#003380] flex flex-col z-20">
+        {{-- Brand Area --}}
+        <div class="px-6 pt-6 pb-5 flex items-center gap-3 border-b border-white/10">
+            <img src="/logo.jfif" alt="Doc Academy" class="w-11 h-11 rounded-xl shadow-lg" />
+            <div>
+                <span class="text-white font-bold text-base tracking-tight">Doc Academy</span>
+                <span class="block text-[#7EB8FF] text-[11px] font-medium">@yield('role_title', 'لوحة التحكم')</span>
+            </div>
         </div>
-        <ul class="flex flex-col space-y-2 flex-grow px-stack-sm">
+
+        {{-- Navigation Links --}}
+        <ul class="flex flex-col gap-1 flex-grow px-3 py-4 overflow-y-auto">
             @if(auth()->check() && auth()->user()->role === 'admin')
+                <li class="text-[#7EB8FF] text-[10px] font-semibold uppercase tracking-widest px-3 mb-2">الإدارة العامة</li>
                 <li>
-                    <a class="flex items-center space-x-reverse space-x-3 px-4 py-3 rounded-lg {{ request()->routeIs('admin.dashboard') ? 'text-primary font-bold border-l-4 border-primary bg-on-secondary-fixed-variant/10' : 'text-surface-variant hover:text-white hover:bg-on-secondary-fixed-variant/5' }} transition-all duration-200" href="{{ route('admin.dashboard') }}">
-                        <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
-                        <span class="font-medium text-sm">نظرة عامة</span>
+                    <a class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->routeIs('admin.dashboard') ? 'bg-white/15 text-white shadow-sm' : 'text-white/70 hover:text-white hover:bg-white/8' }}" href="{{ route('admin.dashboard') }}">
+                        <i class="ph-bold ph-squares-four text-lg"></i>
+                        <span>نظرة عامة</span>
                     </a>
                 </li>
                 <li>
-                    <a class="flex items-center space-x-reverse space-x-3 px-4 py-3 rounded-lg {{ request()->routeIs('admin.teachers.index') ? 'text-primary font-bold border-l-4 border-primary bg-on-secondary-fixed-variant/10' : 'text-surface-variant hover:text-white hover:bg-on-secondary-fixed-variant/5' }} transition-all duration-200" href="{{ route('admin.teachers.index') }}">
-                        <span class="material-symbols-outlined">school</span>
-                        <span class="font-medium text-sm">إدارة المدرسين</span>
+                    <a class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->routeIs('admin.teachers.index') ? 'bg-white/15 text-white shadow-sm' : 'text-white/70 hover:text-white hover:bg-white/8' }}" href="{{ route('admin.teachers.index') }}">
+                        <i class="ph-bold ph-chalkboard-teacher text-lg"></i>
+                        <span>إدارة المدرسين</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->routeIs('admin.students.index') ? 'bg-white/15 text-white shadow-sm' : 'text-white/70 hover:text-white hover:bg-white/8' }}" href="{{ route('admin.students.index') }}">
+                        <i class="ph-bold ph-student text-lg"></i>
+                        <span>إدارة الطلاب</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->routeIs('admin.codes.index') ? 'bg-white/15 text-white shadow-sm' : 'text-white/70 hover:text-white hover:bg-white/8' }}" href="{{ route('admin.codes.index') }}">
+                        <i class="ph-bold ph-key text-lg"></i>
+                        <span>أكواد التفعيل</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->routeIs('admin.chats.*') ? 'bg-white/15 text-white shadow-sm' : 'text-white/70 hover:text-white hover:bg-white/8' }}" href="{{ route('admin.chats.index') }}">
+                        <i class="ph-bold ph-chat-circle-dots text-lg"></i>
+                        <span>مراقبة المحادثات</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->routeIs('admin.settings.index') ? 'bg-white/15 text-white shadow-sm' : 'text-white/70 hover:text-white hover:bg-white/8' }}" href="{{ route('admin.settings.index') }}">
+                        <i class="ph-bold ph-gear text-lg"></i>
+                        <span>بيانات الاتصال</span>
                     </a>
                 </li>
             @elseif(auth()->check() && auth()->user()->role === 'instructor')
+                <li class="text-[#7EB8FF] text-[10px] font-semibold uppercase tracking-widest px-3 mb-2">لوحة المحاضر</li>
                 <li>
-                    <a class="flex items-center space-x-reverse space-x-3 px-4 py-3 rounded-lg {{ request()->routeIs('instructor.dashboard') ? 'text-primary font-bold border-l-4 border-primary bg-on-secondary-fixed-variant/10' : 'text-surface-variant hover:text-white hover:bg-on-secondary-fixed-variant/5' }} transition-all duration-200" href="{{ route('instructor.dashboard') }}">
-                        <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
-                        <span class="font-medium text-sm">لوحة القيادة</span>
+                    <a class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->routeIs('instructor.dashboard') ? 'bg-white/15 text-white shadow-sm' : 'text-white/70 hover:text-white hover:bg-white/8' }}" href="{{ route('instructor.dashboard') }}">
+                        <i class="ph-bold ph-squares-four text-lg"></i>
+                        <span>لوحة القيادة</span>
                     </a>
                 </li>
                 <li>
-                    <a class="flex items-center space-x-reverse space-x-3 px-4 py-3 rounded-lg {{ request()->routeIs('instructor.courses.*') ? 'text-primary font-bold border-l-4 border-primary bg-on-secondary-fixed-variant/10' : 'text-surface-variant hover:text-white hover:bg-on-secondary-fixed-variant/5' }} transition-all duration-200" href="{{ route('instructor.courses.index') }}">
-                        <span class="material-symbols-outlined">menu_book</span>
-                        <span class="font-medium text-sm">إدارة الكورسات</span>
+                    <a class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->routeIs('instructor.courses.*') ? 'bg-white/15 text-white shadow-sm' : 'text-white/70 hover:text-white hover:bg-white/8' }}" href="{{ route('instructor.courses.index') }}">
+                        <i class="ph-bold ph-book-open-text text-lg"></i>
+                        <span>إدارة الكورسات</span>
                     </a>
                 </li>
                 <li>
-                    <a class="flex items-center space-x-reverse space-x-3 px-4 py-3 rounded-lg {{ request()->routeIs('instructor.subscriptions.*') ? 'text-primary font-bold border-l-4 border-primary bg-on-secondary-fixed-variant/10' : 'text-surface-variant hover:text-white hover:bg-on-secondary-fixed-variant/5' }} transition-all duration-200" href="{{ route('instructor.subscriptions.index') }}">
-                        <span class="material-symbols-outlined">vpn_key</span>
-                        <span class="font-medium text-sm">المشتركين والأكواد</span>
+                    <a class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->routeIs('instructor.subscriptions.*') ? 'bg-white/15 text-white shadow-sm' : 'text-white/70 hover:text-white hover:bg-white/8' }}" href="{{ route('instructor.subscriptions.index') }}">
+                        <i class="ph-bold ph-key text-lg"></i>
+                        <span>المشتركين والأكواد</span>
                     </a>
                 </li>
                 <li>
-                    <a class="flex items-center space-x-reverse space-x-3 px-4 py-3 rounded-lg {{ request()->routeIs('instructor.quizzes.*') ? 'text-primary font-bold border-l-4 border-primary bg-on-secondary-fixed-variant/10' : 'text-surface-variant hover:text-white hover:bg-on-secondary-fixed-variant/5' }} transition-all duration-200" href="{{ route('instructor.quizzes.index') }}">
-                        <span class="material-symbols-outlined">quiz</span>
-                        <span class="font-medium text-sm">إدارة الامتحانات</span>
+                    <a class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->routeIs('instructor.quizzes.*') ? 'bg-white/15 text-white shadow-sm' : 'text-white/70 hover:text-white hover:bg-white/8' }}" href="{{ route('instructor.quizzes.index') }}">
+                        <i class="ph-bold ph-exam text-lg"></i>
+                        <span>إدارة الامتحانات</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->routeIs('instructor.chats.*') ? 'bg-white/15 text-white shadow-sm' : 'text-white/70 hover:text-white hover:bg-white/8' }}" href="{{ route('instructor.chats.index') }}">
+                        <i class="ph-bold ph-chat-circle-dots text-lg"></i>
+                        <span>المحادثات والرسائل</span>
                     </a>
                 </li>
             @endif
         </ul>
-        <div class="px-stack-sm mt-auto">
+
+        {{-- User & Logout --}}
+        <div class="px-3 pb-4 mt-auto border-t border-white/10 pt-4">
+            <div class="flex items-center gap-3 px-3 mb-3">
+                <div class="w-9 h-9 rounded-full bg-white/15 flex items-center justify-center text-white font-bold text-sm">
+                    {{ mb_substr(auth()->user()->name ?? '', 0, 1) }}
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-white text-sm font-semibold truncate">{{ auth()->user()->name ?? '' }}</p>
+                    <p class="text-[#7EB8FF] text-[11px] truncate">{{ auth()->user()->email ?? '' }}</p>
+                </div>
+            </div>
             <form action="{{ route('web.logout') }}" method="POST">
                 @csrf
-                <button type="submit" class="w-full flex items-center space-x-reverse space-x-3 px-4 py-3 rounded-lg text-error hover:bg-error-container/10 transition-colors duration-200">
-                    <span class="material-symbols-outlined">logout</span>
-                    <span class="font-semibold text-sm">تسجيل الخروج</span>
+                <button type="submit" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-red-300 hover:bg-red-500/15 hover:text-red-200 transition-all duration-200 text-sm font-medium">
+                    <i class="ph-bold ph-sign-out text-lg"></i>
+                    <span>تسجيل الخروج</span>
                 </button>
             </form>
         </div>
     </nav>
 
-    <!-- TopAppBar -->
-    <header class="fixed top-0 right-[260px] w-[calc(100%-260px)] h-[72px] bg-surface border-b border-outline-variant flex justify-between items-center px-margin-page z-10">
-        <div class="flex items-center text-primary text-xl font-bold">
+    {{-- Top App Bar --}}
+    <header class="fixed top-0 right-[272px] w-[calc(100%-272px)] h-[72px] bg-white border-b border-[#E2E8F0] flex justify-between items-center px-8 z-10">
+        <div class="flex items-center text-[#1A202C] text-lg font-bold">
             @yield('page_title')
         </div>
-        <div class="flex items-center space-x-reverse space-x-4">
-            <button class="p-2 rounded-full text-on-surface-variant hover:bg-surface-container-high transition-colors duration-150 flex items-center justify-center">
-                <span class="material-symbols-outlined">notifications</span>
+        <div class="flex items-center gap-4">
+            <button class="p-2 rounded-xl text-[#718096] hover:bg-[#F8F9FA] hover:text-[#0047AB] transition-colors duration-150">
+                <i class="ph-bold ph-bell text-xl"></i>
             </button>
-            <div class="w-10 h-10 rounded-full overflow-hidden border border-outline-variant ml-2">
-                <img alt="User Profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDSV0FNA2xZhyq1Uz3fXhELtpTUqGQscZYIttVVKZK00eXqctZIG-qrzBDGoN5-GlzBu30aH4tdERQKCXI2-sCzTk_JW-MoTtraVys48C1ZlQeEPhn52TDH-WQysEpFeIWEXgiupZWcpEivao_3Twt3w1qW8dWFin1QJU22LjgH4qYqCvNdqWKWfSW1XxgoYDOrFbtiIksQYgzrsJGskJTDCsUTPkqGr7oex4MBlhlOI3mDPFtZII5u"/>
+            <div class="w-9 h-9 rounded-full bg-gradient-to-br from-[#0047AB] to-[#00A896] flex items-center justify-center text-white font-bold text-sm shadow-sm">
+                {{ mb_substr(auth()->user()->name ?? '', 0, 1) }}
             </div>
         </div>
     </header>
 
-    <!-- Main Content Canvas -->
-    <main class="absolute top-[72px] right-[260px] w-[calc(100%-260px)] h-[calc(100vh-72px)] overflow-y-auto bg-surface-container-lowest p-margin-page">
+    {{-- Main Content Canvas --}}
+    <main class="absolute top-[72px] right-[272px] w-[calc(100%-272px)] h-[calc(100vh-72px)] overflow-y-auto bg-bg-base p-8">
         @if(session('success'))
-            <div class="bg-success-container text-success border border-success/30 p-4 rounded-xl mb-6 flex items-center space-x-reverse space-x-3">
-                <span class="material-symbols-outlined text-green-600">check_circle</span>
-                <span class="text-green-800 font-medium">{{ session('success') }}</span>
+            <div class="bg-[#2EC4B6]/10 text-[#00A896] border border-[#2EC4B6]/30 p-4 rounded-2xl mb-6 flex items-center gap-3">
+                <i class="ph-bold ph-check-circle text-xl"></i>
+                <span class="font-medium text-sm">{{ session('success') }}</span>
+            </div>
+        @endif
+
+        @if(session('error'))
+            <div class="bg-red-50 text-red-700 border border-red-200 p-4 rounded-2xl mb-6 flex items-center gap-3">
+                <i class="ph-bold ph-warning-circle text-xl"></i>
+                <span class="font-medium text-sm">{{ session('error') }}</span>
             </div>
         @endif
 
         @yield('content')
     </main>
 
+    {{-- Global Modal JS --}}
+    <script>
+        function openModal(id) {
+            document.getElementById(id).classList.remove('hidden');
+        }
+        function closeModal(id) {
+            document.getElementById(id).classList.add('hidden');
+        }
+    </script>
+    @stack('scripts')
 </body>
 </html>

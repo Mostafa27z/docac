@@ -49,11 +49,71 @@ class InstructorCourseController extends Controller
         $instructorId = auth()->id();
         $courses = Course::where('instructor_id', $instructorId)->get();
         
-        $activationCodes = CourseActivationCode::whereHas('course', function($q) use ($instructorId) {
+        $activationCodes = \App\Models\CourseActivationCode::whereHas('course', function($q) use ($instructorId) {
             $q->where('instructor_id', $instructorId);
         })->with(['course', 'student'])->latest()->get();
 
-        return view('instructor.subscriptions.index', compact('courses', 'activationCodes'));
+        $enrollments = \App\Models\CourseEnrollment::whereHas('course', function($q) use ($instructorId) {
+            $q->where('instructor_id', $instructorId);
+        })->with(['course', 'student', 'payments'])->latest()->get();
+
+        return view('instructor.subscriptions.index', compact('courses', 'activationCodes', 'enrollments'));
+    }
+
+    public function updateCoursePrice(Request $request, Course $course)
+    {
+        if ($course->instructor_id !== auth()->id()) {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'price' => 'required|numeric|min:0',
+        ]);
+
+        $course->update([
+            'price' => $validated['price']
+        ]);
+
+        return redirect()->back()->with('success', 'تم تحديث سعر الكورس بنجاح.');
+    }
+
+    public function addInstallment(Request $request, \App\Models\CourseEnrollment $enrollment)
+    {
+        if ($enrollment->course->instructor_id !== auth()->id()) {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'amount' => 'required|numeric|min:0.01',
+            'notes' => 'nullable|string|max:255',
+        ]);
+
+        $newPaidAmount = $enrollment->paid_amount + $validated['amount'];
+        
+        // Ensure paid doesn't exceed total_price, but let's allow flexibility or cap it
+        if ($newPaidAmount > $enrollment->total_price) {
+            return redirect()->back()->with('error', 'المبلغ المدفوع يتجاوز إجمالي ثمن الكورس المستحق على الطالب.');
+        }
+
+        // Create the payment record
+        \App\Models\CoursePayment::create([
+            'course_enrollment_id' => $enrollment->id,
+            'amount' => $validated['amount'],
+            'notes' => $validated['notes'],
+        ]);
+
+        // Update payment status
+        $paymentStatus = 'partially_paid';
+        if ($newPaidAmount >= $enrollment->total_price) {
+            $paymentStatus = 'fully_paid';
+        }
+
+        $enrollment->update([
+            'paid_amount' => $newPaidAmount,
+            'payment_status' => $paymentStatus,
+        ]);
+
+        return redirect()->back()->with('success', "تم تسجيل دفعة بقيمة {$validated['amount']} للطالب {$enrollment->student->name} بنجاح.");
     }
 
     public function manage(Course $course)

@@ -114,6 +114,7 @@ class CourseController extends Controller
             'status' => 'active',
             'progress_percentage' => 0.00,
             'enrolled_at' => now(),
+            'total_price' => $course->price,
         ]);
 
         // Mark activation code as used
@@ -202,6 +203,7 @@ class CourseController extends Controller
             'status' => 'active',
             'progress_percentage' => 0.00,
             'enrolled_at' => now(),
+            'total_price' => $course->price,
         ]);
 
         // Mark code as used

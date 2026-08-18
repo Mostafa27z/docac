@@ -2,69 +2,46 @@
 
 @section('title', 'لوحة المحاضر - Doc Academy')
 @section('role_title', 'لوحة المحاضر')
-
-@section('page_title', 'لوحة قيادة المدرس')
+@section('page_title', 'لوحة القيادة')
 
 @section('content')
-    <!-- Stats Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter mb-stack-lg">
-        <div class="bg-surface-container-lowest border border-surface-container-highest rounded-xl p-stack-lg flex flex-col justify-between shadow-sm relative overflow-hidden group">
-            <div class="flex justify-between items-start mb-4">
-                <span class="text-on-surface-variant font-semibold text-sm">الكورسات الخاصة بي</span>
-                <div class="p-2 bg-primary-container/10 rounded-lg text-primary">
-                    <span class="material-symbols-outlined">menu_book</span>
-                </div>
-            </div>
-            <div>
-                <h3 class="text-3xl font-bold text-primary mb-1">{{ $stats['my_courses_count'] }}</h3>
-                <div class="text-xs text-tertiary">كورسات مسجلة ونشطة</div>
-            </div>
-        </div>
-        <div class="bg-surface-container-lowest border border-surface-container-highest rounded-xl p-stack-lg flex flex-col justify-between shadow-sm relative overflow-hidden group">
-            <div class="flex justify-between items-start mb-4">
-                <span class="text-on-surface-variant font-semibold text-sm">إجمالي الطلاب المشتركين</span>
-                <div class="p-2 bg-primary-container/10 rounded-lg text-primary">
-                    <span class="material-symbols-outlined">group</span>
-                </div>
-            </div>
-            <div>
-                <h3 class="text-3xl font-bold text-primary mb-1">{{ $stats['students_count'] }}</h3>
-                <div class="text-xs text-tertiary">طالب ملتحق بمساراتي</div>
-            </div>
-        </div>
-        <div class="bg-surface-container-lowest border border-surface-container-highest rounded-xl p-stack-lg flex flex-col justify-between shadow-sm relative overflow-hidden group">
-            <div class="flex justify-between items-start mb-4">
-                <span class="text-on-surface-variant font-semibold text-sm">بث مباشر مجدول</span>
-                <div class="p-2 bg-primary-container/10 rounded-lg text-primary">
-                    <span class="material-symbols-outlined">video_camera_front</span>
-                </div>
-            </div>
-            <div>
-                <h3 class="text-3xl font-bold text-primary mb-1">{{ $stats['live_sessions_count'] }}</h3>
-                <div class="text-xs text-tertiary">محاضرات بث قادمة</div>
-            </div>
-        </div>
+    {{-- Stats Grid --}}
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <x-stat-card icon="book-open-text" label="الكورسات الخاصة بي" :value="$stats['my_courses_count']" subtitle="كورسات مسجلة ونشطة" color="primary" />
+        <x-stat-card icon="users-three" label="إجمالي الطلاب المشتركين" :value="$stats['students_count']" subtitle="طالب ملتحق بمساراتي" color="teal" />
+        <x-stat-card icon="video-camera" label="بث مباشر مجدول" :value="$stats['live_sessions_count']" subtitle="محاضرات بث قادمة" color="ocean" />
     </div>
 
-    <!-- Quick Shortcuts Panel -->
-    <div class="bg-surface-container-lowest border border-surface-container-highest rounded-xl p-gutter shadow-sm">
-        <h2 class="text-xl font-bold text-primary mb-4">روابط سريعة لوحدات التحكم</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <a href="{{ route('instructor.courses.index') }}" class="p-6 bg-surface border border-outline-variant/30 rounded-xl hover:bg-primary/5 transition-all text-center">
-                <span class="material-symbols-outlined text-4xl text-primary mb-2">menu_book</span>
-                <h3 class="font-bold text-on-surface">إدارة المناهج والكورسات</h3>
-                <p class="text-xs text-secondary mt-1">إنشاء دورات ورفع الفيديوهات الدراسية</p>
+    {{-- Quick Links --}}
+    <x-card>
+        <div class="flex items-center gap-3 mb-6">
+            <div class="p-2 rounded-xl bg-[#0047AB]/10 text-[#0047AB]">
+                <i class="ph-bold ph-link text-lg"></i>
+            </div>
+            <h2 class="text-lg font-bold text-[#1A202C]">روابط سريعة لوحدات التحكم</h2>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <a href="{{ route('instructor.courses.index') }}" class="group p-6 bg-[#F8F9FA] border border-[#E2E8F0] rounded-2xl hover:border-[#0047AB]/30 hover:shadow-md transition-all text-center">
+                <div class="w-14 h-14 mx-auto rounded-2xl bg-[#0047AB]/10 text-[#0047AB] flex items-center justify-center mb-4 group-hover:bg-[#0047AB] group-hover:text-white transition-all">
+                    <i class="ph-bold ph-book-open-text text-2xl"></i>
+                </div>
+                <h3 class="font-bold text-[#1A202C] mb-1">إدارة المناهج والكورسات</h3>
+                <p class="text-xs text-[#718096]">إنشاء دورات ورفع الفيديوهات الدراسية</p>
             </a>
-            <a href="{{ route('instructor.subscriptions.index') }}" class="p-6 bg-surface border border-outline-variant/30 rounded-xl hover:bg-primary/5 transition-all text-center">
-                <span class="material-symbols-outlined text-4xl text-primary mb-2">vpn_key</span>
-                <h3 class="font-bold text-on-surface">المشتركين وأكواد التفعيل</h3>
-                <p class="text-xs text-secondary mt-1">توليد أكواد التسجيل ومتابعة الطلاب</p>
+            <a href="{{ route('instructor.subscriptions.index') }}" class="group p-6 bg-[#F8F9FA] border border-[#E2E8F0] rounded-2xl hover:border-[#00A896]/30 hover:shadow-md transition-all text-center">
+                <div class="w-14 h-14 mx-auto rounded-2xl bg-[#00A896]/10 text-[#00A896] flex items-center justify-center mb-4 group-hover:bg-[#00A896] group-hover:text-white transition-all">
+                    <i class="ph-bold ph-key text-2xl"></i>
+                </div>
+                <h3 class="font-bold text-[#1A202C] mb-1">المشتركين وأكواد التفعيل</h3>
+                <p class="text-xs text-[#718096]">توليد أكواد التسجيل ومتابعة الطلاب</p>
             </a>
-            <a href="{{ route('instructor.quizzes.index') }}" class="p-6 bg-surface border border-outline-variant/30 rounded-xl hover:bg-primary/5 transition-all text-center">
-                <span class="material-symbols-outlined text-4xl text-primary mb-2">quiz</span>
-                <h3 class="font-bold text-on-surface">الامتحانات والـ MCQs</h3>
-                <p class="text-xs text-secondary mt-1">إضافة أسئلة الاختبار والتقييمات</p>
+            <a href="{{ route('instructor.quizzes.index') }}" class="group p-6 bg-[#F8F9FA] border border-[#E2E8F0] rounded-2xl hover:border-[#0088CC]/30 hover:shadow-md transition-all text-center">
+                <div class="w-14 h-14 mx-auto rounded-2xl bg-[#0088CC]/10 text-[#0088CC] flex items-center justify-center mb-4 group-hover:bg-[#0088CC] group-hover:text-white transition-all">
+                    <i class="ph-bold ph-exam text-2xl"></i>
+                </div>
+                <h3 class="font-bold text-[#1A202C] mb-1">الامتحانات والـ MCQs</h3>
+                <p class="text-xs text-[#718096]">إضافة أسئلة الاختبار والتقييمات</p>
             </a>
         </div>
-    </div>
+    </x-card>
 @endsection

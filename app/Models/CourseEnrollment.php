@@ -12,13 +12,18 @@ class CourseEnrollment extends Model
         'status',
         'progress_percentage',
         'enrolled_at',
-        'completed_at'
+        'completed_at',
+        'total_price',
+        'paid_amount',
+        'payment_status'
     ];
 
     protected $casts = [
         'enrolled_at' => 'datetime',
         'completed_at' => 'datetime',
-        'progress_percentage' => 'decimal:2'
+        'progress_percentage' => 'decimal:2',
+        'total_price' => 'decimal:2',
+        'paid_amount' => 'decimal:2'
     ];
 
     public function course()
@@ -29,5 +34,10 @@ class CourseEnrollment extends Model
     public function student()
     {
         return $this->belongsTo(User::class, 'student_id');
+    }
+
+    public function payments()
+    {
+        return $this->hasMany(CoursePayment::class, 'course_enrollment_id');
     }
 }
