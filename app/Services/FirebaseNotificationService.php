@@ -11,7 +11,7 @@ class FirebaseNotificationService
 
     public function __construct()
     {
-        $this->credentialsPath = public_path('docacademyy-2bb9b-firebase-adminsdk-fbsvc-a1463378a6.json');
+        $this->credentialsPath = storage_path('app/firebase-credentials.json');
     }
 
     /**
