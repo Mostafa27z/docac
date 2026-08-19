@@ -23,6 +23,7 @@ class CourseResource extends JsonResource
             'type' => $this->type,
             'status' => $this->status,
             'published_at' => $this->published_at,
+            'price' => (float)$this->price,
             'instructor' => new UserResource($this->whenLoaded('instructor')),
             'sections' => CourseSectionResource::collection($this->whenLoaded('sections')),
             'enrollment' => $this->when($request->user(), function() use ($request) {

@@ -241,6 +241,7 @@ class CourseController extends Controller
                 'description' => $course->description,
                 'thumbnail' => $course->thumbnail,
                 'type' => $course->type,
+                'price' => (float)$course->price,
                 'instructor' => $course->instructor ? [
                     'id' => $course->instructor->id,
                     'name' => $course->instructor->name

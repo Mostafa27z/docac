@@ -29,6 +29,7 @@ Route::prefix('v1')->group(function () {
         Route::post('student/logout', [AuthController::class, 'logout']);
         Route::get('student/profile', [AuthController::class, 'me']);
         Route::put('student/profile', [AuthController::class, 'updateProfile']);
+        Route::post('student/device-token', [AuthController::class, 'registerDeviceToken']);
 
         // Categories (Spec: 2. التصنيفات)
         // Note: For now, we will add basic category/subcategory routes. Let's direct them to a CategoryController or define inline closures since Category tables don't exist yet, or dynamically return mock data that matches the specification. We can make a CategoryController!

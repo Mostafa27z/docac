@@ -175,4 +175,25 @@ class AuthController extends Controller
             ]
         ]);
     }
+
+    public function registerDeviceToken(Request $request)
+    {
+        $validated = $request->validate([
+            'token' => 'required|string',
+            'platform' => 'nullable|in:ios,android',
+        ]);
+
+        $request->user()->deviceTokens()->updateOrCreate(
+            ['token' => $validated['token']],
+            [
+                'platform' => $validated['platform'] ?? 'android',
+                'last_used_at' => now(),
+            ]
+        );
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Device token registered successfully.'
+        ]);
+    }
 }

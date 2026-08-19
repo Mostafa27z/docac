@@ -87,6 +87,24 @@
   }
   ```
 
+### تسجيل رمز جهاز الإشعارات (FCM Device Token)
+* **المسار:** `POST /api/v1/student/device-token`
+* **ملاحظة:** يتطلب هذا الطلب توثيق الـ Token في ترويسة الطلب (Bearer Token).
+* **المُدخلات (Payload):**
+  ```json
+  {
+    "token": "fcm_device_token_abc_123...",
+    "platform": "android"
+  }
+  ```
+* **المُخرجات (200 OK):**
+  ```json
+  {
+    "success": true,
+    "message": "Device token registered successfully."
+  }
+  ```
+
 ### عرض بيانات الملف الشخصي
 * **المسار:** `GET /api/v1/student/profile`
 * **المُخرجات (200 OK):**
@@ -189,7 +207,8 @@
         "slug": "cardiology-basics",
         "description": "Introduction course to ECG...",
         "thumbnail": "courses/cardiology-basics.jpg",
-        "type": "recorded"
+        "type": "recorded",
+        "price": 150.00
       }
     ]
   }
@@ -204,6 +223,7 @@
       "id": 1,
       "title": "Cardiology Basics",
       "description": "Introduction course to ECG...",
+      "price": 150.00,
       "instructor": {
         "id": 1,
         "name": "Dr. Ahmed Ali"
@@ -256,6 +276,7 @@
         "description": "Introduction course to ECG...",
         "thumbnail": "courses/cardiology-basics.jpg",
         "type": "recorded",
+        "price": 150.00,
         "overall_progress_percentage": 50.0
       }
     ]
@@ -521,6 +542,28 @@
       "message_text": "Thank you Doctor.",
       "type": "text",
       "attachment_path": null
+    }
+  }
+  ```
+
+---
+
+## 9. بيانات التواصل والدعم (Support & Contacts)
+
+### استرجاع قنوات التواصل والدعم الفني
+* **المسار:** `GET /api/v1/contacts`
+* **ملاحظة:** مسار عام لا يتطلب تسجيل الدخول (Public API).
+* **المُخرجات (200OK):**
+  ```json
+  {
+    "success": true,
+    "message": "Contact details retrieved successfully.",
+    "data": {
+      "facebook_url": "https://www.facebook.com/share/1YMP1n8ySD/",
+      "youtube_url": "https://youtube.com/@docacademy23?si=TIrT50jyVpi5DYn3",
+      "whatsapp_number": "01090214254",
+      "telegram_number": "01090214254",
+      "telegram_username": "DocAcademyy"
     }
   }
   ```
