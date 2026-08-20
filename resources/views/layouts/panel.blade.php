@@ -123,12 +123,12 @@
                         <span>إدارة الكورسات</span>
                     </a>
                 </li>
-                <li>
+                <!-- <li>
                     <a class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->routeIs('instructor.subscriptions.*') ? 'bg-white/15 text-white shadow-sm' : 'text-white/70 hover:text-white hover:bg-white/8' }}" href="{{ route('instructor.subscriptions.index') }}">
                         <i class="ph-bold ph-key text-lg"></i>
-                        <span>المشتركين والأكواد</span>
+                        <span>المشتركيد</span>
                     </a>
-                </li>
+                </li> -->
                 <li>
                     <a class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->routeIs('instructor.quizzes.*') ? 'bg-white/15 text-white shadow-sm' : 'text-white/70 hover:text-white hover:bg-white/8' }}" href="{{ route('instructor.quizzes.index') }}">
                         <i class="ph-bold ph-exam text-lg"></i>

@@ -4,7 +4,7 @@
     <label for="{{ $name }}" class="block text-sm font-semibold text-[#4A5568] mb-1.5">{{ $label }}</label>
     <textarea
         name="{{ $name }}"
-        id="{{ $name }}"
+        id="{{ $attributes->get('id', $name) }}"
         rows="{{ $rows }}"
         placeholder="{{ $placeholder }}"
         {{ $required ? 'required' : '' }}

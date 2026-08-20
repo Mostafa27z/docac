@@ -18,7 +18,10 @@ Route::post('/logout', [HomeController::class, 'logout'])->name('web.logout');
 Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
     Route::get('/teachers', [AdminController::class, 'teachersList'])->name('admin.teachers.index');
-    Route::post('/instructors', [AdminController::class, 'createInstructor'])->name('admin.instructors.create');
+    Route::post('/teachers', [AdminController::class, 'createTeacher'])->name('admin.teachers.store');
+    Route::put('/teachers/{user}', [AdminController::class, 'updateTeacher'])->name('admin.teachers.update');
+    Route::delete('/teachers/{user}', [AdminController::class, 'destroyTeacher'])->name('admin.teachers.destroy');
+    Route::post('/instructors', [AdminController::class, 'createTeacher'])->name('admin.instructors.create'); // Keep alias for backwards compatibility
     Route::post('/activation-codes', [AdminController::class, 'generateCodes'])->name('admin.codes.generate');
     Route::get('/activation-codes', [AdminController::class, 'activationCodesIndex'])->name('admin.codes.index');
 
@@ -29,6 +32,7 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/students', [AdminController::class, 'studentsList'])->name('admin.students.index');
     Route::post('/students/{user}/reset-device', [AdminController::class, 'resetDevice'])->name('admin.students.resetDevice');
     Route::post('/students/{user}/toggle-status', [AdminController::class, 'toggleStatus'])->name('admin.students.toggleStatus');
+    Route::post('/students/subscribe', [AdminController::class, 'subscribeStudentToCourse'])->name('admin.students.subscribe');
 
     // Settings Routes
     Route::get('/settings', [AdminController::class, 'settingsIndex'])->name('admin.settings.index');
@@ -44,14 +48,19 @@ Route::prefix('instructor')->middleware(['auth', 'role:instructor'])->group(func
     Route::get('/courses', [InstructorCourseController::class, 'index'])->name('instructor.courses.index');
     Route::post('/courses', [InstructorCourseController::class, 'storeCourse'])->name('instructor.courses.store');
     Route::get('/courses/{course}/manage', [InstructorCourseController::class, 'manage'])->name('instructor.courses.manage');
+    Route::put('/courses/{course}', [InstructorCourseController::class, 'updateCourse'])->name('instructor.courses.update');
+    Route::delete('/courses/{course}', [InstructorCourseController::class, 'destroyCourse'])->name('instructor.courses.destroy');
     Route::post('/courses/{course}/publish', [InstructorCourseController::class, 'togglePublish'])->name('instructor.courses.publish');
     Route::post('/courses/{course}/sections', [InstructorCourseController::class, 'addSection'])->name('instructor.sections.store');
     Route::post('/sections/{section}/lessons/chunked', [InstructorCourseController::class, 'uploadChunkedLesson'])->name('instructor.lessons.chunked');
+    Route::put('/lessons/{lesson}', [InstructorCourseController::class, 'updateLesson'])->name('instructor.lessons.update');
+    Route::delete('/lessons/{lesson}', [InstructorCourseController::class, 'destroyLesson'])->name('instructor.lessons.destroy');
     Route::post('/courses/{course}/attachments', [InstructorCourseController::class, 'uploadAttachment'])->name('instructor.attachments.store');
+    Route::post('/courses/{course}/live-sessions', [InstructorCourseController::class, 'storeLiveSession'])->name('instructor.live-sessions.store');
+    Route::delete('/live-sessions/{liveSession}', [InstructorCourseController::class, 'destroyLiveSession'])->name('instructor.live-sessions.destroy');
 
     // 3. Subscriptions & Codes
     Route::get('/subscriptions', [InstructorCourseController::class, 'subscriptionsIndex'])->name('instructor.subscriptions.index');
-    Route::post('/courses/{course}/activation-codes', [InstructorCourseController::class, 'generateActivationCodes'])->name('instructor.courses.codes');
     Route::post('/courses/{course}/price', [InstructorCourseController::class, 'updateCoursePrice'])->name('instructor.courses.price');
     Route::post('/enrollments/{enrollment}/installments', [InstructorCourseController::class, 'addInstallment'])->name('instructor.enrollments.installment');
 

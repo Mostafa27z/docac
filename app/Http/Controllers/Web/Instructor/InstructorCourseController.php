@@ -48,16 +48,12 @@ class InstructorCourseController extends Controller
     {
         $instructorId = auth()->id();
         $courses = Course::where('instructor_id', $instructorId)->get();
-        
-        $activationCodes = \App\Models\CourseActivationCode::whereHas('course', function($q) use ($instructorId) {
-            $q->where('instructor_id', $instructorId);
-        })->with(['course', 'student'])->latest()->get();
 
         $enrollments = \App\Models\CourseEnrollment::whereHas('course', function($q) use ($instructorId) {
             $q->where('instructor_id', $instructorId);
         })->with(['course', 'student', 'payments'])->latest()->get();
 
-        return view('instructor.subscriptions.index', compact('courses', 'activationCodes', 'enrollments'));
+        return view('instructor.subscriptions.index', compact('courses', 'enrollments'));
     }
 
     public function updateCoursePrice(Request $request, Course $course)
@@ -124,12 +120,8 @@ class InstructorCourseController extends Controller
         }
 
         $course->load(['sections.lessons.quiz.questions.options', 'files', 'liveSessions']);
-        $activationCodes = CourseActivationCode::where('course_id', $course->id)
-            ->with('student')
-            ->latest()
-            ->get();
 
-        return view('instructor.courses.manage', compact('course', 'activationCodes'));
+        return view('instructor.courses.manage', compact('course'));
     }
 
     public function togglePublish(Course $course)
@@ -148,35 +140,6 @@ class InstructorCourseController extends Controller
 
         $message = $newStatus === 'published' ? 'تم نشر الكورس بنجاح.' : 'تم تحويل الكورس إلى مسودة.';
         return redirect()->back()->with('success', $message);
-    }
-
-    public function generateActivationCodes(Request $request, Course $course)
-    {
-        if ($course->instructor_id !== auth()->id()) {
-            abort(403);
-        }
-
-        $validated = $request->validate([
-            'quantity' => 'required|integer|min:1|max:50',
-        ]);
-
-        $cleanTitle = mb_substr(preg_replace('/[^A-Za-z0-9]/', '', $course->title), 0, 4, 'UTF-8');
-        if (empty($cleanTitle)) {
-            $cleanTitle = 'CRSE';
-        }
-
-        for ($i = 0; $i < $validated['quantity']; $i++) {
-            $code = strtoupper($cleanTitle . '-' . Str::random(4) . '-' . Str::random(4));
-            
-            CourseActivationCode::create([
-                'course_id' => $course->id,
-                'code' => $code,
-                'is_used' => false,
-                'created_by_user_id' => auth()->id(),
-            ]);
-        }
-
-        return redirect()->back()->with('success', "تم توليد {$validated['quantity']} كود تفعيل للكورس بنجاح.");
     }
 
     public function storeCourse(Request $request)
@@ -348,5 +311,137 @@ class InstructorCourseController extends Controller
         }
 
         return redirect()->back()->with('error', 'حدث خطأ أثناء رفع الملف.');
+    }
+
+    public function updateCourse(Request $request, Course $course)
+    {
+        if ($course->instructor_id !== auth()->id()) {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'type' => 'required|in:recorded,live,mixed',
+            'price' => 'required|numeric|min:0',
+            'thumbnail_file' => 'nullable|image|max:2048', // Max 2MB
+        ]);
+
+        $updateData = [
+            'title' => $validated['title'],
+            'description' => $validated['description'],
+            'type' => $validated['type'],
+            'price' => $validated['price'],
+        ];
+
+        if ($request->hasFile('thumbnail_file')) {
+            $filePath = $this->bunnyStorage->uploadFile(
+                $request->file('thumbnail_file'),
+                'courses/thumbnails'
+            );
+            if ($filePath) {
+                $updateData['thumbnail'] = $filePath;
+            }
+        }
+
+        $course->update($updateData);
+
+        return redirect()->back()->with('success', 'تم تحديث بيانات الكورس بنجاح.');
+    }
+
+    public function destroyCourse(Request $request, Course $course)
+    {
+        if ($course->instructor_id !== auth()->id()) {
+            abort(403);
+        }
+
+        $request->validate([
+            'password' => 'required|string',
+        ]);
+
+        if (!\Illuminate\Support\Facades\Hash::check($request->password, auth()->user()->password)) {
+            return redirect()->back()->withErrors(['password' => 'كلمة المرور غير صحيحة.'])->with('error', 'فشل الحذف: كلمة المرور المدخلة غير صحيحة.');
+        }
+
+        // Delete course cascade handles sections, lessons, etc via DB foreign key cascades
+        $course->delete();
+
+        return redirect()->route('instructor.courses.index')->with('success', 'تم حذف الكورس وجميع محتوياته بنجاح.');
+    }
+
+    public function updateLesson(Request $request, Lesson $lesson)
+    {
+        if ($lesson->section->course->instructor_id !== auth()->id()) {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'is_preview' => 'nullable|boolean',
+            'video_duration_seconds' => 'nullable|integer|min:0',
+        ]);
+
+        $lesson->update([
+            'title' => $validated['title'],
+            'description' => $validated['description'] ?? null,
+            'is_preview' => $request->boolean('is_preview'),
+            'video_duration_seconds' => $validated['video_duration_seconds'] ?? 0,
+        ]);
+
+        return redirect()->back()->with('success', 'تم تحديث بيانات الدرس بنجاح.');
+    }
+
+    public function destroyLesson(Lesson $lesson)
+    {
+        if ($lesson->section->course->instructor_id !== auth()->id()) {
+            abort(403);
+        }
+
+        $lesson->delete();
+
+        return redirect()->back()->with('success', 'تم حذف الدرس بنجاح.');
+    }
+
+    public function storeLiveSession(Request $request, Course $course)
+    {
+        if ($course->instructor_id !== auth()->id()) {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'start_at' => 'required|date',
+            'end_at' => 'required|date|after:start_at',
+            'meeting_provider' => 'required|in:zoom,google_meet',
+            'meeting_url' => 'required|string|max:255',
+            'meeting_id' => 'nullable|string|max:100',
+        ]);
+
+        \App\Models\LiveSession::create([
+            'course_id' => $course->id,
+            'title' => $validated['title'],
+            'description' => $validated['description'] ?? null,
+            'start_at' => $validated['start_at'],
+            'end_at' => $validated['end_at'],
+            'meeting_provider' => $validated['meeting_provider'],
+            'meeting_url' => $validated['meeting_url'],
+            'meeting_id' => $validated['meeting_id'] ?? null,
+            'status' => 'scheduled',
+        ]);
+
+        return redirect()->back()->with('success', 'تم إنشاء وتجدول جلسة البث المباشر بنجاح.');
+    }
+
+    public function destroyLiveSession(\App\Models\LiveSession $liveSession)
+    {
+        if ($liveSession->course->instructor_id !== auth()->id()) {
+            abort(403);
+        }
+
+        $liveSession->delete();
+
+        return redirect()->back()->with('success', 'تم إلغاء وحذف جلسة البث المباشر بنجاح.');
     }
 }

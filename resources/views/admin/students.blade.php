@@ -19,6 +19,47 @@
         </x-slot>
     </x-page-header>
 
+    @if ($errors->any())
+        <div class="mb-6 p-4 bg-red-50 border-r-4 border-red-500 rounded-xl text-sm text-red-600 font-medium">
+            <ul class="list-disc mr-4 space-y-1">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    {{-- Manual Course Subscription Card --}}
+    <x-card class="mb-8">
+        <div class="flex items-center gap-3 mb-5">
+            <div class="p-2.5 rounded-xl bg-purple-600/10 text-purple-600">
+                <i class="ph-bold ph-keyholder text-xl"></i>
+            </div>
+            <h2 class="text-lg font-bold text-[#1A202C]">تسجيل واشتراك طالب يدوي في كورس</h2>
+        </div>
+
+        <form action="{{ route('admin.students.subscribe') }}" method="POST" class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+            @csrf
+            <div>
+                <x-form-input label="البريد الإلكتروني للطالب" name="email" type="email" :required="true" placeholder="student@gmail.com" />
+            </div>
+            <div>
+                <x-form-select label="اختر الكورس المستهدف" name="course_id" :required="true">
+                    <option value="">-- اختر الكورس --</option>
+                    @foreach($courses as $course)
+                        <option value="{{ $course->id }}">{{ $course->title }} ({{ $course->price }} ج.م)</option>
+                    @endforeach
+                </x-form-select>
+            </div>
+            <div>
+                <button type="submit" class="w-full inline-flex items-center justify-center gap-2 bg-[#0047AB] hover:bg-[#003B91] text-white font-semibold px-5 py-2.5 rounded-xl transition-all duration-200 text-sm">
+                    <i class="ph-bold ph-user-plus text-lg"></i>
+                    <span>تسجيل وتفعيل الاشتراك فورا</span>
+                </button>
+            </div>
+        </form>
+    </x-card>
+
     {{-- Students Table --}}
     <x-card>
         <div class="flex items-center gap-3 mb-5 pb-4 border-b border-[#E2E8F0]">

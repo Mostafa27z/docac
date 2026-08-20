@@ -56,7 +56,7 @@ class AdminController extends Controller
         return view('admin.teachers', compact('instructors'));
     }
 
-    public function createInstructor(Request $request)
+    public function createTeacher(Request $request)
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -74,7 +74,48 @@ class AdminController extends Controller
             'status' => 'active',
         ]);
 
-        return redirect()->back()->with('success', 'Instructor account created successfully.');
+        return redirect()->back()->with('success', 'تم إنشاء حساب المحاضر بنجاح.');
+    }
+
+    public function updateTeacher(Request $request, User $user)
+    {
+        if ($user->role !== 'instructor') {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+            'phone' => 'nullable|string|max:20',
+            'status' => 'required|in:active,suspended',
+            'password' => 'nullable|string|min:8',
+        ]);
+
+        $updateData = [
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'phone' => $validated['phone'],
+            'status' => $validated['status'],
+        ];
+
+        if ($request->filled('password')) {
+            $updateData['password'] = Hash::make($request->password);
+        }
+
+        $user->update($updateData);
+
+        return redirect()->back()->with('success', 'تم تحديث بيانات المحاضر بنجاح.');
+    }
+
+    public function destroyTeacher(User $user)
+    {
+        if ($user->role !== 'instructor') {
+            abort(403);
+        }
+
+        $user->delete();
+
+        return redirect()->back()->with('success', 'تم حذف حساب المحاضر بنجاح.');
     }
 
     public function generateCodes(Request $request)
@@ -115,8 +156,9 @@ class AdminController extends Controller
         }
 
         $students = $query->latest()->paginate(15);
+        $courses = Course::latest()->get();
 
-        return view('admin.students', compact('students'));
+        return view('admin.students', compact('students', 'courses'));
     }
 
     public function resetDevice(User $user)
@@ -175,5 +217,43 @@ class AdminController extends Controller
         }
 
         return redirect()->back()->with('success', 'تم تحديث بيانات الاتصال بنجاح.');
+    }
+
+    public function subscribeStudentToCourse(Request $request)
+    {
+        $validated = $request->validate([
+            'email' => 'required|email|exists:users,email',
+            'course_id' => 'required|exists:courses,id',
+        ]);
+
+        $student = User::where('email', $validated['email'])->firstOrFail();
+
+        if ($student->role !== 'student') {
+            return redirect()->back()->withErrors(['email' => 'هذا البريد الإلكتروني لا ينتمي لحساب طالب.'])->with('error', 'فشل الاشتراك: الحساب ليس لطالب.');
+        }
+
+        $course = Course::findOrFail($validated['course_id']);
+
+        // Check if already enrolled
+        $exists = \App\Models\CourseEnrollment::where('student_id', $student->id)
+            ->where('course_id', $course->id)
+            ->exists();
+
+        if ($exists) {
+            return redirect()->back()->with('error', "الطالب {$student->name} مشترك بالفعل في هذا الكورس.");
+        }
+
+        // Create the enrollment
+        \App\Models\CourseEnrollment::create([
+            'student_id' => $student->id,
+            'course_id' => $course->id,
+            'total_price' => $course->price,
+            'paid_amount' => $course->price, // Default fully paid by admin manual subscription
+            'payment_status' => 'fully_paid',
+            'status' => 'active',
+            'enrolled_at' => now(),
+        ]);
+
+        return redirect()->back()->with('success', "تم تسجيل الطالب {$student->name} في الكورس {$course->title} بنجاح.");
     }
 }

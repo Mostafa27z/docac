@@ -4,17 +4,39 @@
 @section('role_title', 'لوحة المحاضر')
 
 @section('page_title')
-    <div class="flex items-center gap-3">
-        <span>إدارة: {{ $course->title }}</span>
-        @if($course->status === 'published')
-            <x-badge variant="success">منشور</x-badge>
-        @else
-            <x-badge variant="warning">مسودة</x-badge>
-        @endif
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 w-full">
+        <div class="flex items-center gap-3">
+            <span>إدارة: {{ $course->title }}</span>
+            @if($course->status === 'published')
+                <x-badge variant="success">منشور</x-badge>
+            @else
+                <x-badge variant="warning">مسودة</x-badge>
+            @endif
+        </div>
+        <div class="flex gap-2">
+            <button type="button" onclick="openEditCourseModal()" class="inline-flex items-center gap-1.5 bg-[#0088CC] hover:bg-[#0088CC]/90 text-white text-xs font-semibold px-4 py-2 rounded-xl transition-all">
+                <i class="ph-bold ph-pencil-simple text-sm"></i>
+                تعديل بيانات الكورس
+            </button>
+            <button type="button" onclick="openDeleteCourseModal()" class="inline-flex items-center gap-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-semibold px-4 py-2 rounded-xl transition-all">
+                <i class="ph-bold ph-trash text-sm"></i>
+                حذف الكورس
+            </button>
+        </div>
     </div>
 @endsection
 
 @section('content')
+    @if ($errors->any())
+        <div class="mb-6 p-4 bg-red-50 border-r-4 border-red-500 rounded-xl text-sm text-red-600 font-medium">
+            <ul class="list-disc mr-4 space-y-1">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
     {{-- Top Actions & Pricing --}}
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
         <div class="lg:col-span-2">
@@ -92,7 +114,7 @@
                                     @endif
                                 </div>
                             </div>
-                            <div class="flex gap-2 items-center">
+                            <div class="flex gap-2 items-center flex-wrap justify-end">
                                 @if($lesson->type === 'video' && $lesson->video_url)
                                     <button onclick="previewBunnyVideo('{{ config('services.bunny.stream_library_id') }}', '{{ $lesson->video_url }}')" class="inline-flex items-center gap-1.5 bg-[#2EC4B6]/10 hover:bg-[#2EC4B6] text-[#00A896] hover:text-white text-xs font-semibold px-3 py-1.5 rounded-xl transition-all">
                                         <i class="ph-bold ph-play text-sm"></i>
@@ -105,6 +127,18 @@
                                         إدارة الأسئلة
                                     </a>
                                 @endif
+                                <button type="button" onclick="openEditLessonModal({{ $lesson->id }}, '{{ addslashes($lesson->title) }}', '{{ addslashes($lesson->description ?? '') }}', {{ $lesson->is_preview ? 1 : 0 }}, {{ $lesson->video_duration_seconds ?? 0 }})" class="inline-flex items-center gap-1.5 bg-[#0088CC]/10 hover:bg-[#0088CC] text-[#0088CC] hover:text-white text-xs font-semibold px-3 py-1.5 rounded-xl transition-all">
+                                    <i class="ph-bold ph-pencil text-sm"></i>
+                                    تعديل
+                                </button>
+                                <form action="{{ route('instructor.lessons.destroy', $lesson->id) }}" method="POST" onsubmit="return confirm('هل أنت متأكد من رغبتك في حذف هذا الدرس؟ لا يمكن التراجع عن هذا الإجراء.')" class="inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="inline-flex items-center gap-1.5 bg-red-600/10 hover:bg-red-600 text-red-600 hover:text-white text-xs font-semibold px-3 py-1.5 rounded-xl transition-all">
+                                        <i class="ph-bold ph-trash text-sm"></i>
+                                        حذف
+                                    </button>
+                                </form>
                             </div>
                         </li>
                     @empty
@@ -282,6 +316,96 @@
         </x-data-table>
     </x-card>
 
+    {{-- 4. Live Sessions --}}
+    <x-card class="mb-6">
+        <div class="flex items-center gap-3 mb-5">
+            <div class="p-2.5 rounded-xl bg-purple-600/10 text-purple-600">
+                <i class="ph-bold ph-video-camera text-xl"></i>
+            </div>
+            <h2 class="text-lg font-bold text-[#1A202C]">جلسات البث المباشر (Live Sessions)</h2>
+        </div>
+
+        {{-- Form to Schedule new live session --}}
+        <form action="{{ route('instructor.live-sessions.store', $course->id) }}" method="POST" class="space-y-4 mb-8 bg-[#F8F9FA] p-5 rounded-2xl border border-[#E2E8F0]">
+            @csrf
+            <h3 class="font-bold text-sm text-[#1A202C] flex items-center gap-1.5 mb-2">
+                <i class="ph-bold ph-plus-circle text-purple-600"></i>
+                جدولة بث مباشر جديد
+            </h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <x-form-input label="عنوان الجلسة" name="title" :required="true" placeholder="مثال: مناقشة أسئلة الامتحان والرد على الاستفسارات" />
+                <x-form-select label="مزود الخدمة" name="meeting_provider" :required="true">
+                    <option value="zoom">Zoom Meetings</option>
+                    <option value="google_meet">Google Meet</option>
+                </x-form-select>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <x-form-input label="موعد البدء" name="start_at" type="datetime-local" :required="true" />
+                <x-form-input label="موعد الانتهاء المتوقع" name="end_at" type="datetime-local" :required="true" />
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <x-form-input label="رابط الاجتماع (Meeting URL)" name="meeting_url" type="url" :required="true" placeholder="https://zoom.us/j/..." />
+                <x-form-input label="معرف الاجتماع (Meeting ID / اختياري)" name="meeting_id" placeholder="987 654 3210" />
+            </div>
+
+            <x-form-textarea label="وصف أو ملاحظات الجلسة (اختياري)" name="description" rows="2" placeholder="اكتب تفاصيل أو تنويهات للطلاب بخصوص هذا البث..." />
+
+            <x-btn-primary icon="plus" type="submit">إضافة وجدولة الجلسة</x-btn-primary>
+        </form>
+
+        {{-- Sessions List --}}
+        <x-data-table :headers="['عنوان الجلسة', 'الموعد والوقت', 'المنصة', 'الحالة', 'رابط الانضمام', 'الإجراءات']">
+            @forelse($course->liveSessions as $session)
+                <tr class="border-b border-[#E2E8F0] hover:bg-[#F8F9FA] transition-colors">
+                    <td class="py-4 px-4 font-semibold text-[#1A202C]">{{ $session->title }}</td>
+                    <td class="py-4 px-4 text-xs text-[#718096]">
+                        <div>البدء: {{ $session->start_at->format('Y-m-d H:i') }}</div>
+                        <div class="mt-0.5">الانتهاء: {{ $session->end_at->format('Y-m-d H:i') }}</div>
+                    </td>
+                    <td class="py-4 px-4 text-sm text-[#718096]">
+                        @if($session->meeting_provider === 'zoom')
+                            <x-badge variant="info">Zoom</x-badge>
+                        @else
+                            <x-badge variant="teal">Google Meet</x-badge>
+                        @endif
+                    </td>
+                    <td class="py-4 px-4">
+                        @if($session->status === 'scheduled')
+                            <x-badge variant="warning">مجدول</x-badge>
+                        @elseif($session->status === 'live')
+                            <x-badge variant="success">بث مباشر الآن</x-badge>
+                        @else
+                            <x-badge variant="neutral">منتهي</x-badge>
+                        @endif
+                    </td>
+                    <td class="py-4 px-4 text-sm">
+                        <a href="{{ $session->meeting_url }}" target="_blank" class="inline-flex items-center gap-1 text-[#0047AB] hover:underline font-semibold">
+                            <i class="ph-bold ph-arrow-square-out"></i>
+                            رابط الجلسة
+                        </a>
+                    </td>
+                    <td class="py-4 px-4">
+                        <form action="{{ route('instructor.live-sessions.destroy', $session->id) }}" method="POST" onsubmit="return confirm('هل أنت متأكد من رغبتك في إلغاء وحذف جلسة البث هذه؟')" class="inline">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="inline-flex items-center gap-1.5 bg-red-600/10 hover:bg-red-600 text-red-600 hover:text-white text-xs font-semibold px-3 py-1.5 rounded-xl transition-all">
+                                <i class="ph-bold ph-trash"></i>
+                                حذف الجلسة
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            @empty
+                <tr>
+                    <td colspan="6" class="py-8 text-center text-[#718096] text-sm">لا توجد جلسات بث مباشر مجدولة لهذا الكورس.</td>
+                </tr>
+            @endforelse
+        </x-data-table>
+    </x-card>
+
     {{-- Chunked Upload JS --}}
     @push('scripts')
     <script>
@@ -411,6 +535,33 @@
         document.getElementById('bunny-video-container').innerHTML = '';
         modal.style.display = 'none';
     }
+
+    // Course Edit & Delete Modal Functions
+    function openEditCourseModal() {
+        document.getElementById('edit-course-modal').style.display = 'flex';
+    }
+    function closeEditCourseModal() {
+        document.getElementById('edit-course-modal').style.display = 'none';
+    }
+    function openDeleteCourseModal() {
+        document.getElementById('delete-course-modal').style.display = 'flex';
+    }
+    function closeDeleteCourseModal() {
+        document.getElementById('delete-course-modal').style.display = 'none';
+    }
+
+    // Lesson Edit Modal Function
+    function openEditLessonModal(id, title, description, isPreview, duration) {
+        document.getElementById('edit-lesson-form').action = `/instructor/lessons/${id}`;
+        document.getElementById('edit-lesson-title').value = title;
+        document.getElementById('edit-lesson-description').value = description;
+        document.getElementById('edit-lesson-preview').checked = isPreview == 1;
+        document.getElementById('edit-lesson-duration').value = duration;
+        document.getElementById('edit-lesson-modal').style.display = 'flex';
+    }
+    function closeEditLessonModal() {
+        document.getElementById('edit-lesson-modal').style.display = 'none';
+    }
     </script>
     @endpush
 
@@ -426,6 +577,89 @@
                 معاينة الفيديو
             </h3>
             <div id="bunny-video-container"></div>
+        </div>
+    </div>
+
+    {{-- Edit Course Modal --}}
+    <div id="edit-course-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(26,32,44,0.6); z-index: 1000; align-items: center; justify-content: center; overflow-y: auto;">
+        <div class="bg-white border border-[#E2E8F0] rounded-2xl w-11/12 max-w-lg p-6 relative shadow-2xl my-8">
+            <h3 class="text-lg font-bold mb-4 text-right text-[#1A202C] flex items-center gap-2 pb-3 border-b border-[#E2E8F0]">
+                <i class="ph-bold ph-pencil-simple text-[#0047AB]"></i>
+                تعديل بيانات الكورس
+            </h3>
+            <form action="{{ route('instructor.courses.update', $course->id) }}" method="POST" enctype="multipart/form-data" class="space-y-4">
+                @csrf
+                @method('PUT')
+                <x-form-input label="عنوان الكورس" name="title" :required="true" value="{{ $course->title }}" />
+                <x-form-select label="نوع الكورس" name="type" :required="true">
+                    <option value="recorded" {{ $course->type === 'recorded' ? 'selected' : '' }}>محاضرات مسجلة فقط</option>
+                    <option value="live" {{ $course->type === 'live' ? 'selected' : '' }}>جلسات بث مباشر فقط</option>
+                    <option value="mixed" {{ $course->type === 'mixed' ? 'selected' : '' }}>هجين (مسجل + بث مباشر)</option>
+                </x-form-select>
+                <x-form-input label="سعر الكورس" name="price" type="number" step="0.01" min="0" value="{{ $course->price }}" :required="true" />
+                <x-form-textarea label="وصف الكورس" name="description" :required="true" rows="4">{{ $course->description }}</x-form-textarea>
+                
+                <div>
+                    <label class="block text-sm font-semibold text-[#4A5568] mb-1.5">صورة الغلاف (Thumbnail)</label>
+                    <input type="file" name="thumbnail_file" accept="image/*" class="w-full text-sm text-[#718096] file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-[#0047AB]/10 file:text-[#0047AB] hover:file:bg-[#0047AB]/20 transition-all">
+                </div>
+
+                <div class="flex gap-3 justify-end pt-4 border-t border-[#E2E8F0]">
+                    <button type="button" onclick="closeEditCourseModal()" class="bg-[#F8F9FA] hover:bg-[#E2E8F0] text-[#4A5568] font-semibold px-5 py-2.5 rounded-xl transition-colors text-sm">إلغاء</button>
+                    <x-btn-primary icon="floppy-disk" type="submit">حفظ التغييرات</x-btn-primary>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {{-- Delete Course Modal --}}
+    <div id="delete-course-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(26,32,44,0.6); z-index: 1000; align-items: center; justify-content: center;">
+        <div class="bg-white border border-[#E2E8F0] rounded-2xl w-11/12 max-w-md p-6 relative shadow-2xl">
+            <h3 class="text-lg font-bold mb-2 text-right text-red-600 flex items-center gap-2">
+                <i class="ph-bold ph-warning"></i>
+                حذف الكورس نهائياً
+            </h3>
+            <p class="text-sm text-[#718096] mb-4">إن حذف الكورس سيؤدي إلى مسح جميع الأقسام، الدروس، المرفقات، والامتحانات المرتبطة به. لا يمكن استعادة هذه البيانات بعد الحذف.</p>
+            <form action="{{ route('instructor.courses.destroy', $course->id) }}" method="POST" class="space-y-4">
+                @csrf
+                @method('DELETE')
+                <x-form-input label="يرجى إدخال كلمة المرور الخاصة بك لتأكيد الحذف" name="password" type="password" :required="true" placeholder="كلمة المرور الحالية" />
+
+                <div class="flex gap-3 justify-end pt-4 border-t border-[#E2E8F0]">
+                    <button type="button" onclick="closeDeleteCourseModal()" class="bg-[#F8F9FA] hover:bg-[#E2E8F0] text-[#4A5568] font-semibold px-5 py-2.5 rounded-xl transition-colors text-sm">إلغاء</button>
+                    <button type="submit" class="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white font-semibold px-5 py-2.5 rounded-xl transition-colors text-sm">
+                        <i class="ph-bold ph-trash"></i>
+                        حذف الكورس نهائياً
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {{-- Edit Lesson Modal --}}
+    <div id="edit-lesson-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(26,32,44,0.6); z-index: 1000; align-items: center; justify-content: center;">
+        <div class="bg-white border border-[#E2E8F0] rounded-2xl w-11/12 max-w-md p-6 relative shadow-2xl">
+            <h3 class="text-lg font-bold mb-4 text-right text-[#1A202C] flex items-center gap-2 pb-3 border-b border-[#E2E8F0]">
+                <i class="ph-bold ph-pencil-simple text-[#0088CC]"></i>
+                تعديل بيانات الدرس
+            </h3>
+            <form id="edit-lesson-form" action="" method="POST" class="space-y-4">
+                @csrf
+                @method('PUT')
+                <x-form-input label="عنوان الدرس" name="title" id="edit-lesson-title" :required="true" />
+                <x-form-textarea label="الوصف" name="description" id="edit-lesson-description" rows="3"></x-form-textarea>
+                <x-form-input label="مدة الفيديو (بالثواني)" name="video_duration_seconds" id="edit-lesson-duration" type="number" min="0" />
+                
+                <div class="flex items-center gap-2">
+                    <input type="checkbox" name="is_preview" id="edit-lesson-preview" value="1" class="rounded border-[#E2E8F0] text-[#0047AB] focus:ring-[#0047AB]">
+                    <label for="edit-lesson-preview" class="text-sm font-medium text-[#4A5568]">السماح بالمعاينة المجانية للدرس قبل الاشتراك</label>
+                </div>
+
+                <div class="flex gap-3 justify-end pt-4 border-t border-[#E2E8F0]">
+                    <button type="button" onclick="closeEditLessonModal()" class="bg-[#F8F9FA] hover:bg-[#E2E8F0] text-[#4A5568] font-semibold px-5 py-2.5 rounded-xl transition-colors text-sm">إلغاء</button>
+                    <x-btn-primary icon="floppy-disk" type="submit">حفظ</x-btn-primary>
+                </div>
+            </form>
         </div>
     </div>
 @endsection

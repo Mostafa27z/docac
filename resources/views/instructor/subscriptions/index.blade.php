@@ -1,67 +1,12 @@
 @extends('layouts.panel')
 
-@section('title', 'المشتركين وأكواد التفعيل - Doc Academy')
+@section('title', 'المشتركين والأقساط - Doc Academy')
 @section('role_title', 'لوحة المحاضر')
 @section('page_title', 'المشتركين والتفعيلات')
 
 @section('content')
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {{-- Generate Codes Form --}}
-        <x-card class="lg:col-span-1 h-fit">
-            <div class="flex items-center gap-3 mb-5">
-                <div class="p-2.5 rounded-xl bg-[#00A896]/10 text-[#00A896]">
-                    <i class="ph-bold ph-key text-xl"></i>
-                </div>
-                <h2 class="text-lg font-bold text-[#1A202C]">توليد أكواد تفعيل جديدة</h2>
-            </div>
-            <form id="generate-codes-form" action="" method="POST" class="space-y-4">
-                @csrf
-                <x-form-select label="اختر الكورس" name="course_id" :required="true" id="course-select" onchange="updateFormAction(this.value)">
-                    <option value="">-- اختر الكورس --</option>
-                    @foreach($courses as $course)
-                        <option value="{{ $course->id }}">{{ $course->title }}</option>
-                    @endforeach
-                </x-form-select>
-                <x-form-input label="الكمية المطلوبة لتوليد الأكواد" name="quantity" type="number" :required="true" value="10" />
-                <x-btn-primary icon="key" class="w-full" type="submit">توليد الأكواد الآن</x-btn-primary>
-            </form>
-        </x-card>
-
-        {{-- Activation Codes Table --}}
-        <x-card class="lg:col-span-2">
-            <div class="flex items-center gap-3 mb-5 pb-4 border-b border-[#E2E8F0]">
-                <div class="p-2 rounded-xl bg-[#0047AB]/10 text-[#0047AB]">
-                    <i class="ph-bold ph-list-dashes text-lg"></i>
-                </div>
-                <h2 class="text-lg font-bold text-[#1A202C]">كشف أكواد تفعيل المسارات</h2>
-            </div>
-
-            <x-data-table :headers="['الكورس', 'كود التفعيل', 'الحالة', 'المستخدم', 'تاريخ التفعيل']">
-                @forelse($activationCodes as $code)
-                    <tr class="border-b border-[#E2E8F0] hover:bg-[#F8F9FA] transition-colors">
-                        <td class="py-4 px-4 text-[#1A202C] text-sm font-semibold">{{ $code->course->title }}</td>
-                        <td class="py-4 px-4 font-mono font-bold text-[#0047AB]">{{ $code->code }}</td>
-                        <td class="py-4 px-4">
-                            @if($code->is_used)
-                                <x-badge variant="error">مُستخدم</x-badge>
-                            @else
-                                <x-badge variant="success">متاح</x-badge>
-                            @endif
-                        </td>
-                        <td class="py-4 px-4 text-[#1A202C] text-sm">{{ $code->student->name ?? '-' }}</td>
-                        <td class="py-4 px-4 text-[#718096] text-sm">{{ $code->used_at ? $code->used_at->format('Y-m-d H:i') : '-' }}</td>
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="5" class="py-8 text-center text-[#718096] text-sm">لا توجد أكواد تفعيل مولدة حتى الآن.</td>
-                    </tr>
-                @endforelse
-            </x-data-table>
-        </x-card>
-    </div>
-
     {{-- Enrolled Students & Installments --}}
-    <x-card class="mt-8">
+    <x-card>
         <div class="flex items-center gap-3 mb-5 pb-4 border-b border-[#E2E8F0]">
             <div class="p-2 rounded-xl bg-[#0047AB]/10 text-[#0047AB]">
                 <i class="ph-bold ph-student text-lg"></i>
@@ -103,7 +48,7 @@
                                     تسجيل دفعة
                                 </button>
                             @endif
-                            <button onclick="openHistoryModal('{{ $enrollment->student->name }}', '{{ $enrollment->course->title }}', {{ json_encode($enrollment->payments) }})" 
+                            <button onclick="openHistoryModal('{{ $enrollment->student->name }}', '{{ $enrollment->course->title }}', '{{ json_encode($enrollment->payments) }}')" 
                                     class="inline-flex items-center gap-1 bg-[#F8F9FA] hover:bg-[#E2E8F0] border border-[#E2E8F0] text-[#4A5568] text-xs font-semibold px-3 py-1.5 rounded-xl transition-all">
                                 <i class="ph-bold ph-clock"></i>
                                 كشف الدفعات
@@ -168,11 +113,6 @@
 
     @push('scripts')
     <script>
-        function updateFormAction(courseId) {
-            const form = document.getElementById('generate-codes-form');
-            form.action = courseId ? `/instructor/courses/${courseId}/activation-codes` : '';
-        }
-
         function openInstallmentModal(enrollmentId, studentName, remainingAmount) {
             document.getElementById('installment-student-name').innerText = studentName;
             document.getElementById('installment-remaining-amount').innerText = remainingAmount;
