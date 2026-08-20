@@ -4,6 +4,7 @@ namespace App\Http\Resources\Api\V1;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Services\BunnyCdnService;
 
 class LessonResource extends JsonResource
 {
@@ -14,6 +15,8 @@ class LessonResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $bunnyCdn = app(BunnyCdnService::class);
+
         return [
             'id' => $this->id,
             'title' => $this->title,
@@ -22,7 +25,9 @@ class LessonResource extends JsonResource
             'video_duration_seconds' => $this->video_duration_seconds,
             'sort_order' => $this->sort_order,
             'is_preview' => $this->is_preview,
-            'video_url' => $this->when($this->is_preview || ($request->user() && $this->isUserEnrolled($request->user())), $this->video_url),
+            'video_url' => $this->when($this->is_preview || ($request->user() && $this->isUserEnrolled($request->user())), function() use ($bunnyCdn) {
+                return $bunnyCdn->buildVideoPlaybackUrl($this->video_url);
+            }),
             'progress' => $this->when($request->user(), function() use ($request) {
                 $progress = $this->progress()->where('student_id', $request->user()->id)->first();
                 if ($progress) {
@@ -47,3 +52,4 @@ class LessonResource extends JsonResource
         return $user->enrollments()->where('course_id', $courseId)->where('status', 'active')->exists();
     }
 }
+

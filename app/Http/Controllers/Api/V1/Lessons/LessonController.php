@@ -57,9 +57,9 @@ class LessonController extends Controller
         // Route is protected by course.enrollment middleware
         $lesson->load('section');
 
-        // If it's a video type and has video_url stored, sign it using Bunny CDN
+        // If it's a video type and has video_url stored, build the full playback URL
         if ($lesson->type === 'video' && $lesson->video_url) {
-            $lesson->video_url = $this->bunnyCdn->generateSignedUrl($lesson->video_url);
+            $lesson->video_url = $this->bunnyCdn->buildVideoPlaybackUrl($lesson->video_url);
         }
 
         return (new LessonResource($lesson))->additional([
