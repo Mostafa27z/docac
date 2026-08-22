@@ -27,11 +27,12 @@ class RoleMiddleware
             return redirect()->route('login');
         }
 
-        if ($user->role !== $role) {
+        $roles = explode('|', $role);
+        if (! in_array($user->role, $roles)) {
             if ($request->expectsJson() || $request->is('api/*')) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Unauthorized. This action requires the ' . $role . ' role.',
+                    'message' => 'Unauthorized. This action requires one of the following roles: ' . implode(', ', $roles),
                 ], 403);
             }
             abort(403, 'غير مصرح لك بالوصول لهذه الصفحة.');

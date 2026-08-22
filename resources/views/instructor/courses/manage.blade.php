@@ -13,7 +13,11 @@
                 <x-badge variant="warning">مسودة</x-badge>
             @endif
         </div>
-        <div class="flex gap-2">
+        <div class="flex gap-2 flex-wrap">
+            <a href="{{ route('instructor.courses.analytics', $course->id) }}" class="inline-flex items-center gap-1.5 bg-[#00A896] hover:bg-[#00A896]/90 text-white text-xs font-semibold px-4 py-2 rounded-xl transition-all">
+                <i class="ph-bold ph-chart-line-up text-sm"></i>
+                نتائج وتقدم الطلاب
+            </a>
             <button type="button" onclick="openEditCourseModal()" class="inline-flex items-center gap-1.5 bg-[#0088CC] hover:bg-[#0088CC]/90 text-white text-xs font-semibold px-4 py-2 rounded-xl transition-all">
                 <i class="ph-bold ph-pencil-simple text-sm"></i>
                 تعديل بيانات الكورس

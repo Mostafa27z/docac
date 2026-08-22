@@ -189,6 +189,20 @@ class AdminController extends Controller
         return redirect()->back()->with('success', "تم {$statusText} حساب الطالب {$user->name} بنجاح.");
     }
 
+    public function upgradeStudentToInstructor(User $user)
+    {
+        if ($user->role !== 'student') {
+            return redirect()->back()->with('error', 'هذا الحساب ليس حساب طالب.');
+        }
+
+        $user->update([
+            'role' => 'instructor',
+            'status' => 'active'
+        ]);
+
+        return redirect()->back()->with('success', "تم ترقية الطالب {$user->name} ليكون محاضراً بنجاح.");
+    }
+
     public function settingsIndex()
     {
         $settings = [

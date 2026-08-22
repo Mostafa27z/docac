@@ -24,6 +24,16 @@ class CourseResource extends JsonResource
             'status' => $this->status,
             'published_at' => $this->published_at,
             'price' => (float)$this->price,
+            'category' => $this->category ? [
+                'id' => $this->category->id,
+                'name' => $this->category->name,
+                'slug' => $this->category->slug,
+            ] : null,
+            'subcategory' => $this->subcategory ? [
+                'id' => $this->subcategory->id,
+                'name' => $this->subcategory->name,
+                'slug' => $this->subcategory->slug,
+            ] : null,
             'instructor' => new UserResource($this->whenLoaded('instructor')),
             'sections' => CourseSectionResource::collection($this->whenLoaded('sections')),
             'enrollment' => $this->when($request->user(), function() use ($request) {

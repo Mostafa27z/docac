@@ -107,20 +107,29 @@
                     </td>
                     <td class="py-4 px-4 text-[#718096] text-sm">{{ $student->created_at->format('Y-m-d') }}</td>
                     <td class="py-4 px-4">
-                        <form action="{{ route('admin.students.toggleStatus', $student->id) }}" method="POST">
-                            @csrf
-                            @if($student->status === 'active')
-                                <button type="submit" class="inline-flex items-center gap-1 bg-amber-50 hover:bg-amber-100 text-amber-700 text-xs font-semibold px-3 py-1.5 rounded-xl border border-amber-200 transition-all">
-                                    <i class="ph-bold ph-prohibit-sidebar text-sm"></i>
-                                    <span>إيقاف الحساب</span>
+                        <div class="flex items-center gap-2">
+                            <form action="{{ route('admin.students.toggleStatus', $student->id) }}" method="POST">
+                                @csrf
+                                @if($student->status === 'active')
+                                    <button type="submit" class="inline-flex items-center gap-1 bg-amber-50 hover:bg-amber-100 text-amber-700 text-xs font-semibold px-3 py-1.5 rounded-xl border border-amber-200 transition-all">
+                                        <i class="ph-bold ph-prohibit-sidebar text-sm"></i>
+                                        <span>إيقاف الحساب</span>
+                                    </button>
+                                @else
+                                    <button type="submit" class="inline-flex items-center gap-1 bg-[#2EC4B6]/10 hover:bg-[#2EC4B6]/20 text-[#00A896] text-xs font-semibold px-3 py-1.5 rounded-xl border border-[#2EC4B6]/20 transition-all">
+                                        <i class="ph-bold ph-check text-sm"></i>
+                                        <span>تنشيط الحساب</span>
+                                    </button>
+                                @endif
+                            </form>
+                            <form action="{{ route('admin.students.upgrade', $student->id) }}" method="POST" onsubmit="return confirm('هل أنت متأكد من ترقية هذا الطالب ليصبح محاضراً في المنصة؟')">
+                                @csrf
+                                <button type="submit" class="inline-flex items-center gap-1 bg-purple-50 hover:bg-purple-100 text-purple-700 text-xs font-semibold px-3 py-1.5 rounded-xl border border-purple-200 transition-all">
+                                    <i class="ph-bold ph-arrow-up-right text-sm"></i>
+                                    <span>ترقية لمدرس</span>
                                 </button>
-                            @else
-                                <button type="submit" class="inline-flex items-center gap-1 bg-[#2EC4B6]/10 hover:bg-[#2EC4B6]/20 text-[#00A896] text-xs font-semibold px-3 py-1.5 rounded-xl border border-[#2EC4B6]/20 transition-all">
-                                    <i class="ph-bold ph-check text-sm"></i>
-                                    <span>تنشيط الحساب</span>
-                                </button>
-                            @endif
-                        </form>
+                            </form>
+                        </div>
                     </td>
                 </tr>
             @empty

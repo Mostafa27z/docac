@@ -8,6 +8,8 @@ class Course extends Model
 {
     protected $fillable = [
         'instructor_id',
+        'category_id',
+        'subcategory_id',
         'title',
         'slug',
         'description',
@@ -25,6 +27,16 @@ class Course extends Model
     public function instructor()
     {
         return $this->belongsTo(User::class, 'instructor_id');
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
+
+    public function subcategory()
+    {
+        return $this->belongsTo(Subcategory::class);
     }
 
     public function sections()

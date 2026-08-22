@@ -478,6 +478,68 @@ curl --location --request POST 'https://mediumspringgreen-aardvark-947551.hostin
 
 ---
 
+### استعلام الطالب عن الأقساط والمبالغ المدفوعة والمتبقية
+
+* **المسار:** `GET /api/v1/student/installments`
+* **التوثيق:** مطلوب (Bearer Token)
+* **حماية الجهاز:** مطلوبة (X-Device-ID)
+* **المدخلات (Query Params اختيارية):** `course_id` (تحديد كورس معين للاستعلام عنه)
+
+**cURL (عرض جميع الكورسات والأقساط):**
+```bash
+curl --location --request GET 'https://mediumspringgreen-aardvark-947551.hostingersite.com/api/v1/student/installments' \
+--header 'Accept: application/json' \
+--header 'Authorization: Bearer {YOUR_TOKEN}' \
+--header 'X-Device-ID: {YOUR_DEVICE_ID}'
+```
+
+**cURL (مع تصفية لكورس معين):**
+```bash
+curl --location --request GET 'https://mediumspringgreen-aardvark-947551.hostingersite.com/api/v1/student/installments?course_id=1' \
+--header 'Accept: application/json' \
+--header 'Authorization: Bearer {YOUR_TOKEN}' \
+--header 'X-Device-ID: {YOUR_DEVICE_ID}'
+```
+
+**المُخرجات (200 OK):**
+```json
+{
+  "success": true,
+  "message": "Installments retrieved successfully.",
+  "data": [
+    {
+      "enrollment_id": 1,
+      "course": {
+        "id": 1,
+        "title": "Cardiology Basics",
+        "thumbnail": "courses/cardiology-basics.jpg",
+        "type": "recorded"
+      },
+      "total_price": 1000.0,
+      "paid_amount": 600.0,
+      "remaining_amount": 400.0,
+      "payment_status": "partially_paid",
+      "payments_history": [
+        {
+          "id": 1,
+          "amount": 300.0,
+          "notes": "الدفعة الأولى",
+          "created_at": "2026-08-15T12:00:00.000000Z"
+        },
+        {
+          "id": 2,
+          "amount": 300.0,
+          "notes": "الدفعة الثانية",
+          "created_at": "2026-08-18T12:00:00.000000Z"
+        }
+      ]
+    }
+  ]
+}
+```
+
+---
+
 ## 4. المحاضرات ومعدل التقدم (Lectures & Progress)
 
 > **تنبيه:** جميع مسارات المحاضرات محمية بـ middleware حماية الجهاز (`single.device`) والتحقق من اشتراك الطالب في الكورس (`course.enrollment`).

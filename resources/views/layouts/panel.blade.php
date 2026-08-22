@@ -1,42 +1,34 @@
 <!DOCTYPE html>
-<html dir="rtl" lang="ar">
+<html lang="ar" dir="rtl">
 <head>
-    <meta charset="utf-8"/>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>@yield('title', 'Doc Academy')</title>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>@yield('title', 'Doc Academy - اللوحة الإدارية')</title>
+    
+    {{-- Fonts & Icons --}}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    
     {{-- Tailwind CSS CDN --}}
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-
-    {{-- Inter Font --}}
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-
-    {{-- Phosphor Icons --}}
-    <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css" />
-    <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/light/style.css" />
-
-    {{-- TUS Upload Client --}}
-    <script src="https://unpkg.com/tus-js-client@3.1.1/dist/tus.min.js"></script>
-
+    <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: { sans: ['Inter', 'sans-serif'] },
                     colors: {
-                        "primary":       "#0047AB",
-                        "primary-light": "#0088CC",
-                        "accent":        "#00A896",
-                        "accent-light":  "#2EC4B6",
-                        "bg-base":       "#F8F9FA",
-                        "dark":          "#1A202C",
-                        "muted":         "#718096",
-                        "border-clr":    "#E2E8F0",
-                        "surface":       "#FFFFFF",
-                    },
-                    spacing: {
-                        "sidebar_w": "272px",
-                        "topbar_h":  "72px",
+                        brand: {
+                            blue: "#0047AB",
+                            cyan: "#00A896",
+                            mint: "#2EC4B6",
+                            ocean: "#0088CC"
+                        },
+                        dark: "#1A202C",
+                        muted: "#718096",
+                        light: "#E2E8F0",
+                        "bg-base": "#F8F9FA"
                     },
                     borderRadius: {
                         "2xl": "1rem",
@@ -48,7 +40,6 @@
     </script>
     <style>
         body { font-family: 'Inter', sans-serif; }
-        /* Custom scrollbar */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #CBD5E0; border-radius: 999px; }
@@ -58,15 +49,23 @@
 </head>
 <body class="bg-bg-base text-dark h-screen overflow-hidden">
 
+    {{-- Mobile Overlay Backdrop --}}
+    <div id="mobile-backdrop" onclick="toggleMobileSidebar()" class="fixed inset-0 bg-black/50 z-40 hidden lg:hidden transition-opacity"></div>
+
     {{-- Sidebar Navigation --}}
-    <nav class="fixed right-0 top-0 h-screen w-[272px] bg-gradient-to-b from-[#0047AB] to-[#003380] flex flex-col z-20">
+    <nav id="sidebar" class="fixed right-0 top-0 h-screen w-[272px] bg-gradient-to-b from-[#0047AB] to-[#003380] flex flex-col z-50 transition-transform duration-300 transform max-lg:translate-x-full lg:translate-x-0">
         {{-- Brand Area --}}
-        <div class="px-6 pt-6 pb-5 flex items-center gap-3 border-b border-white/10">
-            <img src="/logo.jfif" alt="Doc Academy" class="w-11 h-11 rounded-xl shadow-lg" />
-            <div>
-                <span class="text-white font-bold text-base tracking-tight">Doc Academy</span>
-                <span class="block text-[#7EB8FF] text-[11px] font-medium">@yield('role_title', 'لوحة التحكم')</span>
+        <div class="px-6 pt-6 pb-5 flex items-center justify-between border-b border-white/10">
+            <div class="flex items-center gap-3">
+                <img src="/logo.jfif" alt="Doc Academy" class="w-10 h-10 rounded-xl shadow-lg" />
+                <div>
+                    <span class="text-white font-bold text-base tracking-tight">Doc Academy</span>
+                    <span class="block text-[#7EB8FF] text-[11px] font-medium">@yield('role_title', 'لوحة التحكم')</span>
+                </div>
             </div>
+            <button onclick="toggleMobileSidebar()" class="lg:hidden text-white/70 hover:text-white">
+                <i class="ph-bold ph-x text-xl"></i>
+            </button>
         </div>
 
         {{-- Navigation Links --}}
@@ -83,6 +82,18 @@
                     <a class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->routeIs('admin.teachers.index') ? 'bg-white/15 text-white shadow-sm' : 'text-white/70 hover:text-white hover:bg-white/8' }}" href="{{ route('admin.teachers.index') }}">
                         <i class="ph-bold ph-chalkboard-teacher text-lg"></i>
                         <span>إدارة المدرسين</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->routeIs('admin.categories.index') ? 'bg-white/15 text-white shadow-sm' : 'text-white/70 hover:text-white hover:bg-white/8' }}" href="{{ route('admin.categories.index') }}">
+                        <i class="ph-bold ph-folder text-lg"></i>
+                        <span>التصنيفات والتخصصات</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->routeIs('admin.courses.*') ? 'bg-white/15 text-white shadow-sm' : 'text-white/70 hover:text-white hover:bg-white/8' }}" href="{{ route('admin.courses.index') }}">
+                        <i class="ph-bold ph-book-open-text text-lg"></i>
+                        <span>إدارة الكورسات</span>
                     </a>
                 </li>
                 <li>
@@ -123,12 +134,6 @@
                         <span>إدارة الكورسات</span>
                     </a>
                 </li>
-                <!-- <li>
-                    <a class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->routeIs('instructor.subscriptions.*') ? 'bg-white/15 text-white shadow-sm' : 'text-white/70 hover:text-white hover:bg-white/8' }}" href="{{ route('instructor.subscriptions.index') }}">
-                        <i class="ph-bold ph-key text-lg"></i>
-                        <span>المشتركيد</span>
-                    </a>
-                </li> -->
                 <li>
                     <a class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->routeIs('instructor.quizzes.*') ? 'bg-white/15 text-white shadow-sm' : 'text-white/70 hover:text-white hover:bg-white/8' }}" href="{{ route('instructor.quizzes.index') }}">
                         <i class="ph-bold ph-exam text-lg"></i>
@@ -166,22 +171,22 @@
     </nav>
 
     {{-- Top App Bar --}}
-    <header class="fixed top-0 right-[272px] w-[calc(100%-272px)] h-[72px] bg-white border-b border-[#E2E8F0] flex justify-between items-center px-8 z-10">
-        <div class="flex items-center text-[#1A202C] text-lg font-bold">
+    <header class="fixed top-0 right-0 lg:right-[272px] w-full lg:w-[calc(100%-272px)] h-[72px] bg-white border-b border-[#E2E8F0] flex justify-between items-center px-4 lg:px-8 z-10">
+        <div class="flex items-center gap-3 text-[#1A202C] text-sm lg:text-lg font-bold">
+            <button onclick="toggleMobileSidebar()" class="lg:hidden p-2 rounded-xl text-[#718096] hover:bg-[#F8F9FA]">
+                <i class="ph-bold ph-list text-2xl"></i>
+            </button>
             @yield('page_title')
         </div>
-        <div class="flex items-center gap-4">
-            <button class="p-2 rounded-xl text-[#718096] hover:bg-[#F8F9FA] hover:text-[#0047AB] transition-colors duration-150">
-                <i class="ph-bold ph-bell text-xl"></i>
-            </button>
-            <div class="w-9 h-9 rounded-full bg-gradient-to-br from-[#0047AB] to-[#00A896] flex items-center justify-center text-white font-bold text-sm shadow-sm">
+        <div class="flex items-center gap-3">
+            <div class="w-8 h-8 lg:w-9 lg:h-9 rounded-full bg-gradient-to-br from-[#0047AB] to-[#00A896] flex items-center justify-center text-white font-bold text-xs lg:text-sm shadow-sm">
                 {{ mb_substr(auth()->user()->name ?? '', 0, 1) }}
             </div>
         </div>
     </header>
 
     {{-- Main Content Canvas --}}
-    <main class="absolute top-[72px] right-[272px] w-[calc(100%-272px)] h-[calc(100vh-72px)] overflow-y-auto bg-bg-base p-8">
+    <main class="absolute top-[72px] right-0 lg:right-[272px] w-full lg:w-[calc(100%-272px)] h-[calc(100vh-72px)] overflow-y-auto bg-bg-base p-4 lg:p-8">
         @if(session('success'))
             <div class="bg-[#2EC4B6]/10 text-[#00A896] border border-[#2EC4B6]/30 p-4 rounded-2xl mb-6 flex items-center gap-3">
                 <i class="ph-bold ph-check-circle text-xl"></i>
@@ -199,13 +204,18 @@
         @yield('content')
     </main>
 
-    {{-- Global Modal JS --}}
+    {{-- Global JS & Mobile Toggle --}}
     <script>
-        function openModal(id) {
-            document.getElementById(id).classList.remove('hidden');
-        }
-        function closeModal(id) {
-            document.getElementById(id).classList.add('hidden');
+        function toggleMobileSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const backdrop = document.getElementById('mobile-backdrop');
+            if (sidebar.classList.contains('max-lg:translate-x-full')) {
+                sidebar.classList.remove('max-lg:translate-x-full');
+                backdrop.classList.remove('hidden');
+            } else {
+                sidebar.classList.add('max-lg:translate-x-full');
+                backdrop.classList.add('hidden');
+            }
         }
     </script>
     @stack('scripts')

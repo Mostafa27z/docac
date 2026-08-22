@@ -25,13 +25,13 @@ class CourseController extends Controller
         }
 
         // Filtering by category_id (if passed)
-        if ($request->has('category_id')) {
-            // Note: Since no dynamic DB relationship exists yet, we simulate matching or filter placeholder logic
+        if ($request->filled('category_id')) {
+            $query->where('category_id', $request->input('category_id'));
         }
 
         // Filtering by subcategory_id (if passed)
-        if ($request->has('subcategory_id')) {
-            // Note: Since no dynamic DB relationship exists yet, we simulate matching or filter placeholder logic
+        if ($request->filled('subcategory_id')) {
+            $query->where('subcategory_id', $request->input('subcategory_id'));
         }
 
         // Filtering by type (recorded, live, mixed)
@@ -39,7 +39,7 @@ class CourseController extends Controller
             $query->where('type', $request->input('type'));
         }
 
-        $courses = $query->with('instructor')->paginate(15);
+        $courses = $query->with(['instructor', 'category', 'subcategory'])->paginate(15);
 
         return CourseResource::collection($courses)->additional([
             'success' => true,
@@ -265,51 +265,34 @@ class CourseController extends Controller
 
     public function categories(Request $request)
     {
-        // Spec 2. التصنيفات
-        // We will return a predefined rich mockup list of categories since the database is medical-centric.
+        $categories = \App\Models\Category::withCount(['subcategories', 'courses'])->latest()->get()->map(function($cat) {
+            return [
+                'id' => $cat->id,
+                'name' => $cat->name,
+                'slug' => $cat->slug,
+                'image_url' => $cat->image_url,
+                'subcategories_count' => $cat->subcategories_count,
+                'courses_count' => $cat->courses_count,
+            ];
+        });
+
         return response()->json([
             'success' => true,
             'message' => 'Categories retrieved successfully.',
-            'data' => [
-                [
-                    'id' => 1,
-                    'name' => 'Cardiology (القلب والأوعية الدموية)',
-                    'image_url' => 'https://lms.test/categories/cardiology.jpg',
-                ],
-                [
-                    'id' => 2,
-                    'name' => 'Pediatrics (طب الأطفال)',
-                    'image_url' => 'https://lms.test/categories/pediatrics.jpg',
-                ],
-                [
-                    'id' => 3,
-                    'name' => 'Clinical Pathology (التحاليل الطبية)',
-                    'image_url' => 'https://lms.test/categories/pathology.jpg',
-                ]
-            ]
+            'data' => $categories
         ]);
     }
 
     public function subcategories(Request $request, $categoryId)
     {
-        // Spec 2. التصنيفات الفرعية
-        $subcategories = [];
-        if ((int)$categoryId === 1) {
-            $subcategories = [
-                ['id' => 11, 'category_id' => 1, 'name' => 'ECG Reading (قراءة رسم القلب)'],
-                ['id' => 12, 'category_id' => 1, 'name' => 'Cardiac Arrhythmias (اضطرابات ضربات القلب)']
+        $subcategories = \App\Models\Subcategory::where('category_id', $categoryId)->latest()->get()->map(function($sub) {
+            return [
+                'id' => $sub->id,
+                'category_id' => $sub->category_id,
+                'name' => $sub->name,
+                'slug' => $sub->slug,
             ];
-        } elseif ((int)$categoryId === 2) {
-            $subcategories = [
-                ['id' => 21, 'category_id' => 2, 'name' => 'Neonatology (حديثي الولادة)'],
-                ['id' => 22, 'category_id' => 2, 'name' => 'Pediatric Emergencies (طوارئ الأطفال)']
-            ];
-        } else {
-            $subcategories = [
-                ['id' => 31, 'category_id' => $categoryId, 'name' => 'Hematology (أمراض الدم)'],
-                ['id' => 32, 'category_id' => $categoryId, 'name' => 'Biochemistry (الكيمياء الحيوية)']
-            ];
-        }
+        });
 
         return response()->json([
             'success' => true,
@@ -364,6 +347,54 @@ class CourseController extends Controller
                     'completed_courses_count' => $user->enrollments()->where('status', 'completed')->count(),
                 ]
             ]
+        ]);
+    }
+
+    public function installments(Request $request)
+    {
+        $user = $request->user();
+
+        $query = CourseEnrollment::where('student_id', $user->id)
+            ->with(['course', 'payments']);
+
+        if ($request->filled('course_id')) {
+            $query->where('course_id', $request->input('course_id'));
+        }
+
+        $enrollments = $query->get();
+
+        $data = $enrollments->map(function ($enrollment) {
+            $totalPrice = (float) $enrollment->total_price;
+            $paidAmount = (float) $enrollment->paid_amount;
+            $remainingAmount = max(0.00, $totalPrice - $paidAmount);
+
+            return [
+                'enrollment_id' => $enrollment->id,
+                'course' => [
+                    'id' => $enrollment->course->id,
+                    'title' => $enrollment->course->title,
+                    'thumbnail' => $enrollment->course->thumbnail,
+                    'type' => $enrollment->course->type,
+                ],
+                'total_price' => $totalPrice,
+                'paid_amount' => $paidAmount,
+                'remaining_amount' => $remainingAmount,
+                'payment_status' => $enrollment->payment_status ?? ($remainingAmount <= 0 ? 'fully_paid' : ($paidAmount > 0 ? 'partially_paid' : 'unpaid')),
+                'payments_history' => $enrollment->payments->map(function ($payment) {
+                    return [
+                        'id' => $payment->id,
+                        'amount' => (float) $payment->amount,
+                        'notes' => $payment->notes,
+                        'created_at' => $payment->created_at,
+                    ];
+                }),
+            ];
+        });
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Installments retrieved successfully.',
+            'data' => $data
         ]);
     }
 }

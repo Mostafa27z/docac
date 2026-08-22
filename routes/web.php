@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Web\Admin\AdminController;
 use App\Http\Controllers\Web\Admin\AdminChatController;
+use App\Http\Controllers\Web\Admin\AdminCategoryController;
+use App\Http\Controllers\Web\Admin\AdminCourseController;
 use App\Http\Controllers\Web\Instructor\InstructorCourseController;
 use App\Http\Controllers\Web\Instructor\InstructorQuizController;
 use App\Http\Controllers\Web\Instructor\InstructorChatController;
@@ -25,6 +27,20 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
     Route::post('/activation-codes', [AdminController::class, 'generateCodes'])->name('admin.codes.generate');
     Route::get('/activation-codes', [AdminController::class, 'activationCodesIndex'])->name('admin.codes.index');
 
+    // Admin Course Management Routes
+    Route::get('/courses', [AdminCourseController::class, 'index'])->name('admin.courses.index');
+    Route::post('/courses', [AdminCourseController::class, 'store'])->name('admin.courses.store');
+    Route::put('/courses/{course}', [AdminCourseController::class, 'update'])->name('admin.courses.update');
+    Route::delete('/courses/{course}', [AdminCourseController::class, 'destroy'])->name('admin.courses.destroy');
+
+    // Category & Subcategory Routes
+    Route::get('/categories', [AdminCategoryController::class, 'index'])->name('admin.categories.index');
+    Route::post('/categories', [AdminCategoryController::class, 'storeCategory'])->name('admin.categories.store');
+    Route::put('/categories/{category}', [AdminCategoryController::class, 'updateCategory'])->name('admin.categories.update');
+    Route::delete('/categories/{category}', [AdminCategoryController::class, 'destroyCategory'])->name('admin.categories.destroy');
+    Route::post('/subcategories', [AdminCategoryController::class, 'storeSubcategory'])->name('admin.subcategories.store');
+    Route::delete('/subcategories/{subcategory}', [AdminCategoryController::class, 'destroySubcategory'])->name('admin.subcategories.destroy');
+
     // Admin Chat Monitoring Routes
     Route::get('/chats', [AdminChatController::class, 'index'])->name('admin.chats.index');
 
@@ -32,6 +48,7 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/students', [AdminController::class, 'studentsList'])->name('admin.students.index');
     Route::post('/students/{user}/reset-device', [AdminController::class, 'resetDevice'])->name('admin.students.resetDevice');
     Route::post('/students/{user}/toggle-status', [AdminController::class, 'toggleStatus'])->name('admin.students.toggleStatus');
+    Route::post('/students/{user}/upgrade', [AdminController::class, 'upgradeStudentToInstructor'])->name('admin.students.upgrade');
     Route::post('/students/subscribe', [AdminController::class, 'subscribeStudentToCourse'])->name('admin.students.subscribe');
 
     // Settings Routes
@@ -40,7 +57,7 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
 });
 
 // Instructor Panel Routes
-Route::prefix('instructor')->middleware(['auth', 'role:instructor'])->group(function () {
+Route::prefix('instructor')->middleware(['auth', 'role:instructor|admin'])->group(function () {
     // 1. Dashboard Overview
     Route::get('/dashboard', [InstructorCourseController::class, 'dashboard'])->name('instructor.dashboard');
 
@@ -48,6 +65,7 @@ Route::prefix('instructor')->middleware(['auth', 'role:instructor'])->group(func
     Route::get('/courses', [InstructorCourseController::class, 'index'])->name('instructor.courses.index');
     Route::post('/courses', [InstructorCourseController::class, 'storeCourse'])->name('instructor.courses.store');
     Route::get('/courses/{course}/manage', [InstructorCourseController::class, 'manage'])->name('instructor.courses.manage');
+    Route::get('/courses/{course}/analytics', [InstructorCourseController::class, 'courseAnalytics'])->name('instructor.courses.analytics');
     Route::put('/courses/{course}', [InstructorCourseController::class, 'updateCourse'])->name('instructor.courses.update');
     Route::delete('/courses/{course}', [InstructorCourseController::class, 'destroyCourse'])->name('instructor.courses.destroy');
     Route::post('/courses/{course}/publish', [InstructorCourseController::class, 'togglePublish'])->name('instructor.courses.publish');

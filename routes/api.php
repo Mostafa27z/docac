@@ -42,6 +42,7 @@ Route::prefix('v1')->group(function () {
             Route::get('student/courses/{course}', [CourseController::class, 'show']);
             Route::post('student/courses/{course}/enroll', [CourseController::class, 'enroll']);
             Route::get('student/my-courses', [CourseController::class, 'myCourses']);
+            Route::get('student/installments', [CourseController::class, 'installments']);
         });
 
         // Other utility routes

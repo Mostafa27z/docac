@@ -8,6 +8,9 @@ use App\Models\CourseSection;
 use App\Models\Lesson;
 use App\Models\CourseFile;
 use App\Models\CourseActivationCode;
+use App\Models\CourseEnrollment;
+use App\Models\LessonProgress;
+use App\Models\QuizAttempt;
 use App\Services\BunnyStorageService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -112,12 +115,17 @@ class InstructorCourseController extends Controller
         return redirect()->back()->with('success', "تم تسجيل دفعة بقيمة {$validated['amount']} للطالب {$enrollment->student->name} بنجاح.");
     }
 
-    public function manage(Course $course)
+    protected function checkCourseAccess(Course $course)
     {
-        // Authorization check: instructor can only manage their own course
-        if ($course->instructor_id !== auth()->id()) {
+        $user = auth()->user();
+        if ($user->role !== 'admin' && $course->instructor_id !== $user->id) {
             abort(403, 'غير مصرح لك بإدارة هذا الكورس.');
         }
+    }
+
+    public function manage(Course $course)
+    {
+        $this->checkCourseAccess($course);
 
         $course->load(['sections.lessons.quiz.questions.options', 'files', 'liveSessions']);
 
@@ -126,9 +134,7 @@ class InstructorCourseController extends Controller
 
     public function togglePublish(Course $course)
     {
-        if ($course->instructor_id !== auth()->id()) {
-            abort(403);
-        }
+        $this->checkCourseAccess($course);
 
         $newStatus = $course->status === 'published' ? 'draft' : 'published';
         $publishedAt = $newStatus === 'published' ? now() : null;
@@ -164,9 +170,7 @@ class InstructorCourseController extends Controller
 
     public function addSection(Request $request, Course $course)
     {
-        if ($course->instructor_id !== auth()->id()) {
-            abort(403);
-        }
+        $this->checkCourseAccess($course);
 
         $validated = $request->validate([
             'title' => 'required|string|max:255',
@@ -218,9 +222,7 @@ class InstructorCourseController extends Controller
 
     public function uploadChunkedLesson(Request $request, CourseSection $section)
     {
-        if ($section->course->instructor_id !== auth()->id()) {
-            return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
-        }
+        $this->checkCourseAccess($section->course);
 
         $validated = $request->validate([
             'title' => 'required|string|max:255',
@@ -278,9 +280,7 @@ class InstructorCourseController extends Controller
 
     public function uploadAttachment(Request $request, Course $course)
     {
-        if ($course->instructor_id !== auth()->id()) {
-            abort(403);
-        }
+        $this->checkCourseAccess($course);
 
         $validated = $request->validate([
             'title' => 'required|string|max:255',
@@ -315,9 +315,7 @@ class InstructorCourseController extends Controller
 
     public function updateCourse(Request $request, Course $course)
     {
-        if ($course->instructor_id !== auth()->id()) {
-            abort(403);
-        }
+        $this->checkCourseAccess($course);
 
         $validated = $request->validate([
             'title' => 'required|string|max:255',
@@ -351,9 +349,7 @@ class InstructorCourseController extends Controller
 
     public function destroyCourse(Request $request, Course $course)
     {
-        if ($course->instructor_id !== auth()->id()) {
-            abort(403);
-        }
+        $this->checkCourseAccess($course);
 
         $request->validate([
             'password' => 'required|string',
@@ -371,9 +367,7 @@ class InstructorCourseController extends Controller
 
     public function updateLesson(Request $request, Lesson $lesson)
     {
-        if ($lesson->section->course->instructor_id !== auth()->id()) {
-            abort(403);
-        }
+        $this->checkCourseAccess($lesson->section->course);
 
         $validated = $request->validate([
             'title' => 'required|string|max:255',
@@ -394,9 +388,7 @@ class InstructorCourseController extends Controller
 
     public function destroyLesson(Lesson $lesson)
     {
-        if ($lesson->section->course->instructor_id !== auth()->id()) {
-            abort(403);
-        }
+        $this->checkCourseAccess($lesson->section->course);
 
         $lesson->delete();
 
@@ -405,9 +397,7 @@ class InstructorCourseController extends Controller
 
     public function storeLiveSession(Request $request, Course $course)
     {
-        if ($course->instructor_id !== auth()->id()) {
-            abort(403);
-        }
+        $this->checkCourseAccess($course);
 
         $validated = $request->validate([
             'title' => 'required|string|max:255',
@@ -436,12 +426,47 @@ class InstructorCourseController extends Controller
 
     public function destroyLiveSession(\App\Models\LiveSession $liveSession)
     {
-        if ($liveSession->course->instructor_id !== auth()->id()) {
-            abort(403);
-        }
+        $this->checkCourseAccess($liveSession->course);
 
         $liveSession->delete();
 
         return redirect()->back()->with('success', 'تم إلغاء وحذف جلسة البث المباشر بنجاح.');
+    }
+
+    public function courseAnalytics(Course $course)
+    {
+        $this->checkCourseAccess($course);
+
+        $course->load(['sections.lessons.quiz']);
+        $totalLessons = $course->lessons()->count();
+
+        $enrollments = CourseEnrollment::where('course_id', $course->id)
+            ->with(['student'])
+            ->get()
+            ->map(function($enrollment) use ($course, $totalLessons) {
+                $studentId = $enrollment->student_id;
+
+                $completedLessonsCount = LessonProgress::where('student_id', $studentId)
+                    ->whereNotNull('completed_at')
+                    ->whereHas('lesson.section', function($q) use ($course) {
+                        $q->where('course_id', $course->id);
+                    })->count();
+
+                $quizAttempts = QuizAttempt::where('student_id', $studentId)
+                    ->whereHas('quiz.lesson.section', function($q) use ($course) {
+                        $q->where('course_id', $course->id);
+                    })->with('quiz.lesson')->latest()->get();
+
+                return [
+                    'enrollment' => $enrollment,
+                    'student' => $enrollment->student,
+                    'completed_lessons_count' => $completedLessonsCount,
+                    'total_lessons_count' => $totalLessons,
+                    'progress_percentage' => $enrollment->progress_percentage,
+                    'quiz_attempts' => $quizAttempts,
+                ];
+            });
+
+        return view('instructor.courses.analytics', compact('course', 'enrollments', 'totalLessons'));
     }
 }
