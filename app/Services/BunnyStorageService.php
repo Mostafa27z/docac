@@ -50,19 +50,28 @@ class BunnyStorageService
         try {
             $relativePath = ltrim($destinationPath, '/') . '/' . $fileName;
 
-            // 1. Save to Laravel public storage disk (storage/app/public/)
-            $appPublicDir = storage_path('app/public/' . dirname($relativePath));
-            if (!file_exists($appPublicDir)) {
-                @mkdir($appPublicDir, 0777, true);
-            }
-            @copy($file->getRealPath(), storage_path('app/public/' . $relativePath));
+            $localDestinations = [
+                storage_path('app/public/' . $relativePath),
+                public_path('storage/' . $relativePath),
+                public_path($relativePath),
+            ];
 
-            // 2. Save directly to public/storage/ directory
-            $publicStorageDir = public_path('storage/' . dirname($relativePath));
-            if (!file_exists($publicStorageDir)) {
-                @mkdir($publicStorageDir, 0777, true);
+            if (file_exists(base_path('../public_html'))) {
+                $localDestinations[] = base_path('../public_html/storage/' . $relativePath);
+                $localDestinations[] = base_path('../public_html/' . $relativePath);
             }
-            @copy($file->getRealPath(), public_path('storage/' . $relativePath));
+            if (file_exists(base_path('public_html'))) {
+                $localDestinations[] = base_path('public_html/storage/' . $relativePath);
+                $localDestinations[] = base_path('public_html/' . $relativePath);
+            }
+
+            foreach ($localDestinations as $destPath) {
+                $dir = dirname($destPath);
+                if (!file_exists($dir)) {
+                    @mkdir($dir, 0777, true);
+                }
+                @copy($file->getRealPath(), $destPath);
+            }
 
             // 3. Upload to Bunny Storage cloud
             $response = Http::withOptions(['verify' => false])->withHeaders([
