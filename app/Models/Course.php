@@ -40,7 +40,9 @@ class Course extends Model
             $path = substr($path, 8);
         }
 
-        return asset('storage/' . $path);
+        $appUrl = rtrim(config('app.url', 'http://localhost:8000'), '/');
+
+        return $appUrl . '/storage/' . $path;
     }
 
     public function instructor()
