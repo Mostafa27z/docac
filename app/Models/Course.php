@@ -40,7 +40,7 @@ class Course extends Model
             $path = substr($path, 8);
         }
 
-        $appUrl = rtrim(config('app.url', 'http://localhost:8000'), '/');
+        $appUrl = rtrim(config('app.url', 'https://mediumspringgreen-aardvark-947551.hostingersite.com'), '/');
 
         return $appUrl . '/storage/' . $path;
     }
