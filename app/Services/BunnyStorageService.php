@@ -48,12 +48,21 @@ class BunnyStorageService
         $targetUrl = "https://storage.bunnycdn.com/{$this->storageZone}/" . ltrim($destinationPath, '/') . '/' . $fileName;
 
         try {
-            // Save local copy to public/storage/ for fast local rendering
-            $localDir = public_path('storage/' . ltrim($destinationPath, '/'));
+            $relativePath = ltrim($destinationPath, '/') . '/' . $fileName;
+
+            // Save local copy to public/ directory for fast local rendering
+            $localDir = public_path(dirname($relativePath));
             if (!file_exists($localDir)) {
                 @mkdir($localDir, 0777, true);
             }
-            @copy($file->getRealPath(), $localDir . '/' . $fileName);
+            @copy($file->getRealPath(), public_path($relativePath));
+
+            // Also save copy under public/storage/ if symlink or storage folder is used
+            $storageDir = public_path('storage/' . dirname($relativePath));
+            if (!file_exists($storageDir)) {
+                @mkdir($storageDir, 0777, true);
+            }
+            @copy($file->getRealPath(), public_path('storage/' . $relativePath));
 
             $response = Http::withOptions(['verify' => false])->withHeaders([
                 'AccessKey' => $this->apiKey,
@@ -64,7 +73,7 @@ class BunnyStorageService
                 'body' => $response->body()
             ]);
 
-            return 'storage/' . ltrim($destinationPath, '/') . '/' . $fileName;
+            return $relativePath;
         } catch (\Exception $e) {
             \Illuminate\Support\Facades\Log::error("Bunny Storage: Upload exception: " . $e->getMessage(), [
                 'trace' => $e->getTraceAsString()
