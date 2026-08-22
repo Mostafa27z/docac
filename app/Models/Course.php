@@ -24,6 +24,28 @@ class Course extends Model
         'published_at' => 'datetime'
     ];
 
+    public function getThumbnailUrlAttribute()
+    {
+        if (!$this->thumbnail) {
+            return asset('logo.jfif');
+        }
+
+        if (str_starts_with($this->thumbnail, 'http://') || str_starts_with($this->thumbnail, 'https://')) {
+            return $this->thumbnail;
+        }
+
+        $cleanPath = ltrim($this->thumbnail, '/');
+        if (file_exists(public_path($cleanPath))) {
+            return asset($cleanPath);
+        }
+
+        $storageZone = config('services.bunny.storage_zone', 'docac-storage');
+        $pathSegments = explode('/', $cleanPath);
+        $encodedSegments = array_map('rawurlencode', $pathSegments);
+        
+        return "https://{$storageZone}.b-cdn.net/" . implode('/', $encodedSegments);
+    }
+
     public function instructor()
     {
         return $this->belongsTo(User::class, 'instructor_id');

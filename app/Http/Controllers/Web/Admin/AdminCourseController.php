@@ -39,15 +39,16 @@ class AdminCourseController extends Controller
             'instructor_id' => 'required|exists:users,id',
             'category_id' => 'nullable|exists:categories,id',
             'subcategory_id' => 'nullable|exists:subcategories,id',
-            'thumbnail_file' => 'nullable|image|max:2048',
+            'thumbnail_file' => 'nullable|image|max:10240',
+            'thumbnail' => 'nullable|image|max:10240',
         ]);
 
+        $file = $request->file('thumbnail_file') ?? $request->file('thumbnail') ?? $request->file('image');
         $thumbnail = null;
-        if ($request->hasFile('thumbnail_file')) {
-            $thumbnail = $this->bunnyStorage->uploadFile(
-                $request->file('thumbnail_file'),
-                'courses/thumbnails'
-            );
+
+        if ($file) {
+            $thumbnail = $this->bunnyStorage->uploadFile($file, 'courses/thumbnails');
+            \Illuminate\Support\Facades\Log::info("AdminCourseController store: Uploaded thumbnail.", ['path' => $thumbnail]);
         }
 
         $course = Course::create([
@@ -76,7 +77,8 @@ class AdminCourseController extends Controller
             'instructor_id' => 'required|exists:users,id',
             'category_id' => 'nullable|exists:categories,id',
             'subcategory_id' => 'nullable|exists:subcategories,id',
-            'thumbnail_file' => 'nullable|image|max:2048',
+            'thumbnail_file' => 'nullable|image|max:10240',
+            'thumbnail' => 'nullable|image|max:10240',
         ]);
 
         $updateData = [
@@ -89,13 +91,15 @@ class AdminCourseController extends Controller
             'subcategory_id' => $validated['subcategory_id'] ?? null,
         ];
 
-        if ($request->hasFile('thumbnail_file')) {
-            $thumbnail = $this->bunnyStorage->uploadFile(
-                $request->file('thumbnail_file'),
-                'courses/thumbnails'
-            );
+        $file = $request->file('thumbnail_file') ?? $request->file('thumbnail') ?? $request->file('image');
+        if ($file) {
+            $thumbnail = $this->bunnyStorage->uploadFile($file, 'courses/thumbnails');
             if ($thumbnail) {
                 $updateData['thumbnail'] = $thumbnail;
+                \Illuminate\Support\Facades\Log::info("AdminCourseController update: Updated course thumbnail.", [
+                    'course_id' => $course->id,
+                    'thumbnail' => $thumbnail
+                ]);
             }
         }
 

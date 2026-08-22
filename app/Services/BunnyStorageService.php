@@ -4,6 +4,7 @@ namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Str;
 
 class BunnyStorageService
 {
@@ -25,20 +26,49 @@ class BunnyStorageService
      */
     public function uploadFile(UploadedFile $file, string $destinationPath): ?string
     {
+        \Illuminate\Support\Facades\Log::info("Bunny Storage: Preparing upload file.", [
+            'destination_path' => $destinationPath,
+            'file_name' => $file->getClientOriginalName(),
+            'has_api_key' => !empty($this->apiKey),
+            'storage_zone' => $this->storageZone
+        ]);
+
         if (empty($this->apiKey) || empty($this->storageZone)) {
+            \Illuminate\Support\Facades\Log::error("Bunny Storage: Missing API key or Storage Zone.");
             return null;
         }
 
-        $fileName = time() . '_' . $file->getClientOriginalName();
+        $extension = $file->getClientOriginalExtension();
+        $safeBaseName = Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME));
+        if (empty($safeBaseName)) {
+            $safeBaseName = 'file';
+        }
+        $fileName = time() . '_' . $safeBaseName . '.' . strtolower($extension);
+
         $targetUrl = "https://storage.bunnycdn.com/{$this->storageZone}/" . ltrim($destinationPath, '/') . '/' . $fileName;
 
-        $response = Http::withOptions(['verify' => false])->withHeaders([
-            'AccessKey' => $this->apiKey,
-        ])->withBody(file_get_contents($file->getRealPath()), $file->getMimeType())
-          ->put($targetUrl);
+        try {
+            // Save local copy to public/storage/ for fast local rendering
+            $localDir = public_path('storage/' . ltrim($destinationPath, '/'));
+            if (!file_exists($localDir)) {
+                @mkdir($localDir, 0777, true);
+            }
+            @copy($file->getRealPath(), $localDir . '/' . $fileName);
 
-        if ($response->successful()) {
-            return ltrim($destinationPath, '/') . '/' . $fileName;
+            $response = Http::withOptions(['verify' => false])->withHeaders([
+                'AccessKey' => $this->apiKey,
+            ])->withBody(file_get_contents($file->getRealPath()), $file->getMimeType())
+              ->put($targetUrl);
+
+            \Illuminate\Support\Facades\Log::info("Bunny Storage: API response status: " . $response->status(), [
+                'body' => $response->body()
+            ]);
+
+            return 'storage/' . ltrim($destinationPath, '/') . '/' . $fileName;
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error("Bunny Storage: Upload exception: " . $e->getMessage(), [
+                'trace' => $e->getTraceAsString()
+            ]);
         }
 
         return null;

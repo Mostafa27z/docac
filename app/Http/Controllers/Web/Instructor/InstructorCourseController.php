@@ -322,7 +322,8 @@ class InstructorCourseController extends Controller
             'description' => 'required|string',
             'type' => 'required|in:recorded,live,mixed',
             'price' => 'required|numeric|min:0',
-            'thumbnail_file' => 'nullable|image|max:2048', // Max 2MB
+            'thumbnail_file' => 'nullable|image|max:10240',
+            'thumbnail' => 'nullable|image|max:10240',
         ]);
 
         $updateData = [
@@ -332,13 +333,15 @@ class InstructorCourseController extends Controller
             'price' => $validated['price'],
         ];
 
-        if ($request->hasFile('thumbnail_file')) {
-            $filePath = $this->bunnyStorage->uploadFile(
-                $request->file('thumbnail_file'),
-                'courses/thumbnails'
-            );
+        $file = $request->file('thumbnail_file') ?? $request->file('thumbnail') ?? $request->file('image');
+        if ($file) {
+            $filePath = $this->bunnyStorage->uploadFile($file, 'courses/thumbnails');
             if ($filePath) {
                 $updateData['thumbnail'] = $filePath;
+                \Illuminate\Support\Facades\Log::info("InstructorCourseController updateCourse: Updated course thumbnail.", [
+                    'course_id' => $course->id,
+                    'thumbnail' => $filePath
+                ]);
             }
         }
 

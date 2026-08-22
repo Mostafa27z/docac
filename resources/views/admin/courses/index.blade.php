@@ -41,7 +41,7 @@
                     <td class="py-4 px-4 font-semibold text-[#1A202C]">
                         <div class="flex items-center gap-3">
                             @if($course->thumbnail)
-                                <img src="{{ rtrim(config('services.bunny.cdn_url'), '/') }}/{{ ltrim($course->thumbnail, '/') }}" class="w-10 h-10 rounded-xl object-cover border border-[#E2E8F0]" onerror="this.src='/logo.jfif'" />
+                                <img src="{{ $course->thumbnail_url }}" class="w-10 h-10 rounded-xl object-cover border border-[#E2E8F0]" onerror="this.src='/logo.jfif'" />
                             @else
                                 <div class="w-10 h-10 rounded-xl bg-[#0047AB]/10 text-[#0047AB] flex items-center justify-center font-bold text-xs">
                                     <i class="ph-bold ph-book-bookmark text-lg"></i>
