@@ -50,20 +50,21 @@ class BunnyStorageService
         try {
             $relativePath = ltrim($destinationPath, '/') . '/' . $fileName;
 
-            // Save local copy to public/ directory for fast local rendering
-            $localDir = public_path(dirname($relativePath));
-            if (!file_exists($localDir)) {
-                @mkdir($localDir, 0777, true);
+            // 1. Save to Laravel public storage disk (storage/app/public/)
+            $appPublicDir = storage_path('app/public/' . dirname($relativePath));
+            if (!file_exists($appPublicDir)) {
+                @mkdir($appPublicDir, 0777, true);
             }
-            @copy($file->getRealPath(), public_path($relativePath));
+            @copy($file->getRealPath(), storage_path('app/public/' . $relativePath));
 
-            // Also save copy under public/storage/ if symlink or storage folder is used
-            $storageDir = public_path('storage/' . dirname($relativePath));
-            if (!file_exists($storageDir)) {
-                @mkdir($storageDir, 0777, true);
+            // 2. Save directly to public/storage/ directory
+            $publicStorageDir = public_path('storage/' . dirname($relativePath));
+            if (!file_exists($publicStorageDir)) {
+                @mkdir($publicStorageDir, 0777, true);
             }
             @copy($file->getRealPath(), public_path('storage/' . $relativePath));
 
+            // 3. Upload to Bunny Storage cloud
             $response = Http::withOptions(['verify' => false])->withHeaders([
                 'AccessKey' => $this->apiKey,
             ])->withBody(file_get_contents($file->getRealPath()), $file->getMimeType())
