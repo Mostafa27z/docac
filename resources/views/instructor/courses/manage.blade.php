@@ -412,6 +412,7 @@
 
     {{-- Chunked Upload JS --}}
     @push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/tus-js-client@2.3.1/dist/tus.min.js"></script>
     <script>
     async function uploadChunkedLesson(event, sectionId, endpointUrl) {
         event.preventDefault();
