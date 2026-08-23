@@ -50,6 +50,24 @@ class User extends Authenticatable
         ];
     }
 
+    public function getAvatarUrlAttribute()
+    {
+        if (!$this->avatar) {
+            return null;
+        }
+
+        if (str_starts_with($this->avatar, 'http://') || str_starts_with($this->avatar, 'https://')) {
+            return $this->avatar;
+        }
+
+        $path = ltrim($this->avatar, '/');
+        if (str_starts_with($path, 'storage/')) {
+            $path = substr($path, 8);
+        }
+
+        return asset('storage/' . $path);
+    }
+
     public function enrollments()
     {
         return $this->hasMany(CourseEnrollment::class, 'student_id');

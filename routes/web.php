@@ -9,6 +9,7 @@ use App\Http\Controllers\Web\Admin\AdminBannerController;
 use App\Http\Controllers\Web\Instructor\InstructorCourseController;
 use App\Http\Controllers\Web\Instructor\InstructorQuizController;
 use App\Http\Controllers\Web\Instructor\InstructorChatController;
+use App\Http\Controllers\Web\ProfileController;
 
 use App\Http\Controllers\Web\HomeController;
 
@@ -100,4 +101,11 @@ Route::prefix('instructor')->middleware(['auth', 'role:instructor|admin'])->grou
     Route::post('/chats/start', [InstructorChatController::class, 'startChat'])->name('instructor.chats.start');
     Route::post('/chats/broadcast', [InstructorChatController::class, 'broadcast'])->name('instructor.chats.broadcast');
     Route::post('/chats/{conversation}/messages', [InstructorChatController::class, 'sendMessage'])->name('instructor.chats.sendMessage');
+});
+
+// Profile Management Routes for Admin & Instructor
+Route::middleware(['auth', 'role:admin|instructor'])->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
 });
