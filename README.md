@@ -232,6 +232,40 @@ curl --location --request PUT 'https://mediumspringgreen-aardvark-947551.hosting
 
 ---
 
+## البنرات والإعلانات (Banners)
+
+### استرجاع قائمة البنرات الإعلانية النشطة
+
+* **المسار:** `GET /api/v1/student/banners`
+* **التوثيق:** غير مطلوب (Public)
+* **حماية الجهاز:** غير مطلوبة
+
+**cURL:**
+```bash
+curl --location --request GET 'https://mediumspringgreen-aardvark-947551.hostingersite.com/api/v1/student/banners' \
+--header 'Accept: application/json'
+```
+
+**المُخرجات (200 OK):**
+```json
+{
+  "success": true,
+  "message": "Banners retrieved successfully.",
+  "data": [
+    {
+      "id": 1,
+      "title": "خصم 20% على دورات الباطنة",
+      "description": "استخدم كود الخصم عند الاشتراك للاستفادة من العرض لفترة محدودة",
+      "image": "https://mediumspringgreen-aardvark-947551.hostingersite.com/storage/banners/1787413058_banner-1.png",
+      "sort_order": 1,
+      "created_at": "2026-08-23T14:00:00.000000Z"
+    }
+  ]
+}
+```
+
+---
+
 ## 2. التصنيفات (Categories)
 
 ### استرجاع جميع التصنيفات الأساسية
