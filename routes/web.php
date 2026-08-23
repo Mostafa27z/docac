@@ -5,6 +5,7 @@ use App\Http\Controllers\Web\Admin\AdminController;
 use App\Http\Controllers\Web\Admin\AdminChatController;
 use App\Http\Controllers\Web\Admin\AdminCategoryController;
 use App\Http\Controllers\Web\Admin\AdminCourseController;
+use App\Http\Controllers\Web\Admin\AdminBannerController;
 use App\Http\Controllers\Web\Instructor\InstructorCourseController;
 use App\Http\Controllers\Web\Instructor\InstructorQuizController;
 use App\Http\Controllers\Web\Instructor\InstructorChatController;
@@ -26,6 +27,13 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
     Route::post('/instructors', [AdminController::class, 'createTeacher'])->name('admin.instructors.create'); // Keep alias for backwards compatibility
     Route::post('/activation-codes', [AdminController::class, 'generateCodes'])->name('admin.codes.generate');
     Route::get('/activation-codes', [AdminController::class, 'activationCodesIndex'])->name('admin.codes.index');
+
+    // Admin Banner Routes
+    Route::get('/banners', [AdminBannerController::class, 'index'])->name('admin.banners.index');
+    Route::post('/banners', [AdminBannerController::class, 'store'])->name('admin.banners.store');
+    Route::put('/banners/{banner}', [AdminBannerController::class, 'update'])->name('admin.banners.update');
+    Route::delete('/banners/{banner}', [AdminBannerController::class, 'destroy'])->name('admin.banners.destroy');
+    Route::post('/banners/{banner}/toggle', [AdminBannerController::class, 'toggleActive'])->name('admin.banners.toggle');
 
     // Admin Course Management Routes
     Route::get('/courses', [AdminCourseController::class, 'index'])->name('admin.courses.index');
