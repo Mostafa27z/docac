@@ -282,10 +282,37 @@ class InstructorCourseController extends Controller
     {
         $this->checkCourseAccess($course);
 
+        \Illuminate\Support\Facades\Log::info("Attachment Upload Debug Log", [
+            'course_id' => $course->id,
+            'php_ini' => [
+                'upload_max_filesize' => ini_get('upload_max_filesize'),
+                'post_max_size' => ini_get('post_max_size'),
+                'max_execution_time' => ini_get('max_execution_time'),
+                'memory_limit' => ini_get('memory_limit'),
+            ],
+            'server' => [
+                'content_length' => $_SERVER['CONTENT_LENGTH'] ?? null,
+                'content_type' => $_SERVER['CONTENT_TYPE'] ?? null,
+            ],
+            'files_raw' => $_FILES['attachment'] ?? null,
+            'laravel_file' => [
+                'has_file' => $request->hasFile('attachment'),
+                'is_valid' => $request->file('attachment')?->isValid(),
+                'error_code' => $request->file('attachment')?->getError(),
+                'error_message' => $request->file('attachment')?->getErrorMessage(),
+                'size_bytes' => $request->file('attachment')?->getSize(),
+                'client_name' => $request->file('attachment')?->getClientOriginalName(),
+                'mime_type' => $request->file('attachment')?->getClientMimeType(),
+            ]
+        ]);
+
         // Check if upload failed due to size limit
         $uploadError = null;
         if (isset($_FILES['attachment']) && $_FILES['attachment']['error'] !== UPLOAD_ERR_OK) {
             $err = $_FILES['attachment']['error'];
+            \Illuminate\Support\Facades\Log::warning("Attachment Upload Error Code Detected: " . $err, [
+                'files_attachment' => $_FILES['attachment']
+            ]);
             if ($err === UPLOAD_ERR_INI_SIZE || $err === UPLOAD_ERR_FORM_SIZE) {
                 // Get request size in MB from Content-Length header as proxy size
                 $contentLengthBytes = $_SERVER['CONTENT_LENGTH'] ?? 0;
@@ -295,6 +322,7 @@ class InstructorCourseController extends Controller
         }
 
         if ($uploadError) {
+            \Illuminate\Support\Facades\Log::error("Attachment Upload Blocked by PHP upload_max_filesize/post_max_size: " . $uploadError);
             return redirect()->back()->withErrors(['attachment' => $uploadError])->withInput();
         }
 
