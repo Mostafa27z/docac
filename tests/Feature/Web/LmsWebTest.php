@@ -58,13 +58,13 @@ class LmsWebTest extends TestCase
     }
 
     /** @test */
-    public function admin_can_access_admin_dashboard_but_not_instructor()
+    public function admin_can_access_admin_and_instructor_dashboards()
     {
         $response = $this->actingAs($this->admin)->get('/admin/dashboard');
         $response->assertStatus(200);
 
         $response2 = $this->actingAs($this->admin)->get('/instructor/dashboard');
-        $response2->assertStatus(403);
+        $response2->assertStatus(200);
     }
 
     /** @test */

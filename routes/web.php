@@ -68,7 +68,7 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
 });
 
 // Instructor Panel Routes
-Route::prefix('instructor')->middleware(['auth', 'role:instructor'])->group(function () {
+Route::prefix('instructor')->middleware(['auth', 'role:instructor|admin'])->group(function () {
     // 1. Dashboard Overview
     Route::get('/dashboard', [InstructorCourseController::class, 'dashboard'])->name('instructor.dashboard');
 
