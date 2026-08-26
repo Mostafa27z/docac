@@ -313,6 +313,21 @@ class InstructorCourseController extends Controller
         return redirect()->back()->with('error', 'حدث خطأ أثناء رفع الملف.');
     }
 
+    public function destroyAttachment(CourseFile $file)
+    {
+        $this->checkCourseAccess($file->course);
+
+        // Delete from local storage if exists
+        if (!empty($file->file_path)) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($file->file_path);
+        }
+
+        // Delete database record
+        $file->delete();
+
+        return redirect()->back()->with('success', 'تم حذف الملف بنجاح.');
+    }
+
     public function updateCourse(Request $request, Course $course)
     {
         $this->checkCourseAccess($course);

@@ -83,6 +83,7 @@ Route::prefix('instructor')->middleware(['auth', 'role:instructor|admin'])->grou
     Route::put('/lessons/{lesson}', [InstructorCourseController::class, 'updateLesson'])->name('instructor.lessons.update');
     Route::delete('/lessons/{lesson}', [InstructorCourseController::class, 'destroyLesson'])->name('instructor.lessons.destroy');
     Route::post('/courses/{course}/attachments', [InstructorCourseController::class, 'uploadAttachment'])->name('instructor.attachments.store');
+    Route::delete('/attachments/{file}', [InstructorCourseController::class, 'destroyAttachment'])->name('instructor.attachments.destroy');
     Route::post('/courses/{course}/live-sessions', [InstructorCourseController::class, 'storeLiveSession'])->name('instructor.live-sessions.store');
     Route::delete('/live-sessions/{liveSession}', [InstructorCourseController::class, 'destroyLiveSession'])->name('instructor.live-sessions.destroy');
 

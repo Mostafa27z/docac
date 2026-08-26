@@ -304,17 +304,26 @@
             <x-btn-primary icon="upload-simple" type="submit">رفع الملف إلى Bunny Storage</x-btn-primary>
         </form>
 
-        <x-data-table :headers="['عنوان الملف', 'اسم الملف الأصلي', 'حجم الملف', 'تاريخ الرفع']">
+        <x-data-table :headers="['عنوان الملف', 'اسم الملف الأصلي', 'حجم الملف', 'تاريخ الرفع', 'التحكم']">
             @forelse($course->files as $file)
                 <tr class="border-b border-[#E2E8F0] hover:bg-[#F8F9FA] transition-colors">
                     <td class="py-4 px-4 font-medium text-[#1A202C]">{{ $file->title }}</td>
                     <td class="py-4 px-4 text-[#718096] text-sm">{{ $file->file_name }}</td>
                     <td class="py-4 px-4 text-[#718096] text-sm">{{ round($file->file_size_bytes / 1024 / 1024, 2) }} MB</td>
                     <td class="py-4 px-4 text-[#718096] text-sm">{{ $file->created_at->format('Y-m-d') }}</td>
+                    <td class="py-2 px-4">
+                        <form action="{{ route('instructor.attachments.destroy', $file->id) }}" method="POST" onsubmit="return confirm('هل أنت متأكد من حذف هذا الملف؟')" class="inline">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="p-2 bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700 rounded-xl transition-all" title="حذف الملف">
+                                <i class="ph-bold ph-trash text-sm"></i>
+                            </button>
+                        </form>
+                    </td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="4" class="py-8 text-center text-[#718096] text-sm">لا توجد ملفات مرفقة بهذا الكورس.</td>
+                    <td colspan="5" class="py-8 text-center text-[#718096] text-sm">لا توجد ملفات مرفقة بهذا الكورس.</td>
                 </tr>
             @endforelse
         </x-data-table>
