@@ -73,7 +73,14 @@ class BunnyStorageService
                 @copy($file->getRealPath(), $destPath);
             }
 
-            // 3. Upload to Bunny Storage cloud
+            // 3. Upload to Bunny Storage cloud (bypassed for attachment files)
+            if (str_starts_with(ltrim($destinationPath, '/'), 'courses/attachments')) {
+                \Illuminate\Support\Facades\Log::info("Bunny Storage: Bypassing Bunny Storage upload for attachment file.", [
+                    'relative_path' => $relativePath
+                ]);
+                return $relativePath;
+            }
+
             $response = Http::withOptions(['verify' => false])->withHeaders([
                 'AccessKey' => $this->apiKey,
             ])->withBody(file_get_contents($file->getRealPath()), $file->getMimeType())

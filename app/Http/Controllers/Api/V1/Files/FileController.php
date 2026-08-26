@@ -32,8 +32,8 @@ class FileController extends Controller
                     'file_name' => $file->file_name,
                     'mime_type' => $file->mime_type,
                     'file_size_bytes' => $file->file_size_bytes,
-                    // Secure URL generated using HMAC signature key
-                    'download_url' => $this->bunnyCdn->generateSignedUrl($file->file_path),
+                    // Local storage URL
+                    'download_url' => asset('storage/' . $file->file_path),
                 ];
             })
         ]);
@@ -43,8 +43,8 @@ class FileController extends Controller
     {
         $file = CourseFile::findOrFail($fileId);
 
-        // Generate signed URL
-        $signedUrl = $this->bunnyCdn->generateSignedUrl($file->file_path);
+        // Local storage URL
+        $signedUrl = asset('storage/' . $file->file_path);
 
         return response()->json([
             'success' => true,
