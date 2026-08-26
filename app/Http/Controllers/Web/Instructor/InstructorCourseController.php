@@ -282,10 +282,32 @@ class InstructorCourseController extends Controller
     {
         $this->checkCourseAccess($course);
 
+        // Check if upload failed due to size limit
+        $uploadError = null;
+        if (isset($_FILES['attachment']) && $_FILES['attachment']['error'] !== UPLOAD_ERR_OK) {
+            $err = $_FILES['attachment']['error'];
+            if ($err === UPLOAD_ERR_INI_SIZE || $err === UPLOAD_ERR_FORM_SIZE) {
+                // Get request size in MB from Content-Length header as proxy size
+                $contentLengthBytes = $_SERVER['CONTENT_LENGTH'] ?? 0;
+                $approxSizeMb = round($contentLengthBytes / 1024 / 1024, 2);
+                $uploadError = "الحد الأقصى المسموح به للملف هو 20 ميجابايت، وحجم الملف المرفوع حالياً هو {$approxSizeMb} ميجابايت (فشل الرفع بسبب إعدادات السيرفر).";
+            }
+        }
+
+        if ($uploadError) {
+            return redirect()->back()->withErrors(['attachment' => $uploadError])->withInput();
+        }
+
+        $file = $request->file('attachment');
+        $fileSizeMb = $file ? round($file->getSize() / 1024 / 1024, 2) : 0;
+
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'attachment' => 'required|file|max:20480', // 20MB limit
             'lesson_id' => 'nullable|exists:lessons,id',
+        ], [
+            'attachment.max' => "الحد الأقصى المسموح به للملف هو 20 ميجابايت، وحجم الملف المرفوع حالياً هو {$fileSizeMb} ميجابايت.",
+            'attachment.uploaded' => "فشل رفع الملف. قد يكون حجم الملف أكبر من الحد الأقصى المسموح به على السيرفر (20 ميجابايت).",
         ]);
 
         $filePath = null;
