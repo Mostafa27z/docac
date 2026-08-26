@@ -7,6 +7,7 @@ use App\Models\Course;
 use App\Models\User;
 use App\Models\Category;
 use App\Models\Subcategory;
+use App\Models\ChildSubcategory;
 use App\Services\BunnyStorageService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -22,9 +23,9 @@ class AdminCourseController extends Controller
 
     public function index()
     {
-        $courses = Course::with(['instructor', 'category', 'subcategory'])->latest()->get();
+        $courses = Course::with(['instructor', 'category', 'subcategory', 'childSubcategory'])->latest()->get();
         $instructors = User::where('role', 'instructor')->where('status', 'active')->get();
-        $categories = Category::with('subcategories')->get();
+        $categories = Category::with(['subcategories.childSubcategories'])->get();
 
         return view('admin.courses.index', compact('courses', 'instructors', 'categories'));
     }
@@ -39,6 +40,7 @@ class AdminCourseController extends Controller
             'instructor_id' => 'required|exists:users,id',
             'category_id' => 'nullable|exists:categories,id',
             'subcategory_id' => 'nullable|exists:subcategories,id',
+            'child_subcategory_id' => 'nullable|exists:child_subcategories,id',
             'thumbnail_file' => 'nullable|image|max:10240',
             'thumbnail' => 'nullable|image|max:10240',
         ]);
@@ -55,6 +57,7 @@ class AdminCourseController extends Controller
             'instructor_id' => $validated['instructor_id'],
             'category_id' => $validated['category_id'] ?? null,
             'subcategory_id' => $validated['subcategory_id'] ?? null,
+            'child_subcategory_id' => $validated['child_subcategory_id'] ?? null,
             'title' => $validated['title'],
             'slug' => Str::slug($validated['title']) . '-' . Str::random(4),
             'description' => $validated['description'],
@@ -77,6 +80,7 @@ class AdminCourseController extends Controller
             'instructor_id' => 'required|exists:users,id',
             'category_id' => 'nullable|exists:categories,id',
             'subcategory_id' => 'nullable|exists:subcategories,id',
+            'child_subcategory_id' => 'nullable|exists:child_subcategories,id',
             'thumbnail_file' => 'nullable|image|max:10240',
             'thumbnail' => 'nullable|image|max:10240',
         ]);
@@ -89,6 +93,7 @@ class AdminCourseController extends Controller
             'instructor_id' => $validated['instructor_id'],
             'category_id' => $validated['category_id'] ?? null,
             'subcategory_id' => $validated['subcategory_id'] ?? null,
+            'child_subcategory_id' => $validated['child_subcategory_id'] ?? null,
         ];
 
         $file = $request->file('thumbnail_file') ?? $request->file('thumbnail') ?? $request->file('image');

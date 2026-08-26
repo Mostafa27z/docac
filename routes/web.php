@@ -49,6 +49,8 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
     Route::delete('/categories/{category}', [AdminCategoryController::class, 'destroyCategory'])->name('admin.categories.destroy');
     Route::post('/subcategories', [AdminCategoryController::class, 'storeSubcategory'])->name('admin.subcategories.store');
     Route::delete('/subcategories/{subcategory}', [AdminCategoryController::class, 'destroySubcategory'])->name('admin.subcategories.destroy');
+    Route::post('/child-subcategories', [AdminCategoryController::class, 'storeChildSubcategory'])->name('admin.child-subcategories.store');
+    Route::delete('/child-subcategories/{childSubcategory}', [AdminCategoryController::class, 'destroyChildSubcategory'])->name('admin.child-subcategories.destroy');
 
     // Admin Chat Monitoring Routes
     Route::get('/chats', [AdminChatController::class, 'index'])->name('admin.chats.index');
@@ -66,7 +68,7 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
 });
 
 // Instructor Panel Routes
-Route::prefix('instructor')->middleware(['auth', 'role:instructor|admin'])->group(function () {
+Route::prefix('instructor')->middleware(['auth', 'role:instructor'])->group(function () {
     // 1. Dashboard Overview
     Route::get('/dashboard', [InstructorCourseController::class, 'dashboard'])->name('instructor.dashboard');
 
@@ -90,6 +92,7 @@ Route::prefix('instructor')->middleware(['auth', 'role:instructor|admin'])->grou
     // 3. Subscriptions & Codes
     Route::get('/subscriptions', [InstructorCourseController::class, 'subscriptionsIndex'])->name('instructor.subscriptions.index');
     Route::post('/courses/{course}/price', [InstructorCourseController::class, 'updateCoursePrice'])->name('instructor.courses.price');
+    Route::post('/courses/{course}/activation-codes', [InstructorCourseController::class, 'generateCourseCodes'])->name('instructor.courses.generate-codes');
     Route::post('/enrollments/{enrollment}/installments', [InstructorCourseController::class, 'addInstallment'])->name('instructor.enrollments.installment');
 
     // 4. Quizzes & MCQs

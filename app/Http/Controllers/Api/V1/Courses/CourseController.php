@@ -34,12 +34,17 @@ class CourseController extends Controller
             $query->where('subcategory_id', $request->input('subcategory_id'));
         }
 
+        // Filtering by child_subcategory_id (if passed)
+        if ($request->filled('child_subcategory_id')) {
+            $query->where('child_subcategory_id', $request->input('child_subcategory_id'));
+        }
+
         // Filtering by type (recorded, live, mixed)
         if ($request->has('type')) {
             $query->where('type', $request->input('type'));
         }
 
-        $courses = $query->with(['instructor', 'category', 'subcategory'])->paginate(15);
+        $courses = $query->with(['instructor', 'category', 'subcategory', 'childSubcategory'])->paginate(15);
 
         return CourseResource::collection($courses)->additional([
             'success' => true,
@@ -265,7 +270,7 @@ class CourseController extends Controller
 
     public function categories(Request $request)
     {
-        $categories = \App\Models\Category::withCount(['subcategories', 'courses'])->latest()->get()->map(function($cat) {
+        $categories = \App\Models\Category::with(['subcategories.childSubcategories'])->withCount(['subcategories', 'courses'])->latest()->get()->map(function($cat) {
             return [
                 'id' => $cat->id,
                 'name' => $cat->name,
@@ -273,6 +278,20 @@ class CourseController extends Controller
                 'image_url' => $cat->image_url,
                 'subcategories_count' => $cat->subcategories_count,
                 'courses_count' => $cat->courses_count,
+                'subcategories' => $cat->subcategories->map(function($sub) {
+                    return [
+                        'id' => $sub->id,
+                        'name' => $sub->name,
+                        'slug' => $sub->slug,
+                        'child_subcategories' => $sub->childSubcategories->map(function($child) {
+                            return [
+                                'id' => $child->id,
+                                'name' => $child->name,
+                                'slug' => $child->slug,
+                            ];
+                        }),
+                    ];
+                }),
             ];
         });
 
@@ -285,12 +304,19 @@ class CourseController extends Controller
 
     public function subcategories(Request $request, $categoryId)
     {
-        $subcategories = \App\Models\Subcategory::where('category_id', $categoryId)->latest()->get()->map(function($sub) {
+        $subcategories = \App\Models\Subcategory::with('childSubcategories')->where('category_id', $categoryId)->latest()->get()->map(function($sub) {
             return [
                 'id' => $sub->id,
                 'category_id' => $sub->category_id,
                 'name' => $sub->name,
                 'slug' => $sub->slug,
+                'child_subcategories' => $sub->childSubcategories->map(function($child) {
+                    return [
+                        'id' => $child->id,
+                        'name' => $child->name,
+                        'slug' => $child->slug,
+                    ];
+                }),
             ];
         });
 
@@ -298,6 +324,24 @@ class CourseController extends Controller
             'success' => true,
             'message' => 'Subcategories retrieved successfully.',
             'data' => $subcategories
+        ]);
+    }
+
+    public function childSubcategories(Request $request, $subcategoryId)
+    {
+        $childSubcategories = \App\Models\ChildSubcategory::where('subcategory_id', $subcategoryId)->latest()->get()->map(function($child) {
+            return [
+                'id' => $child->id,
+                'subcategory_id' => $child->subcategory_id,
+                'name' => $child->name,
+                'slug' => $child->slug,
+            ];
+        });
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Child subcategories retrieved successfully.',
+            'data' => $childSubcategories
         ]);
     }
 

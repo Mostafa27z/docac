@@ -320,7 +320,46 @@ curl --location --request GET 'https://mediumspringgreen-aardvark-947551.hosting
     {
       "id": 11,
       "category_id": 1,
-      "name": "ECG Reading (قراءة رسم القلب)"
+      "name": "ECG Reading (قراءة رسم القلب)",
+      "slug": "ecg-reading",
+      "child_subcategories": [
+        {
+          "id": 101,
+          "name": "ECG Advanced (رسم القلب المتقدم)",
+          "slug": "ecg-advanced"
+        }
+      ]
+    }
+  ]
+}
+```
+
+---
+
+### استرجاع التصنيفات الفرعية الفرعية (المستوى الثالث - Child Subcategories)
+
+* **المسار:** `GET /api/v1/student/subcategories/{subcategory_id}/child-subcategories`
+* **التوثيق:** مطلوب (Bearer Token)
+* **حماية الجهاز:** غير مطلوبة
+
+**cURL:**
+```bash
+curl --location --request GET 'https://mediumspringgreen-aardvark-947551.hostingersite.com/api/v1/student/subcategories/11/child-subcategories' \
+--header 'Accept: application/json' \
+--header 'Authorization: Bearer {YOUR_TOKEN}'
+```
+
+**المُخرجات (200 OK):**
+```json
+{
+  "success": true,
+  "message": "Child subcategories retrieved successfully.",
+  "data": [
+    {
+      "id": 101,
+      "subcategory_id": 11,
+      "name": "ECG Advanced (رسم القلب المتقدم)",
+      "slug": "ecg-advanced"
     }
   ]
 }
@@ -339,7 +378,7 @@ curl --location --request GET 'https://mediumspringgreen-aardvark-947551.hosting
 * **المسار:** `GET /api/v1/student/courses`
 * **التوثيق:** مطلوب (Bearer Token)
 * **حماية الجهاز:** مطلوبة (X-Device-ID)
-* **المدخلات (Query Params اختيارية):** `category_id`, `subcategory_id`, `search`, `type`
+* **المدخلات (Query Params اختيارية):** `category_id`, `subcategory_id`, `child_subcategory_id`, `search`, `type`
 
 **cURL (بدون فلترة):**
 ```bash
@@ -349,9 +388,9 @@ curl --location --request GET 'https://mediumspringgreen-aardvark-947551.hosting
 --header 'X-Device-ID: {YOUR_DEVICE_ID}'
 ```
 
-**cURL (مع فلترة):**
+**cURL (مع فلترة بالـ 3 مستويات من التصنيفات):**
 ```bash
-curl --location --request GET 'https://mediumspringgreen-aardvark-947551.hostingersite.com/api/v1/student/courses?category_id=1&type=recorded&search=cardiology' \
+curl --location --request GET 'https://mediumspringgreen-aardvark-947551.hostingersite.com/api/v1/student/courses?category_id=1&subcategory_id=11&child_subcategory_id=101&type=recorded&search=cardiology' \
 --header 'Accept: application/json' \
 --header 'Authorization: Bearer {YOUR_TOKEN}' \
 --header 'X-Device-ID: {YOUR_DEVICE_ID}'

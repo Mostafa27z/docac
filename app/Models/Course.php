@@ -10,6 +10,7 @@ class Course extends Model
         'instructor_id',
         'category_id',
         'subcategory_id',
+        'child_subcategory_id',
         'title',
         'slug',
         'description',
@@ -56,6 +57,11 @@ class Course extends Model
     public function subcategory()
     {
         return $this->belongsTo(Subcategory::class);
+    }
+
+    public function childSubcategory()
+    {
+        return $this->belongsTo(ChildSubcategory::class);
     }
 
     public function sections()

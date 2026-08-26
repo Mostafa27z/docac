@@ -387,6 +387,9 @@ class InstructorCourseController extends Controller
             'description' => 'required|string',
             'type' => 'required|in:recorded,live,mixed',
             'price' => 'required|numeric|min:0',
+            'category_id' => 'nullable|exists:categories,id',
+            'subcategory_id' => 'nullable|exists:subcategories,id',
+            'child_subcategory_id' => 'nullable|exists:child_subcategories,id',
             'thumbnail_file' => 'nullable|image|max:10240',
             'thumbnail' => 'nullable|image|max:10240',
         ]);
@@ -396,6 +399,9 @@ class InstructorCourseController extends Controller
             'description' => $validated['description'],
             'type' => $validated['type'],
             'price' => $validated['price'],
+            'category_id' => $validated['category_id'] ?? null,
+            'subcategory_id' => $validated['subcategory_id'] ?? null,
+            'child_subcategory_id' => $validated['child_subcategory_id'] ?? null,
         ];
 
         $file = $request->file('thumbnail_file') ?? $request->file('thumbnail') ?? $request->file('image');
@@ -536,5 +542,26 @@ class InstructorCourseController extends Controller
             });
 
         return view('instructor.courses.analytics', compact('course', 'enrollments', 'totalLessons'));
+    }
+
+    public function generateCourseCodes(Request $request, Course $course)
+    {
+        $this->checkCourseAccess($course);
+
+        $validated = $request->validate([
+            'quantity' => 'required|integer|min:1|max:100',
+        ]);
+
+        $quantity = (int) $validated['quantity'];
+        for ($i = 0; $i < $quantity; $i++) {
+            \App\Models\CourseActivationCode::create([
+                'course_id' => $course->id,
+                'created_by_user_id' => auth()->id(),
+                'code' => strtoupper(\Illuminate\Support\Str::random(12)),
+                'status' => 'unused',
+            ]);
+        }
+
+        return redirect()->back()->with('success', "تم إنشاء {$quantity} كود تفعيل بنجاح.");
     }
 }

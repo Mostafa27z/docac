@@ -37,6 +37,7 @@ Route::prefix('v1')->group(function () {
         // Note: For now, we will add basic category/subcategory routes. Let's direct them to a CategoryController or define inline closures since Category tables don't exist yet, or dynamically return mock data that matches the specification. We can make a CategoryController!
         Route::get('student/categories', [CourseController::class, 'categories']);
         Route::get('student/categories/{category_id}/subcategories', [CourseController::class, 'subcategories']);
+        Route::get('student/subcategories/{subcategory_id}/child-subcategories', [CourseController::class, 'childSubcategories']);
 
         // 3. Courses (Spec: 3. الكورسات)
         Route::middleware('single.device')->group(function () {

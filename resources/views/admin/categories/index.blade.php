@@ -66,21 +66,51 @@
 
                     {{-- Subcategories Section --}}
                     <div>
-                        <h4 class="text-xs font-bold text-[#718096] uppercase tracking-wider mb-3">التصنيفات الفرعية والتخصصات:</h4>
-                        <div class="flex flex-wrap gap-2">
+                        <h4 class="text-xs font-bold text-[#718096] uppercase tracking-wider mb-3">التصنيفات الفرعية والتخصصات (المستوى 2 و 3):</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                             @forelse($category->subcategories as $sub)
-                                <div class="inline-flex items-center gap-2 bg-[#F8F9FA] border border-[#E2E8F0] px-3 py-1.5 rounded-xl text-xs font-medium text-[#1A202C]">
-                                    <span>{{ $sub->name }}</span>
-                                    <form action="{{ route('admin.subcategories.destroy', $sub->id) }}" method="POST" onsubmit="return confirm('حذف هذا التصنيف الفرعي؟')" class="inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="text-red-500 hover:text-red-700 transition-colors">
-                                            <i class="ph-bold ph-x text-xs"></i>
-                                        </button>
-                                    </form>
+                                <div class="bg-[#F8F9FA] border border-[#E2E8F0] p-3 rounded-xl">
+                                    <div class="flex items-center justify-between gap-2 mb-2 pb-1.5 border-b border-[#E2E8F0]/70">
+                                        <div class="flex items-center gap-1.5 font-bold text-xs text-[#1A202C]">
+                                            <i class="ph-bold ph-git-branch text-[#00A896]"></i>
+                                            <span>{{ $sub->name }}</span>
+                                        </div>
+                                        <div class="flex items-center gap-1">
+                                            <button onclick="openAddChildSubcategoryModal({{ $sub->id }}, '{{ addslashes($sub->name) }}')" title="إضافة تصنيف فرعي دقيق (المستوى 3)" class="inline-flex items-center gap-1 text-[11px] bg-[#0047AB]/10 text-[#0047AB] hover:bg-[#0047AB] hover:text-white px-2 py-1 rounded-lg transition-all font-semibold">
+                                                <i class="ph-bold ph-plus text-[10px]"></i>
+                                                فرعي دقيق
+                                            </button>
+                                            <form action="{{ route('admin.subcategories.destroy', $sub->id) }}" method="POST" onsubmit="return confirm('حذف هذا التصنيف الفرعي وجميع تصنيفاته الفرعية؟')" class="inline">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="text-red-500 hover:text-red-700 p-1 rounded transition-colors" title="حذف التصنيف الفرعي">
+                                                    <i class="ph-bold ph-trash text-xs"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+
+                                    {{-- Level 3 Child Subcategories --}}
+                                    <div class="flex flex-wrap gap-1.5">
+                                        @forelse($sub->childSubcategories as $child)
+                                            <div class="inline-flex items-center gap-1.5 bg-white border border-[#E2E8F0] px-2.5 py-1 rounded-lg text-[11px] font-medium text-[#4A5568]">
+                                                <i class="ph-bold ph-caret-left text-[10px] text-[#0088CC]"></i>
+                                                <span>{{ $child->name }}</span>
+                                                <form action="{{ route('admin.child-subcategories.destroy', $child->id) }}" method="POST" onsubmit="return confirm('حذف هذا التصنيف الفرعي الدقيق؟')" class="inline">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="text-red-400 hover:text-red-600 transition-colors">
+                                                        <i class="ph-bold ph-x text-[10px]"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        @empty
+                                            <span class="text-[11px] text-[#A0AEC0] italic">لا توجد تصنيفات فرعية دقيقة.</span>
+                                        @endforelse
+                                    </div>
                                 </div>
                             @empty
-                                <span class="text-xs text-[#718096] italic">لا توجد تخصصات فرعية مضافة حتى الآن.</span>
+                                <div class="col-span-2 text-xs text-[#718096] italic">لا توجد تخصصات فرعية مضافة حتى الآن.</div>
                             @endforelse
                         </div>
                     </div>
@@ -145,7 +175,7 @@
         <div class="bg-white border border-[#E2E8F0] rounded-2xl w-11/12 max-w-md p-6 relative shadow-2xl">
             <h3 class="text-lg font-bold mb-1 text-right text-[#1A202C] flex items-center gap-2">
                 <i class="ph-bold ph-git-branch text-[#00A896]"></i>
-                إضافة تصنيف فرعي
+                إضافة تصنيف فرعي (المستوى الثاني)
             </h3>
             <p class="text-xs text-[#718096] mb-4">التصنيف الرئيسي: <strong id="parent-category-name" class="text-[#0047AB]"></strong></p>
             <form action="{{ route('admin.subcategories.store') }}" method="POST" class="space-y-4">
@@ -156,6 +186,27 @@
                 <div class="flex gap-3 justify-end pt-4 border-t border-[#E2E8F0]">
                     <button type="button" onclick="closeAddSubcategoryModal()" class="bg-[#F8F9FA] hover:bg-[#E2E8F0] text-[#4A5568] font-semibold px-5 py-2.5 rounded-xl transition-colors text-sm">إلغاء</button>
                     <x-btn-primary icon="plus" type="submit">إضافة التخصص الفرعي</x-btn-primary>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {{-- Add Child Subcategory Modal (Level 3) --}}
+    <div id="add-child-subcategory-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(26,32,44,0.6); z-index: 1000; align-items: center; justify-content: center;">
+        <div class="bg-white border border-[#E2E8F0] rounded-2xl w-11/12 max-w-md p-6 relative shadow-2xl">
+            <h3 class="text-lg font-bold mb-1 text-right text-[#1A202C] flex items-center gap-2">
+                <i class="ph-bold ph-caret-circle-left text-[#0088CC]"></i>
+                إضافة تصنيف فرعي فرعي (المستوى الثالث)
+            </h3>
+            <p class="text-xs text-[#718096] mb-4">التصنيف الفرعي: <strong id="parent-subcategory-name" class="text-[#00A896]"></strong></p>
+            <form action="{{ route('admin.child-subcategories.store') }}" method="POST" class="space-y-4">
+                @csrf
+                <input type="hidden" name="subcategory_id" id="parent-subcategory-id" value="">
+                <x-form-input label="اسم التصنيف الفرعي الفرعي" name="name" :required="true" placeholder="مثال: رسم القلب المتقدم ECG Advanced" />
+
+                <div class="flex gap-3 justify-end pt-4 border-t border-[#E2E8F0]">
+                    <button type="button" onclick="closeAddChildSubcategoryModal()" class="bg-[#F8F9FA] hover:bg-[#E2E8F0] text-[#4A5568] font-semibold px-5 py-2.5 rounded-xl transition-colors text-sm">إلغاء</button>
+                    <x-btn-primary icon="plus" type="submit">إضافة المستوى الثالث</x-btn-primary>
                 </div>
             </form>
         </div>
@@ -186,6 +237,15 @@
     }
     function closeAddSubcategoryModal() {
         document.getElementById('add-subcategory-modal').style.display = 'none';
+    }
+
+    function openAddChildSubcategoryModal(subcategoryId, subcategoryName) {
+        document.getElementById('parent-subcategory-id').value = subcategoryId;
+        document.getElementById('parent-subcategory-name').innerText = subcategoryName;
+        document.getElementById('add-child-subcategory-modal').style.display = 'flex';
+    }
+    function closeAddChildSubcategoryModal() {
+        document.getElementById('add-child-subcategory-modal').style.display = 'none';
     }
     </script>
     @endpush

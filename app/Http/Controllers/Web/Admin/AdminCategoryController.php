@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Web\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Subcategory;
+use App\Models\ChildSubcategory;
 use App\Services\BunnyStorageService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -20,7 +21,7 @@ class AdminCategoryController extends Controller
 
     public function index()
     {
-        $categories = Category::with(['subcategories'])->withCount('courses')->latest()->get();
+        $categories = Category::with(['subcategories.childSubcategories'])->withCount('courses')->latest()->get();
         return view('admin.categories.index', compact('categories'));
     }
 
@@ -101,5 +102,27 @@ class AdminCategoryController extends Controller
     {
         $subcategory->delete();
         return redirect()->back()->with('success', 'تم حذف التصنيف الفرعي بنجاح.');
+    }
+
+    public function storeChildSubcategory(Request $request)
+    {
+        $validated = $request->validate([
+            'subcategory_id' => 'required|exists:subcategories,id',
+            'name' => 'required|string|max:255',
+        ]);
+
+        ChildSubcategory::create([
+            'subcategory_id' => $validated['subcategory_id'],
+            'name' => $validated['name'],
+            'slug' => Str::slug($validated['name']) . '-' . Str::random(4),
+        ]);
+
+        return redirect()->back()->with('success', 'تم إضافة التصنيف الفرعي الفرعي (المستوى الثالث) بنجاح.');
+    }
+
+    public function destroyChildSubcategory(ChildSubcategory $childSubcategory)
+    {
+        $childSubcategory->delete();
+        return redirect()->back()->with('success', 'تم حذف التصنيف الفرعي الفرعي بنجاح.');
     }
 }
