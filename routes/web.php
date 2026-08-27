@@ -6,6 +6,7 @@ use App\Http\Controllers\Web\Admin\AdminChatController;
 use App\Http\Controllers\Web\Admin\AdminCategoryController;
 use App\Http\Controllers\Web\Admin\AdminCourseController;
 use App\Http\Controllers\Web\Admin\AdminBannerController;
+use App\Http\Controllers\Web\Admin\AdminAdController;
 use App\Http\Controllers\Web\Instructor\InstructorCourseController;
 use App\Http\Controllers\Web\Instructor\InstructorQuizController;
 use App\Http\Controllers\Web\Instructor\InstructorChatController;
@@ -35,6 +36,13 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
     Route::put('/banners/{banner}', [AdminBannerController::class, 'update'])->name('admin.banners.update');
     Route::delete('/banners/{banner}', [AdminBannerController::class, 'destroy'])->name('admin.banners.destroy');
     Route::post('/banners/{banner}/toggle', [AdminBannerController::class, 'toggleActive'])->name('admin.banners.toggle');
+
+    // Admin Ad Routes
+    Route::get('/ads', [AdminAdController::class, 'index'])->name('admin.ads.index');
+    Route::post('/ads', [AdminAdController::class, 'store'])->name('admin.ads.store');
+    Route::put('/ads/{ad}', [AdminAdController::class, 'update'])->name('admin.ads.update');
+    Route::delete('/ads/{ad}', [AdminAdController::class, 'destroy'])->name('admin.ads.destroy');
+    Route::post('/ads/{ad}/toggle', [AdminAdController::class, 'toggleActive'])->name('admin.ads.toggle');
 
     // Admin Course Management Routes
     Route::get('/courses', [AdminCourseController::class, 'index'])->name('admin.courses.index');

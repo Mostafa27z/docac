@@ -250,4 +250,36 @@ class LmsApiTest extends TestCase
 
         $loginResponse2->assertStatus(200);
     }
+
+    /** @test */
+    public function student_can_retrieve_active_ads()
+    {
+        // 1. Create an active ad and an inactive ad
+        \App\Models\Ad::create([
+            'title' => 'Active Promo Ad',
+            'description' => 'Active promo description',
+            'image' => 'storage/ads/promo.png',
+            'link' => 'https://t.me/promo',
+            'is_active' => true,
+            'sort_order' => 1,
+        ]);
+
+        \App\Models\Ad::create([
+            'title' => 'Inactive Promo Ad',
+            'description' => 'Inactive promo description',
+            'image' => 'storage/ads/promo2.png',
+            'link' => 'https://t.me/promo2',
+            'is_active' => false,
+            'sort_order' => 2,
+        ]);
+
+        // 2. Call Ads endpoint
+        $response = $this->getJson('/api/v1/student/ads');
+
+        $response->assertStatus(200)
+                 ->assertJsonPath('success', true)
+                 ->assertJsonCount(1, 'data')
+                 ->assertJsonPath('data.0.title', 'Active Promo Ad')
+                 ->assertJsonPath('data.0.link', 'https://t.me/promo');
+    }
 }

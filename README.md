@@ -266,6 +266,39 @@ curl --location --request GET 'https://mediumspringgreen-aardvark-947551.hosting
 
 ---
 
+### استرجاع قائمة الإعلانات الترويجية النشطة (Ads)
+
+* **المسار:** `GET /api/v1/student/ads`
+* **التوثيق:** غير مطلوب (Public)
+* **حماية الجهاز:** غير مطلوبة
+
+**cURL:**
+```bash
+curl --location --request GET 'https://mediumspringgreen-aardvark-947551.hostingersite.com/api/v1/student/ads' \
+--header 'Accept: application/json'
+```
+
+**المُخرجات (200 OK):**
+```json
+{
+  "success": true,
+  "message": "Ads retrieved successfully.",
+  "data": [
+    {
+      "id": 1,
+      "title": "انضم إلى قناة التلجرام الرسمية",
+      "description": "تابع آخر الأخبار والخصومات الحصرية لأكاديميتنا",
+      "image": "https://mediumspringgreen-aardvark-947551.hostingersite.com/storage/ads/telegram-promo.png",
+      "link": "https://t.me/example",
+      "sort_order": 1,
+      "created_at": "2026-08-27T22:00:00.000000Z"
+    }
+  ]
+}
+```
+
+---
+
 ## 2. التصنيفات (Categories)
 
 ### استرجاع جميع التصنيفات الأساسية

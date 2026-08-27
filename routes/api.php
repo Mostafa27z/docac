@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\V1\Live\LiveController;
 use App\Http\Controllers\Api\V1\Chat\ChatController;
 use App\Http\Controllers\Api\V1\Files\FileController;
 use App\Http\Controllers\Api\V1\BannerApiController;
+use App\Http\Controllers\Api\V1\AdApiController;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,6 +24,7 @@ Route::prefix('v1')->group(function () {
     Route::post('student/login', [AuthController::class, 'login']);
     Route::get('contacts', [\App\Http\Controllers\Api\V1\ContactApiController::class, 'index']);
     Route::get('student/banners', [BannerApiController::class, 'index']);
+    Route::get('student/ads', [AdApiController::class, 'index']);
 
     // 2. Protected routes by Sanctum
     Route::middleware('auth:sanctum')->group(function () {

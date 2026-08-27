@@ -100,7 +100,13 @@
                 <li>
                     <a class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->routeIs('admin.banners.*') ? 'bg-white/15 text-white shadow-sm' : 'text-white/70 hover:text-white hover:bg-white/8' }}" href="{{ route('admin.banners.index') }}">
                         <i class="ph-bold ph-image text-lg"></i>
-                        <span>البنرات والإعلانات</span>
+                        <span>البنرات الإعلانية</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->routeIs('admin.ads.*') ? 'bg-white/15 text-white shadow-sm' : 'text-white/70 hover:text-white hover:bg-white/8' }}" href="{{ route('admin.ads.index') }}">
+                        <i class="ph-bold ph-megaphone text-lg"></i>
+                        <span>الإعلانات الترويجية</span>
                     </a>
                 </li>
                 <li>
