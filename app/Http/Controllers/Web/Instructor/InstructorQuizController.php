@@ -14,8 +14,12 @@ class InstructorQuizController extends Controller
     public function index()
     {
         $instructorId = auth()->id();
-        $quizzes = Quiz::whereHas('lesson.section.course', function ($q) use ($instructorId) {
-            $q->where('instructor_id', $instructorId);
+        $isAdmin = auth()->user()->role === 'admin';
+
+        $quizzes = Quiz::whereHas('lesson.section.course', function ($q) use ($instructorId, $isAdmin) {
+            if (!$isAdmin) {
+                $q->where('instructor_id', $instructorId);
+            }
         })->with(['lesson.section.course'])->latest()->get();
 
         return view('instructor.quizzes.index', compact('quizzes'));
@@ -23,6 +27,10 @@ class InstructorQuizController extends Controller
 
     public function storeQuiz(Request $request, Lesson $lesson)
     {
+        if (auth()->user()->role !== 'admin' && $lesson->section->course->instructor_id !== auth()->id()) {
+            abort(403);
+        }
+
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'pass_percentage' => 'required|numeric|min:0|max:100',
@@ -43,6 +51,10 @@ class InstructorQuizController extends Controller
 
     public function storeQuestion(Request $request, Quiz $quiz)
     {
+        if (auth()->user()->role !== 'admin' && $quiz->lesson->section->course->instructor_id !== auth()->id()) {
+            abort(403);
+        }
+
         $validated = $request->validate([
             'question_text' => 'required|string',
             'points' => 'required|integer|min:1',

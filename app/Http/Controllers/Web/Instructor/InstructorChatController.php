@@ -15,20 +15,26 @@ class InstructorChatController extends Controller
     public function index(Request $request)
     {
         $instructorId = auth()->id();
+        $isAdmin = auth()->user()->role === 'admin';
 
-        // 1. Fetch instructor's conversations
-        $conversations = Conversation::where('instructor_id', $instructorId)
-            ->with(['student', 'course'])
+        // 1. Fetch conversations
+        $conversationsQuery = Conversation::query();
+        if (!$isAdmin) {
+            $conversationsQuery->where('instructor_id', $instructorId);
+        }
+        $conversations = $conversationsQuery->with(['student', 'course'])
             ->orderBy('last_message_at', 'desc')
             ->get();
 
-        // 2. Fetch instructor's courses to allow starting chats/broadcasting per course
-        $courses = Course::where('instructor_id', $instructorId)->get();
+        // 2. Fetch courses to allow starting chats/broadcasting per course
+        $courses = $isAdmin ? Course::all() : Course::where('instructor_id', $instructorId)->get();
 
-        // 3. Fetch all students enrolled in any of the instructor's courses
+        // 3. Fetch all students enrolled in any of the courses
         $enrolledStudents = User::where('role', 'student')
-            ->whereHas('enrollments.course', function ($query) use ($instructorId) {
-                $query->where('instructor_id', $instructorId);
+            ->whereHas('enrollments.course', function ($query) use ($instructorId, $isAdmin) {
+                if (!$isAdmin) {
+                    $query->where('instructor_id', $instructorId);
+                }
             })
             ->get();
 
@@ -36,10 +42,11 @@ class InstructorChatController extends Controller
         $messages = collect();
 
         if ($request->has('conversation_id')) {
-            $selectedConversation = Conversation::where('id', $request->conversation_id)
-                ->where('instructor_id', $instructorId)
-                ->with(['student', 'course'])
-                ->first();
+            $selectedConversationQuery = Conversation::where('id', $request->conversation_id);
+            if (!$isAdmin) {
+                $selectedConversationQuery->where('instructor_id', $instructorId);
+            }
+            $selectedConversation = $selectedConversationQuery->with(['student', 'course'])->first();
 
             if ($selectedConversation) {
                 $messages = $selectedConversation->messages()->with('sender')->get();
@@ -57,7 +64,7 @@ class InstructorChatController extends Controller
 
     public function sendMessage(Request $request, Conversation $conversation)
     {
-        if ($conversation->instructor_id !== auth()->id()) {
+        if (auth()->user()->role !== 'admin' && $conversation->instructor_id !== auth()->id()) {
             abort(403);
         }
 
@@ -87,16 +94,18 @@ class InstructorChatController extends Controller
             'student_id' => 'required|exists:users,id',
         ]);
 
-        // Verify the course belongs to the logged-in instructor
-        $course = Course::where('id', $validated['course_id'])
-            ->where('instructor_id', auth()->id())
-            ->firstOrFail();
+        // Verify course
+        $courseQuery = Course::where('id', $validated['course_id']);
+        if (auth()->user()->role !== 'admin') {
+            $courseQuery->where('instructor_id', auth()->id());
+        }
+        $course = $courseQuery->firstOrFail();
 
         // Find or create conversation
         $conversation = Conversation::firstOrCreate([
             'course_id' => $course->id,
             'student_id' => $validated['student_id'],
-            'instructor_id' => auth()->id(),
+            'instructor_id' => $course->instructor_id,
         ]);
 
         return redirect()->route('instructor.chats.index', ['conversation_id' => $conversation->id]);
@@ -110,10 +119,13 @@ class InstructorChatController extends Controller
         ]);
 
         $instructorId = auth()->id();
+        $isAdmin = auth()->user()->role === 'admin';
 
         // Get student IDs enrolled
-        $query = CourseEnrollment::whereHas('course', function ($q) use ($instructorId, $validated) {
-            $q->where('instructor_id', $instructorId);
+        $query = CourseEnrollment::whereHas('course', function ($q) use ($instructorId, $validated, $isAdmin) {
+            if (!$isAdmin) {
+                $q->where('instructor_id', $instructorId);
+            }
             if ($validated['course_id'] !== 'all') {
                 $q->where('course_id', $validated['course_id']);
             }
@@ -125,13 +137,12 @@ class InstructorChatController extends Controller
             return redirect()->back()->with('error', 'لا يوجد طلاب مشتركين لإرسال الرسالة الجماعية لهم.');
         }
 
-        // We need a course reference if 'all' is selected. We'll associate the conversation with the first course of the student or a general one.
-        // Let's loop through each student and determine which course they are enrolled in for this instructor.
         foreach ($studentIds as $studentId) {
-            // Find one course that this student is enrolled in that belongs to this instructor
             $enrollment = CourseEnrollment::where('student_id', $studentId)
-                ->whereHas('course', function ($q) use ($instructorId, $validated) {
-                    $q->where('instructor_id', $instructorId);
+                ->whereHas('course', function ($q) use ($instructorId, $validated, $isAdmin) {
+                    if (!$isAdmin) {
+                        $q->where('instructor_id', $instructorId);
+                    }
                     if ($validated['course_id'] !== 'all') {
                         $q->where('course_id', $validated['course_id']);
                     }
@@ -145,12 +156,12 @@ class InstructorChatController extends Controller
             $conversation = Conversation::firstOrCreate([
                 'course_id' => $enrollment->course_id,
                 'student_id' => $studentId,
-                'instructor_id' => $instructorId,
+                'instructor_id' => $enrollment->course->instructor_id,
             ]);
 
             Message::create([
                 'conversation_id' => $conversation->id,
-                'sender_id' => $instructorId,
+                'sender_id' => auth()->id(),
                 'message_text' => $validated['message_text'],
                 'type' => 'text',
             ]);

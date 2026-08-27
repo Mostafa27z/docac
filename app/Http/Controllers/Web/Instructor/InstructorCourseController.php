@@ -27,14 +27,19 @@ class InstructorCourseController extends Controller
     public function dashboard()
     {
         $instructorId = auth()->id();
+        $isAdmin = auth()->user()->role === 'admin';
         
         $stats = [
-            'my_courses_count' => Course::where('instructor_id', $instructorId)->count(),
-            'students_count' => \App\Models\CourseEnrollment::whereHas('course', function($q) use ($instructorId) {
-                $q->where('instructor_id', $instructorId);
+            'my_courses_count' => $isAdmin ? Course::count() : Course::where('instructor_id', $instructorId)->count(),
+            'students_count' => \App\Models\CourseEnrollment::whereHas('course', function($q) use ($instructorId, $isAdmin) {
+                if (!$isAdmin) {
+                    $q->where('instructor_id', $instructorId);
+                }
             })->count(),
-            'live_sessions_count' => \App\Models\LiveSession::whereHas('course', function($q) use ($instructorId) {
-                $q->where('instructor_id', $instructorId);
+            'live_sessions_count' => \App\Models\LiveSession::whereHas('course', function($q) use ($instructorId, $isAdmin) {
+                if (!$isAdmin) {
+                    $q->where('instructor_id', $instructorId);
+                }
             })->count(),
         ];
 
@@ -43,17 +48,20 @@ class InstructorCourseController extends Controller
 
     public function index()
     {
-        $courses = Course::where('instructor_id', auth()->id())->latest()->get();
+        $courses = auth()->user()->role === 'admin' ? Course::latest()->get() : Course::where('instructor_id', auth()->id())->latest()->get();
         return view('instructor.courses.index', compact('courses'));
     }
 
     public function subscriptionsIndex()
     {
         $instructorId = auth()->id();
-        $courses = Course::where('instructor_id', $instructorId)->get();
+        $isAdmin = auth()->user()->role === 'admin';
+        $courses = $isAdmin ? Course::all() : Course::where('instructor_id', $instructorId)->get();
 
-        $enrollments = \App\Models\CourseEnrollment::whereHas('course', function($q) use ($instructorId) {
-            $q->where('instructor_id', $instructorId);
+        $enrollments = \App\Models\CourseEnrollment::whereHas('course', function($q) use ($instructorId, $isAdmin) {
+            if (!$isAdmin) {
+                $q->where('instructor_id', $instructorId);
+            }
         })->with(['course', 'student', 'payments'])->latest()->get();
 
         return view('instructor.subscriptions.index', compact('courses', 'enrollments'));
@@ -61,7 +69,7 @@ class InstructorCourseController extends Controller
 
     public function updateCoursePrice(Request $request, Course $course)
     {
-        if ($course->instructor_id !== auth()->id()) {
+        if (auth()->user()->role !== 'admin' && $course->instructor_id !== auth()->id()) {
             abort(403);
         }
 
@@ -78,7 +86,7 @@ class InstructorCourseController extends Controller
 
     public function addInstallment(Request $request, \App\Models\CourseEnrollment $enrollment)
     {
-        if ($enrollment->course->instructor_id !== auth()->id()) {
+        if (auth()->user()->role !== 'admin' && $enrollment->course->instructor_id !== auth()->id()) {
             abort(403);
         }
 
@@ -187,7 +195,7 @@ class InstructorCourseController extends Controller
 
     public function storeLesson(Request $request, CourseSection $section)
     {
-        if ($section->course->instructor_id !== auth()->id()) {
+        if (auth()->user()->role !== 'admin' && $section->course->instructor_id !== auth()->id()) {
             abort(403);
         }
 
