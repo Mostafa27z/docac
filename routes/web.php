@@ -106,6 +106,7 @@ Route::prefix('instructor')->middleware(['auth', 'role:instructor|admin'])->grou
     // 4. Quizzes & MCQs
     Route::get('/quizzes', [InstructorQuizController::class, 'index'])->name('instructor.quizzes.index');
     Route::post('/lessons/{lesson}/quizzes', [InstructorQuizController::class, 'storeQuiz'])->name('instructor.quizzes.store');
+    Route::post('/courses/{course}/quizzes', [InstructorQuizController::class, 'storeQuizForCourse'])->name('instructor.quizzes.storeForCourse');
     Route::post('/quizzes/{quiz}/questions', [InstructorQuizController::class, 'storeQuestion'])->name('instructor.questions.store');
 
     // 5. Chats & Messages

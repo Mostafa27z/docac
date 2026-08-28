@@ -211,13 +211,48 @@
         </div>
         <p class="text-[#718096] text-sm mb-6 mr-12">قم بإنشاء امتحانات للدروس وإضافة أسئلة اختيار من متعدد مع تحديد الإجابة الصحيحة.</p>
 
+        {{-- Add Quiz to Existing Lesson --}}
+        <details class="bg-[#F8F9FA] border border-[#E2E8F0] rounded-xl p-4 mb-6 mr-12">
+            <summary class="cursor-pointer font-bold text-[#1A202C] text-sm flex items-center gap-2 select-none">
+                <i class="ph-bold ph-plus-circle text-[#00A896] text-lg"></i>
+                <span>إنشاء امتحان جديد وربطه بدرس قائم</span>
+            </summary>
+            <form action="{{ route('instructor.quizzes.storeForCourse', $course->id) }}" method="POST" class="mt-4 space-y-4">
+                @csrf
+                <div>
+                    <label class="block text-sm font-semibold text-[#4A5568] mb-1.5">اختر الدرس المرتبط</label>
+                    <select name="lesson_id" required class="w-full bg-white border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-[#1A202C] text-sm focus:outline-none focus:ring-2 focus:ring-[#0047AB]/20 focus:border-[#0047AB] transition-all">
+                        <option value="">-- اختر درس من الكورس --</option>
+                        @foreach($course->sections as $sec)
+                            <optgroup label="{{ $sec->title }}">
+                                @foreach($sec->lessons as $les)
+                                    @if(!$les->quiz)
+                                        <option value="{{ $les->id }}">{{ $les->title }} ({{ $les->type === 'video' ? 'فيديو' : 'امتحان' }})</option>
+                                    @endif
+                                @endforeach
+                            </optgroup>
+                        @endforeach
+                    </select>
+                </div>
+                <x-form-input label="عنوان الامتحان" name="title" :required="true" placeholder="مثال: اختبار تحديد المستوى" />
+                <div class="grid grid-cols-2 gap-4">
+                    <x-form-input label="نسبة النجاح (%)" name="pass_percentage" type="number" :required="true" value="60" />
+                    <x-form-input label="الحد الأقصى للمحاولات" name="attempts_allowed" type="number" value="3" />
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <x-form-input label="مدة الامتحان (بالدقائق - اختياري)" name="time_limit_minutes" type="number" placeholder="مثال: 30" />
+                </div>
+                <x-btn-primary icon="gear" type="submit">إنشاء الامتحان</x-btn-primary>
+            </form>
+        </details>
+
         @foreach($course->sections as $section)
             @foreach($section->lessons as $lesson)
-                @if($lesson->type === 'quiz')
+                @if($lesson->type === 'quiz' || $lesson->quiz)
                     <div id="quiz-builder-{{ $lesson->id }}" class="bg-[#F8F9FA] border border-[#E2E8F0] rounded-2xl p-5 mb-5">
                         <h3 class="text-base font-bold text-[#0047AB] mb-4 flex items-center gap-2">
                             <i class="ph-bold ph-check-square text-lg"></i>
-                            امتحان الدرس: {{ $lesson->title }}
+                            امتحان الدرس: {{ $lesson->title }} ({{ $lesson->type === 'video' ? 'درس فيديو' : 'درس امتحان' }})
                         </h3>
 
                         @if(!$lesson->quiz)

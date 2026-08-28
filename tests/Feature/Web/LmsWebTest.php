@@ -162,4 +162,36 @@ class LmsWebTest extends TestCase
             'attempts_allowed' => null,
         ]);
     }
+
+    /** @test */
+    public function instructor_can_create_quiz_and_link_to_existing_lesson()
+    {
+        $section = \App\Models\CourseSection::create([
+            'course_id' => $this->course->id,
+            'title' => 'Test Section',
+            'sort_order' => 1,
+        ]);
+
+        $lesson = \App\Models\Lesson::create([
+            'section_id' => $section->id,
+            'title' => 'Test Video Lesson',
+            'type' => 'video',
+            'sort_order' => 1,
+        ]);
+
+        $response = $this->actingAs($this->instructor)->post("/instructor/courses/{$this->course->id}/quizzes", [
+            'lesson_id' => $lesson->id,
+            'title' => 'Linked Exam',
+            'pass_percentage' => 70,
+            'attempts_allowed' => 2,
+        ]);
+
+        $response->assertRedirect();
+        $this->assertDatabaseHas('quizzes', [
+            'lesson_id' => $lesson->id,
+            'title' => 'Linked Exam',
+            'pass_percentage' => 70,
+            'attempts_allowed' => 2,
+        ]);
+    }
 }

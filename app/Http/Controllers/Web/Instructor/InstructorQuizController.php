@@ -7,6 +7,7 @@ use App\Models\Quiz;
 use App\Models\Question;
 use App\Models\QuestionOption;
 use App\Models\Lesson;
+use App\Models\Course;
 use Illuminate\Http\Request;
 
 class InstructorQuizController extends Controller
@@ -47,6 +48,43 @@ class InstructorQuizController extends Controller
         ]);
 
         return redirect()->back()->with('success', 'Quiz assessment created.');
+    }
+
+    public function storeQuizForCourse(Request $request, Course $course)
+    {
+        if (auth()->user()->role !== 'admin' && $course->instructor_id !== auth()->id()) {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'lesson_id' => 'required|exists:lessons,id',
+            'title' => 'required|string|max:255',
+            'pass_percentage' => 'required|numeric|min:0|max:100',
+            'time_limit_minutes' => 'nullable|integer',
+            'attempts_allowed' => 'nullable|integer',
+        ]);
+
+        // Check if the lesson belongs to this course
+        $lesson = Lesson::findOrFail($validated['lesson_id']);
+        if ($lesson->section->course_id !== $course->id) {
+            abort(403, 'الدرس المختار لا ينتمي لهذا الكورس.');
+        }
+
+        // Check if quiz already exists for this lesson
+        $existingQuiz = Quiz::where('lesson_id', $lesson->id)->first();
+        if ($existingQuiz) {
+            return redirect()->back()->with('error', 'هذا الدرس يحتوي بالفعل على امتحان.');
+        }
+
+        Quiz::create([
+            'lesson_id' => $lesson->id,
+            'title' => $validated['title'],
+            'pass_percentage' => $validated['pass_percentage'],
+            'time_limit_minutes' => $validated['time_limit_minutes'] ?? null,
+            'attempts_allowed' => $validated['attempts_allowed'] ?? null,
+        ]);
+
+        return redirect()->back()->with('success', 'تم إنشاء الامتحان بنجاح وربطه بالدرس.');
     }
 
     public function storeQuestion(Request $request, Quiz $quiz)
