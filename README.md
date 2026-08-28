@@ -859,6 +859,48 @@ curl --location --request GET 'https://mediumspringgreen-aardvark-947551.hosting
 
 ## 7. الامتحانات (Exams / MCQs)
 
+### استرجاع امتحانات الكورس الكاملة (Get Course Quizzes)
+
+* **المسار:** `GET /api/v1/student/courses/{course_id}/quizzes`
+* **التوثيق:** مطلوب (Bearer Token)
+* **حماية الجهاز:** مطلوبة (X-Device-ID)
+
+**cURL:**
+```bash
+curl --location --request GET 'https://mediumspringgreen-aardvark-947551.hostingersite.com/api/v1/student/courses/1/quizzes' \
+--header 'Accept: application/json' \
+--header 'Authorization: Bearer {YOUR_TOKEN}' \
+--header 'X-Device-ID: {YOUR_DEVICE_ID}'
+```
+
+**المُخرجات (200 OK):**
+```json
+{
+  "success": true,
+  "message": "Course quizzes retrieved successfully.",
+  "data": [
+    {
+      "id": 1,
+      "lesson_id": 1,
+      "title": "ECG Reading Basics MCQ Quiz",
+      "pass_percentage": "50.00",
+      "time_limit_minutes": null,
+      "attempts_allowed": null,
+      "created_at": "2026-08-28T12:00:00.000000Z",
+      "updated_at": "2026-08-28T12:00:00.000000Z",
+      "lesson": {
+        "id": 1,
+        "section_id": 1,
+        "title": "ECG Leads Waveform",
+        "sort_order": 1
+      }
+    }
+  ]
+}
+```
+
+---
+
 ### استرجاع أسئلة MCQ الخاصة بالمحاضرة
 
 * **المسار:** `GET /api/v1/student/lectures/{lecture_id}/quiz`

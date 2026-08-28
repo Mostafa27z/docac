@@ -7,10 +7,28 @@ use App\Models\Question;
 use App\Models\Quiz;
 use App\Models\QuizAttempt;
 use App\Models\QuizAnswer;
+use App\Models\Lesson;
+use App\Models\Course;
 use Illuminate\Http\Request;
 
 class QuizController extends Controller
 {
+    public function getCourseQuizzes(Request $request, Course $course)
+    {
+        // Get all quizzes for lessons in sections belonging to this course
+        $quizzes = Quiz::whereHas('lesson.section', function ($query) use ($course) {
+            $query->where('course_id', $course->id);
+        })->with(['lesson' => function ($query) {
+            $query->select('id', 'section_id', 'title', 'sort_order');
+        }])->get();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Course quizzes retrieved successfully.',
+            'data' => $quizzes
+        ]);
+    }
+
     public function getLessonQuiz(Request $request, Lesson $lesson)
     {
         // 7. Get MCQ questions (Spec: 7. الامتحانات)

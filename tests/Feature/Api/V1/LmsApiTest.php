@@ -282,4 +282,40 @@ class LmsApiTest extends TestCase
                  ->assertJsonPath('data.0.title', 'Active Promo Ad')
                  ->assertJsonPath('data.0.link', 'https://t.me/promo');
     }
+
+    /** @test */
+    public function student_can_retrieve_course_quizzes_when_enrolled()
+    {
+        $token = $this->student->createToken('test_token')->plainTextToken;
+
+        // Try getting course quizzes before enrollment
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $token,
+            'X-Device-ID' => 'device_a_123'
+        ])->getJson("/api/v1/student/courses/{$this->course->id}/quizzes");
+
+        $response->assertStatus(403)
+                 ->assertJsonPath('message', 'You are not enrolled in this course.');
+
+        // Enroll the student (manually/simulate enrollment via DB)
+        \App\Models\CourseEnrollment::create([
+            'course_id' => $this->course->id,
+            'student_id' => $this->student->id,
+            'status' => 'active',
+            'progress_percentage' => 0.00,
+            'enrolled_at' => now(),
+            'total_price' => $this->course->price ?? 0.00,
+        ]);
+
+        // Get course quizzes after enrollment
+        $responseEnrolled = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $token,
+            'X-Device-ID' => 'device_a_123'
+        ])->getJson("/api/v1/student/courses/{$this->course->id}/quizzes");
+
+        $responseEnrolled->assertStatus(200)
+                         ->assertJsonPath('success', true)
+                         ->assertJsonCount(1, 'data')
+                         ->assertJsonPath('data.0.id', $this->quiz->id);
+    }
 }

@@ -70,6 +70,7 @@ Route::prefix('v1')->group(function () {
             Route::get('student/courses/{course}/live-events', [LiveController::class, 'index']);
 
             // 7. Exams & MCQ (Spec: 7. الامتحانات)
+            Route::get('student/courses/{course}/quizzes', [QuizController::class, 'getCourseQuizzes']);
             Route::get('student/lectures/{lesson}/quiz', [QuizController::class, 'getLessonQuiz']);
             Route::post('student/lectures/{lesson}/quiz/submit', [QuizController::class, 'submitLessonQuiz']);
 
