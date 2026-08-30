@@ -133,6 +133,12 @@
                         <span>بيانات الاتصال</span>
                     </a>
                 </li>
+                <li>
+                    <a class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->routeIs('admin.admins.*') ? 'bg-white/15 text-white shadow-sm' : 'text-white/70 hover:text-white hover:bg-white/8' }}" href="{{ route('admin.admins.index') }}">
+                        <i class="ph-bold ph-users-three text-lg"></i>
+                        <span>إدارة المشرفين</span>
+                    </a>
+                </li>
             @elseif(auth()->check() && auth()->user()->role === 'instructor')
                 <li class="text-[#7EB8FF] text-[10px] font-semibold uppercase tracking-widest px-3 mb-2">لوحة المحاضر</li>
                 <li>
@@ -161,18 +167,20 @@
                 </li>
             @endif
 
-            {{-- Common Link for both Admin & Instructor --}}
+            {{-- Common Link for Admin Only --}}
+            @if(auth()->check() && auth()->user()->role === 'admin')
             <li class="pt-2 border-t border-white/10 mt-2">
                 <a class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->routeIs('profile.edit') ? 'bg-white/15 text-white shadow-sm' : 'text-white/70 hover:text-white hover:bg-white/8' }}" href="{{ route('profile.edit') }}">
                     <i class="ph-bold ph-user-circle text-lg"></i>
                     <span>الملف الشخصي</span>
                 </a>
             </li>
+            @endif
         </ul>
 
         {{-- User & Logout --}}
         <div class="px-3 pb-4 mt-auto border-t border-white/10 pt-4">
-            <a href="{{ route('profile.edit') }}" class="flex items-center gap-3 px-3 mb-3 hover:bg-white/10 p-2 rounded-xl transition-colors">
+            <a href="{{ auth()->check() && auth()->user()->role === 'admin' ? route('profile.edit') : '#' }}" class="flex items-center gap-3 px-3 mb-3 hover:bg-white/10 p-2 rounded-xl transition-colors {{ auth()->check() && auth()->user()->role !== 'admin' ? 'cursor-default pointer-events-none' : '' }}">
                 @if(auth()->check() && auth()->user()->avatar_url)
                     <img src="{{ auth()->user()->avatar_url }}" alt="{{ auth()->user()->name }}" class="w-9 h-9 rounded-full object-cover border border-white/20">
                 @else
@@ -204,7 +212,7 @@
             @yield('page_title')
         </div>
         <div class="flex items-center gap-3">
-            <a href="{{ route('profile.edit') }}" title="الملف الشخصي" class="flex items-center gap-2 text-xs font-semibold text-[#4A5568] hover:text-[#0047AB] transition-colors p-1.5 rounded-xl hover:bg-[#F8F9FA]">
+            <a href="{{ auth()->check() && auth()->user()->role === 'admin' ? route('profile.edit') : '#' }}" title="الملف الشخصي" class="flex items-center gap-2 text-xs font-semibold text-[#4A5568] hover:text-[#0047AB] transition-colors p-1.5 rounded-xl hover:bg-[#F8F9FA] {{ auth()->check() && auth()->user()->role !== 'admin' ? 'cursor-default pointer-events-none' : '' }}">
                 @if(auth()->check() && auth()->user()->avatar_url)
                     <img src="{{ auth()->user()->avatar_url }}" alt="{{ auth()->user()->name }}" class="w-8 h-8 lg:w-9 lg:h-9 rounded-full object-cover border border-[#0047AB]/20 shadow-sm">
                 @else

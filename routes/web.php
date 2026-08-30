@@ -73,6 +73,12 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
     // Settings Routes
     Route::get('/settings', [AdminController::class, 'settingsIndex'])->name('admin.settings.index');
     Route::post('/settings', [AdminController::class, 'settingsUpdate'])->name('admin.settings.update');
+
+    // Admin Management Routes
+    Route::get('/admins', [AdminController::class, 'adminsList'])->name('admin.admins.index');
+    Route::post('/admins', [AdminController::class, 'createAdmin'])->name('admin.admins.store');
+    Route::put('/admins/{user}', [AdminController::class, 'updateAdmin'])->name('admin.admins.update');
+    Route::delete('/admins/{user}', [AdminController::class, 'destroyAdmin'])->name('admin.admins.destroy');
 });
 
 // Instructor Panel Routes
@@ -116,8 +122,8 @@ Route::prefix('instructor')->middleware(['auth', 'role:instructor|admin'])->grou
     Route::post('/chats/{conversation}/messages', [InstructorChatController::class, 'sendMessage'])->name('instructor.chats.sendMessage');
 });
 
-// Profile Management Routes for Admin & Instructor
-Route::middleware(['auth', 'role:admin|instructor'])->group(function () {
+// Profile Management Routes for Admin
+Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');

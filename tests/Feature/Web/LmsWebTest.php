@@ -194,4 +194,62 @@ class LmsWebTest extends TestCase
             'attempts_allowed' => 2,
         ]);
     }
+
+    /** @test */
+    public function instructor_cannot_access_profile_routes()
+    {
+        $this->actingAs($this->instructor)->get('/profile')->assertStatus(403);
+        $this->actingAs($this->instructor)->put('/profile', ['name' => 'New Name', 'email' => 'inst@test.com'])->assertStatus(403);
+    }
+
+    /** @test */
+    public function admin_can_access_profile_routes()
+    {
+        $this->actingAs($this->admin)->get('/profile')->assertStatus(200);
+    }
+
+    /** @test */
+    public function admin_can_manage_other_admins_but_cannot_delete_self()
+    {
+        // 1. Can view list
+        $response = $this->actingAs($this->admin)->get('/admin/admins');
+        $response->assertStatus(200);
+
+        // 2. Can create new admin
+        $createResponse = $this->actingAs($this->admin)->post('/admin/admins', [
+            'name' => 'New Admin',
+            'email' => 'newadmin@test.com',
+            'password' => 'password123',
+        ]);
+        $createResponse->assertRedirect();
+        $this->assertDatabaseHas('users', [
+            'email' => 'newadmin@test.com',
+            'role' => 'admin',
+        ]);
+
+        $newAdmin = User::where('email', 'newadmin@test.com')->first();
+
+        // 3. Can update other admin
+        $updateResponse = $this->actingAs($this->admin)->put("/admin/admins/{$newAdmin->id}", [
+            'name' => 'Updated Admin Name',
+            'email' => 'newadmin@test.com',
+            'status' => 'suspended',
+        ]);
+        $updateResponse->assertRedirect();
+        $this->assertDatabaseHas('users', [
+            'id' => $newAdmin->id,
+            'name' => 'Updated Admin Name',
+            'status' => 'suspended',
+        ]);
+
+        // 4. Cannot delete self
+        $deleteSelfResponse = $this->actingAs($this->admin)->delete("/admin/admins/{$this->admin->id}");
+        $deleteSelfResponse->assertSessionHas('error');
+        $this->assertDatabaseHas('users', ['id' => $this->admin->id]);
+
+        // 5. Can delete other admin
+        $deleteOtherResponse = $this->actingAs($this->admin)->delete("/admin/admins/{$newAdmin->id}");
+        $deleteOtherResponse->assertSessionHas('success');
+        $this->assertDatabaseMissing('users', ['id' => $newAdmin->id]);
+    }
 }

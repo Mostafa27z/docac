@@ -118,6 +118,78 @@ class AdminController extends Controller
         return redirect()->back()->with('success', 'تم حذف حساب المحاضر بنجاح.');
     }
 
+    public function adminsList()
+    {
+        $admins = User::where('role', 'admin')->latest()->get();
+        return view('admin.admins', compact('admins'));
+    }
+
+    public function createAdmin(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'phone' => 'nullable|string|max:20',
+            'password' => 'required|string|min:8',
+        ]);
+
+        User::create([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'phone' => $validated['phone'] ?? null,
+            'password' => Hash::make($validated['password']),
+            'role' => 'admin',
+            'status' => 'active',
+        ]);
+
+        return redirect()->back()->with('success', 'تم إنشاء حساب المشرف بنجاح.');
+    }
+
+    public function updateAdmin(Request $request, User $user)
+    {
+        if ($user->role !== 'admin') {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+            'phone' => 'nullable|string|max:20',
+            'status' => 'required|in:active,suspended',
+            'password' => 'nullable|string|min:8',
+        ]);
+
+        $updateData = [
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'phone' => $validated['phone'] ?? null,
+            'status' => $validated['status'],
+        ];
+
+        if ($request->filled('password')) {
+            $updateData['password'] = Hash::make($request->password);
+        }
+
+        $user->update($updateData);
+
+        return redirect()->back()->with('success', 'تم تحديث بيانات المشرف بنجاح.');
+    }
+
+    public function destroyAdmin(User $user)
+    {
+        if ($user->role !== 'admin') {
+            abort(403);
+        }
+
+        if (auth()->id() === $user->id) {
+            return redirect()->back()->with('error', 'لا يمكنك حذف حسابك الشخصي.');
+        }
+
+        $user->delete();
+
+        return redirect()->back()->with('success', 'تم حذف حساب المشرف بنجاح.');
+    }
+
     public function generateCodes(Request $request)
     {
         $validated = $request->validate([
