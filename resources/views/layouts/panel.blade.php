@@ -54,7 +54,7 @@
     <div id="mobile-backdrop" onclick="toggleMobileSidebar()" class="fixed inset-0 bg-black/50 z-40 hidden lg:hidden transition-opacity"></div>
 
     {{-- Sidebar Navigation --}}
-    <nav id="sidebar" class="fixed right-0 top-0 h-screen w-[272px] bg-gradient-to-b from-[#0047AB] to-[#003380] flex flex-col z-50 transition-transform duration-300 transform max-lg:translate-x-full lg:translate-x-0">
+    <nav id="sidebar" class="fixed right-0 top-0 h-screen max-h-screen overflow-hidden w-[272px] bg-gradient-to-b from-[#0047AB] to-[#003380] flex flex-col z-50 transition-transform duration-300 transform max-lg:translate-x-full lg:translate-x-0">
         {{-- Brand Area --}}
         <div class="px-6 pt-6 pb-5 flex items-center justify-between border-b border-white/10 flex-shrink-0">
             <div class="flex items-center gap-3">
