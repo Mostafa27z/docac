@@ -56,7 +56,7 @@
     {{-- Sidebar Navigation --}}
     <nav id="sidebar" class="fixed right-0 top-0 h-screen w-[272px] bg-gradient-to-b from-[#0047AB] to-[#003380] flex flex-col z-50 transition-transform duration-300 transform max-lg:translate-x-full lg:translate-x-0">
         {{-- Brand Area --}}
-        <div class="px-6 pt-6 pb-5 flex items-center justify-between border-b border-white/10">
+        <div class="px-6 pt-6 pb-5 flex items-center justify-between border-b border-white/10 flex-shrink-0">
             <div class="flex items-center gap-3">
                 <img src="/logo.jfif" alt="Doc Academy" class="w-10 h-10 rounded-xl shadow-lg" />
                 <div>
@@ -179,7 +179,7 @@
         </ul>
 
         {{-- User & Logout --}}
-        <div class="px-3 pb-4 mt-auto border-t border-white/10 pt-4">
+        <div class="px-3 pb-4 mt-auto border-t border-white/10 pt-4 flex-shrink-0">
             <a href="{{ auth()->check() && auth()->user()->role === 'admin' ? route('profile.edit') : '#' }}" class="flex items-center gap-3 px-3 mb-3 hover:bg-white/10 p-2 rounded-xl transition-colors {{ auth()->check() && auth()->user()->role !== 'admin' ? 'cursor-default pointer-events-none' : '' }}">
                 @if(auth()->check() && auth()->user()->avatar_url)
                     <img src="{{ auth()->user()->avatar_url }}" alt="{{ auth()->user()->name }}" class="w-9 h-9 rounded-full object-cover border border-white/20">
