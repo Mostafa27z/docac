@@ -69,6 +69,30 @@
             </button>
         </div>
 
+        {{-- User & Logout --}}
+        <div class="px-3 py-4 border-b border-white/10 flex-shrink-0">
+            <a href="{{ auth()->check() && auth()->user()->role === 'admin' ? route('profile.edit') : '#' }}" class="flex items-center gap-3 px-3 mb-3 hover:bg-white/10 p-2 rounded-xl transition-colors {{ auth()->check() && auth()->user()->role !== 'admin' ? 'cursor-default pointer-events-none' : '' }}">
+                @if(auth()->check() && auth()->user()->avatar_url)
+                    <img src="{{ auth()->user()->avatar_url }}" alt="{{ auth()->user()->name }}" class="w-9 h-9 rounded-full object-cover border border-white/20">
+                @else
+                    <div class="w-9 h-9 rounded-full bg-white/15 flex items-center justify-center text-white font-bold text-sm">
+                        {{ mb_substr(auth()->user()->name ?? '', 0, 1) }}
+                    </div>
+                @endif
+                <div class="flex-1 min-w-0">
+                    <p class="text-white text-sm font-semibold truncate">{{ auth()->user()->name ?? '' }}</p>
+                    <p class="text-[#7EB8FF] text-[11px] truncate">{{ auth()->user()->email ?? '' }}</p>
+                </div>
+            </a>
+            <form action="{{ route('web.logout') }}" method="POST">
+                @csrf
+                <button type="submit" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-red-300 hover:bg-red-500/15 hover:text-red-200 transition-all duration-200 text-sm font-medium">
+                    <i class="ph-bold ph-sign-out text-lg"></i>
+                    <span>تسجيل الخروج</span>
+                </button>
+            </form>
+        </div>
+
         {{-- Navigation Links --}}
         <ul class="flex flex-col gap-1 flex-grow px-3 py-4 overflow-y-auto">
             @if(auth()->check() && auth()->user()->role === 'admin')
@@ -177,30 +201,6 @@
             </li>
             @endif
         </ul>
-
-        {{-- User & Logout --}}
-        <div class="px-3 pb-4 mt-auto border-t border-white/10 pt-4 flex-shrink-0">
-            <a href="{{ auth()->check() && auth()->user()->role === 'admin' ? route('profile.edit') : '#' }}" class="flex items-center gap-3 px-3 mb-3 hover:bg-white/10 p-2 rounded-xl transition-colors {{ auth()->check() && auth()->user()->role !== 'admin' ? 'cursor-default pointer-events-none' : '' }}">
-                @if(auth()->check() && auth()->user()->avatar_url)
-                    <img src="{{ auth()->user()->avatar_url }}" alt="{{ auth()->user()->name }}" class="w-9 h-9 rounded-full object-cover border border-white/20">
-                @else
-                    <div class="w-9 h-9 rounded-full bg-white/15 flex items-center justify-center text-white font-bold text-sm">
-                        {{ mb_substr(auth()->user()->name ?? '', 0, 1) }}
-                    </div>
-                @endif
-                <div class="flex-1 min-w-0">
-                    <p class="text-white text-sm font-semibold truncate">{{ auth()->user()->name ?? '' }}</p>
-                    <p class="text-[#7EB8FF] text-[11px] truncate">{{ auth()->user()->email ?? '' }}</p>
-                </div>
-            </a>
-            <form action="{{ route('web.logout') }}" method="POST">
-                @csrf
-                <button type="submit" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-red-300 hover:bg-red-500/15 hover:text-red-200 transition-all duration-200 text-sm font-medium">
-                    <i class="ph-bold ph-sign-out text-lg"></i>
-                    <span>تسجيل الخروج</span>
-                </button>
-            </form>
-        </div>
     </nav>
 
     {{-- Top App Bar --}}
