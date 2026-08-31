@@ -252,4 +252,18 @@ class LmsWebTest extends TestCase
         $deleteOtherResponse->assertSessionHas('success');
         $this->assertDatabaseMissing('users', ['id' => $newAdmin->id]);
     }
+
+    /** @test */
+    public function home_page_and_logout_have_no_cache_headers()
+    {
+        $response = $this->get('/');
+        $response->assertStatus(200);
+        $response->assertHeader('Cache-Control');
+        $this->assertStringContainsString('no-store', $response->headers->get('Cache-Control'));
+
+        $logoutResponse = $this->actingAs($this->admin)->post('/logout');
+        $logoutResponse->assertRedirect('/');
+        $logoutResponse->assertHeader('Cache-Control');
+        $this->assertStringContainsString('no-store', $logoutResponse->headers->get('Cache-Control'));
+    }
 }

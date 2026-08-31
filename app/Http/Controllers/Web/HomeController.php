@@ -24,7 +24,11 @@ class HomeController extends Controller
             'instructors_count' => User::where('role', 'instructor')->count(),
         ];
 
-        return view('home', compact('courses', 'stats'));
+        return response()
+            ->view('home', compact('courses', 'stats'))
+            ->header('Cache-Control', 'no-cache, no-store, max-age=0, must-revalidate')
+            ->header('Pragma', 'no-cache')
+            ->header('Expires', 'Fri, 01 Jan 1990 00:00:00 GMT');
     }
 
     public function login(Request $request)
@@ -58,6 +62,9 @@ class HomeController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        return redirect('/')
+            ->header('Cache-Control', 'no-cache, no-store, max-age=0, must-revalidate')
+            ->header('Pragma', 'no-cache')
+            ->header('Expires', 'Fri, 01 Jan 1990 00:00:00 GMT');
     }
 }

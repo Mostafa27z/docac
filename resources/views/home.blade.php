@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>منصة دوكاك التعليمية - Docac LMS</title>
     <meta name="description" content="منصة تعليمية طبية متكاملة للأطباء والمحاضرين الطبيين - كورسات مسجلة وبث مباشر">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css" />
@@ -197,10 +200,15 @@
         </div>
     </section>
 
-    {{-- Footer --}}
-    <footer class="bg-white border-t border-border-clr py-6 text-center text-xs text-muted">
-        <p>&copy; {{ date('Y') }} جميع الحقوق محفوظة لـ منصة دوكاك التعليمية.</p>
     </footer>
 
+    {{-- Auto-refresh if restored from mobile Back-Forward Cache (BFCache) --}}
+    <script>
+        window.addEventListener('pageshow', function (event) {
+            if (event.persisted || (window.performance && window.performance.navigation && window.performance.navigation.type === 2)) {
+                window.location.reload();
+            }
+        });
+    </script>
 </body>
 </html>

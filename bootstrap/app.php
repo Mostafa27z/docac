@@ -19,5 +19,16 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        $exceptions->render(function (\Illuminate\Session\TokenMismatchException $e, $request) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'انتهت صلاحية الجلسة، يرجى إعادة المحاولة.'
+                ], 419);
+            }
+
+            return redirect()->route('login')->withErrors([
+                'email' => 'انتهت صلاحية الصفحة أو الجلسة، يرجى إعادة المحاولة.'
+            ]);
+        });
     })->create();
