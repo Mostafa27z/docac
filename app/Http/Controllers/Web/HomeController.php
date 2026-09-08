@@ -31,6 +31,11 @@ class HomeController extends Controller
             ->header('Expires', 'Fri, 01 Jan 1990 00:00:00 GMT');
     }
 
+    public function privacy()
+    {
+        return view('privacy');
+    }
+
     public function login(Request $request)
     {
         $credentials = $request->validate([

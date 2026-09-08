@@ -15,6 +15,7 @@ use App\Http\Controllers\Web\ProfileController;
 use App\Http\Controllers\Web\HomeController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/privacy', [HomeController::class, 'privacy'])->name('privacy');
 Route::get('/login', [HomeController::class, 'index'])->name('login');
 Route::post('/login', [HomeController::class, 'login'])->name('web.login');
 Route::post('/logout', [HomeController::class, 'logout'])->name('web.logout');

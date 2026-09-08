@@ -46,6 +46,7 @@
         </div>
         <div class="flex items-center gap-6">
             <a href="#courses" class="text-sm font-semibold text-dark hover:text-primary transition-colors">الكورسات</a>
+            <a href="/privacy" class="text-sm font-semibold text-dark hover:text-primary transition-colors">سياسة الخصوصية</a>
             <a href="/api_docs.html" target="_blank" class="text-sm font-semibold text-dark hover:text-primary transition-colors">توثيق API</a>
         </div>
     </nav>
@@ -200,6 +201,14 @@
         </div>
     </section>
 
+    <footer class="bg-white border-t border-border-clr py-6 text-center text-xs text-muted">
+        <div class="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <p>&copy; 2026 Doc Academy (منصة دوكاك التعليمية). جميع الحقوق محفوظة.</p>
+            <div class="flex items-center gap-4">
+                <a href="/privacy" class="hover:text-primary transition-colors font-medium">Privacy Policy / سياسة الخصوصية</a>
+                <a href="/api_docs.html" target="_blank" class="hover:text-primary transition-colors font-medium">API Docs</a>
+            </div>
+        </div>
     </footer>
 
     {{-- Auto-refresh if restored from mobile Back-Forward Cache (BFCache) --}}
