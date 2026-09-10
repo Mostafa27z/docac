@@ -25,6 +25,7 @@ class User extends Authenticatable
         'avatar',
         'status',
         'active_device_id',
+        'allow_multiple_devices',
     ];
 
     /**
@@ -47,6 +48,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'allow_multiple_devices' => 'boolean',
         ];
     }
 

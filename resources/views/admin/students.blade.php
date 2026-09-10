@@ -2,7 +2,15 @@
 
 @section('title', 'إدارة الطلاب - Doc Academy')
 @section('role_title', 'لوحة المشرف العام')
-@section('page_title', 'إدارة الطلاب')
+@section('page_title')
+    <div class="flex justify-between items-center w-full">
+        <span>إدارة الطلاب</span>
+        <button onclick="openModal('add-student-modal')" class="inline-flex items-center gap-1.5 bg-[#0047AB] hover:bg-[#003B91] text-white text-xs font-semibold px-4 py-2 rounded-xl transition-all shadow-sm">
+            <i class="ph-bold ph-user-plus text-sm"></i>
+            إضافة طالب جديد
+        </button>
+    </div>
+@endsection
 
 @section('content')
     <x-page-header title="إدارة الطلاب" subtitle="عرض بيانات الطلاب المسجلين بالمنصة وإلغاء ارتباط الأجهزة وتعديل حالات الحسابات.">
@@ -69,7 +77,7 @@
             <h3 class="font-bold text-[#1A202C]">قائمة الطلاب المسجلين</h3>
         </div>
 
-        <x-data-table :headers="['الاسم والمعلومات', 'البريد الإلكتروني', 'الهاتف', 'معرّف الجهاز (Device ID)', 'الحالة', 'تاريخ التسجيل', 'الإجراءات']">
+        <x-data-table :headers="['الاسم والمعلومات', 'البريد الإلكتروني', 'الهاتف', 'معرّف وسياسة الجهاز', 'الحالة', 'تاريخ التسجيل', 'الإجراءات']">
             @forelse($students as $student)
                 <tr class="border-b border-[#E2E8F0] hover:bg-[#F8F9FA] transition-colors">
                     <td class="py-4 px-4 flex items-center gap-3">
@@ -81,9 +89,25 @@
                     <td class="py-4 px-4 text-[#718096] text-sm">{{ $student->email }}</td>
                     <td class="py-4 px-4 text-[#718096] text-sm">{{ $student->phone ?? '-' }}</td>
                     <td class="py-4 px-4 text-sm">
-                        @if($student->active_device_id)
+                        @if($student->allow_multiple_devices)
                             <div class="flex flex-col gap-1.5 items-start">
-                                <span class="font-mono text-xs text-[#0047AB] bg-[#0047AB]/5 px-2.5 py-1 rounded-lg border border-[#0047AB]/10 select-all max-w-[200px] truncate" title="{{ $student->active_device_id }}">
+                                <span class="inline-flex items-center gap-1 bg-purple-50 text-purple-700 text-xs font-semibold px-2.5 py-1 rounded-lg border border-purple-200">
+                                    <i class="ph-bold ph-devices text-sm"></i>
+                                    أجهزة متعددة مسموحة
+                                </span>
+                                @if($student->active_device_id)
+                                    <span class="font-mono text-[11px] text-[#718096] select-all max-w-[180px] truncate" title="{{ $student->active_device_id }}">
+                                        آخر جهاز: {{ $student->active_device_id }}
+                                    </span>
+                                @endif
+                            </div>
+                        @elseif($student->active_device_id)
+                            <div class="flex flex-col gap-1.5 items-start">
+                                <span class="inline-flex items-center gap-1 bg-blue-50 text-[#0047AB] text-xs font-semibold px-2.5 py-1 rounded-lg border border-blue-200">
+                                    <i class="ph-bold ph-device-mobile text-sm"></i>
+                                    مقيد بجهاز واحد
+                                </span>
+                                <span class="font-mono text-xs text-[#0047AB] bg-[#0047AB]/5 px-2 py-0.5 rounded border border-[#0047AB]/10 select-all max-w-[180px] truncate" title="{{ $student->active_device_id }}">
                                     {{ $student->active_device_id }}
                                 </span>
                                 <form action="{{ route('admin.students.resetDevice', $student->id) }}" method="POST" onsubmit="return confirm('هل أنت متأكد من رغبتك في إلغاء ارتباط هذا الجهاز؟ سيتمكن الطالب من تسجيل الدخول من جهاز آخر.')">
@@ -95,7 +119,10 @@
                                 </form>
                             </div>
                         @else
-                            <x-badge variant="neutral">لا يوجد جهاز مرتبط</x-badge>
+                            <span class="inline-flex items-center gap-1 bg-gray-50 text-gray-600 text-xs font-semibold px-2.5 py-1 rounded-lg border border-gray-200">
+                                <i class="ph-bold ph-device-mobile text-sm"></i>
+                                مقيد بجهاز واحد (لم يرتبط بعد)
+                            </span>
                         @endif
                     </td>
                     <td class="py-4 px-4">
@@ -108,6 +135,23 @@
                     <td class="py-4 px-4 text-[#718096] text-sm">{{ $student->created_at->format('Y-m-d') }}</td>
                     <td class="py-4 px-4">
                         <div class="flex items-center gap-2">
+                            {{-- Multi-device quick toggle --}}
+                            <form action="{{ route('admin.students.toggleMultiDevice', $student->id) }}" method="POST">
+                                @csrf
+                                @if($student->allow_multiple_devices)
+                                    <button type="submit" title="تقييد الحساب بجهاز واحد فقط" class="inline-flex items-center gap-1 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-semibold px-2.5 py-1.5 rounded-xl border border-gray-300 transition-all">
+                                        <i class="ph-bold ph-lock-key text-sm"></i>
+                                        <span>تقييد بجهاز</span>
+                                    </button>
+                                @else
+                                    <button type="submit" title="السماح بالدخول من أجهزة متعددة" class="inline-flex items-center gap-1 bg-purple-50 hover:bg-purple-100 text-purple-700 text-xs font-semibold px-2.5 py-1.5 rounded-xl border border-purple-200 transition-all">
+                                        <i class="ph-bold ph-devices text-sm"></i>
+                                        <span>سماح متعدد</span>
+                                    </button>
+                                @endif
+                            </form>
+
+                            {{-- Toggle Status --}}
                             <form action="{{ route('admin.students.toggleStatus', $student->id) }}" method="POST">
                                 @csrf
                                 @if($student->status === 'active')
@@ -122,6 +166,8 @@
                                     </button>
                                 @endif
                             </form>
+
+                            {{-- Upgrade to Instructor --}}
                             <form action="{{ route('admin.students.upgrade', $student->id) }}" method="POST" onsubmit="return confirm('هل أنت متأكد من ترقية هذا الطالب ليصبح محاضراً في المنصة؟')">
                                 @csrf
                                 <button type="submit" class="inline-flex items-center gap-1 bg-purple-50 hover:bg-purple-100 text-purple-700 text-xs font-semibold px-3 py-1.5 rounded-xl border border-purple-200 transition-all">
@@ -145,4 +191,36 @@
             {{ $students->appends(request()->query())->links() }}
         </div>
     </x-card>
+
+    {{-- Add Student Modal --}}
+    <x-modal id="add-student-modal" title="إضافة حساب طالب جديد" icon="user-plus">
+        <form action="{{ route('admin.students.store') }}" method="POST" class="space-y-4">
+            @csrf
+            <x-form-input label="الاسم بالكامل" name="name" :required="true" placeholder="مثال: أحمد محمد" />
+            <x-form-input label="البريد الإلكتروني" name="email" type="email" :required="true" placeholder="student@gmail.com" />
+            <x-form-input label="رقم الهاتف" name="phone" placeholder="مثال: 01012345678" />
+            <x-form-input label="كلمة المرور" name="password" type="password" :required="true" placeholder="8 خانات على الأقل" />
+
+            {{-- Multi-Device Option --}}
+            <div class="p-3.5 bg-[#F8F9FA] rounded-xl border border-[#E2E8F0] transition-colors hover:border-[#0047AB]/30">
+                <label class="flex items-start gap-3 cursor-pointer">
+                    <input type="checkbox" name="allow_multiple_devices" value="1" class="mt-1 w-4 h-4 text-[#0047AB] rounded border-[#CBD5E0] focus:ring-[#0047AB]">
+                    <div class="flex-1">
+                        <span class="block text-sm font-bold text-[#1A202C] flex items-center gap-1.5">
+                            <i class="ph-bold ph-devices text-[#0047AB]"></i>
+                            السماح بالدخول من أجهزة متعددة (Multiple Devices)
+                        </span>
+                        <span class="block text-xs text-[#718096] mt-1 leading-relaxed">
+                            تفعيل هذا الخيار يسمح للطالب بفتح حسابه على أكثر من جهاز (هواتف، تابلت، كمبيوتر) في آن واحد دون حظره أو تقييده بجهاز واحد.
+                        </span>
+                    </div>
+                </label>
+            </div>
+
+            <div class="flex gap-3 justify-end pt-4 border-t border-[#E2E8F0]">
+                <x-btn-secondary onclick="closeModal('add-student-modal')">إلغاء</x-btn-secondary>
+                <x-btn-primary icon="user-plus" type="submit">إنشاء حساب الطالب</x-btn-primary>
+            </div>
+        </form>
+    </x-modal>
 @endsection

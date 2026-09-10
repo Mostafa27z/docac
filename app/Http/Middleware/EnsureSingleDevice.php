@@ -17,7 +17,7 @@ class EnsureSingleDevice
     {
         $user = $request->user();
 
-        if ($user && $user->role === 'student') {
+        if ($user && $user->role === 'student' && !$user->allow_multiple_devices) {
             $deviceId = $request->header('X-Device-ID') ?: $request->input('device_id');
 
             if (!$deviceId || $user->active_device_id !== $deviceId) {

@@ -233,6 +233,43 @@ class AdminController extends Controller
         return view('admin.students', compact('students', 'courses'));
     }
 
+    public function createStudent(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email',
+            'phone' => 'nullable|string|max:20',
+            'password' => 'required|string|min:8',
+            'allow_multiple_devices' => 'nullable|boolean',
+        ]);
+
+        $student = User::create([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'phone' => $validated['phone'] ?? null,
+            'password' => Hash::make($validated['password']),
+            'role' => 'student',
+            'status' => 'active',
+            'allow_multiple_devices' => $request->boolean('allow_multiple_devices'),
+        ]);
+
+        return redirect()->back()->with('success', "تم إنشاء حساب الطالب {$student->name} بنجاح.");
+    }
+
+    public function toggleMultiDevice(User $user)
+    {
+        if ($user->role !== 'student') {
+            abort(403);
+        }
+
+        $user->update([
+            'allow_multiple_devices' => !$user->allow_multiple_devices
+        ]);
+
+        $statusText = $user->allow_multiple_devices ? 'تفعيل السماح بالدخول من أجهزة متعددة' : 'تقييد الحساب بجهاز واحد';
+        return redirect()->back()->with('success', "تم {$statusText} للطالب {$user->name} بنجاح.");
+    }
+
     public function resetDevice(User $user)
     {
         if ($user->role !== 'student') {

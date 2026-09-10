@@ -43,6 +43,7 @@ class AuthController extends Controller
                 'role' => $user->role,
                 'status' => $user->status,
                 'active_device_id' => $user->active_device_id,
+                'allow_multiple_devices' => (bool)$user->allow_multiple_devices,
             ]
         ], 201);
     }
@@ -70,8 +71,8 @@ class AuthController extends Controller
             ], 403);
         }
 
-        // Only enforce single device policy for students
-        if ($user->role === 'student') {
+        // Only enforce single device policy for students if allow_multiple_devices is false
+        if ($user->role === 'student' && !$user->allow_multiple_devices) {
             if ($user->active_device_id && $user->active_device_id !== $validated['device_id']) {
                 return response()->json([
                     'success' => false,
@@ -99,6 +100,7 @@ class AuthController extends Controller
                 'role' => $user->role,
                 'status' => $user->status,
                 'active_device_id' => $user->active_device_id,
+                'allow_multiple_devices' => (bool)$user->allow_multiple_devices,
             ]
         ]);
     }
@@ -132,6 +134,7 @@ class AuthController extends Controller
                 'avatar' => $user->avatar,
                 'status' => $user->status,
                 'active_device_id' => $user->active_device_id,
+                'allow_multiple_devices' => (bool)$user->allow_multiple_devices,
             ]
         ]);
     }
@@ -172,6 +175,7 @@ class AuthController extends Controller
                 'avatar' => $user->avatar,
                 'status' => $user->status,
                 'active_device_id' => $user->active_device_id,
+                'allow_multiple_devices' => (bool)$user->allow_multiple_devices,
             ]
         ]);
     }
