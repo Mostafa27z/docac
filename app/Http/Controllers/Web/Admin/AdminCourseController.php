@@ -21,9 +21,21 @@ class AdminCourseController extends Controller
         $this->bunnyStorage = $bunnyStorage;
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $courses = Course::with(['instructor', 'category', 'subcategory', 'childSubcategory'])->latest()->get();
+        $query = Course::with(['instructor', 'category', 'subcategory', 'childSubcategory']);
+
+        if ($request->filled('category_id')) {
+            $query->where('category_id', $request->category_id);
+        }
+        if ($request->filled('subcategory_id')) {
+            $query->where('subcategory_id', $request->subcategory_id);
+        }
+        if ($request->filled('child_subcategory_id')) {
+            $query->where('child_subcategory_id', $request->child_subcategory_id);
+        }
+
+        $courses = $query->latest()->get();
         $instructors = User::where('role', 'instructor')->where('status', 'active')->get();
         $categories = Category::with(['subcategories.childSubcategories'])->get();
 

@@ -11,6 +11,7 @@ use App\Models\CourseActivationCode;
 use App\Models\CourseEnrollment;
 use App\Models\LessonProgress;
 use App\Models\QuizAttempt;
+use App\Models\Category;
 use App\Services\BunnyStorageService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -46,10 +47,26 @@ class InstructorCourseController extends Controller
         return view('instructor.dashboard', compact('stats'));
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $courses = auth()->user()->role === 'admin' ? Course::latest()->get() : Course::where('instructor_id', auth()->id())->latest()->get();
-        return view('instructor.courses.index', compact('courses'));
+        $query = auth()->user()->role === 'admin'
+            ? Course::with(['instructor', 'category', 'subcategory', 'childSubcategory'])
+            : Course::with(['instructor', 'category', 'subcategory', 'childSubcategory'])->where('instructor_id', auth()->id());
+
+        if ($request->filled('category_id')) {
+            $query->where('category_id', $request->category_id);
+        }
+        if ($request->filled('subcategory_id')) {
+            $query->where('subcategory_id', $request->subcategory_id);
+        }
+        if ($request->filled('child_subcategory_id')) {
+            $query->where('child_subcategory_id', $request->child_subcategory_id);
+        }
+
+        $courses = $query->latest()->get();
+        $categories = Category::with(['subcategories.childSubcategories'])->get();
+
+        return view('instructor.courses.index', compact('courses', 'categories'));
     }
 
     public function subscriptionsIndex()

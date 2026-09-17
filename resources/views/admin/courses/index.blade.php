@@ -26,6 +26,51 @@
         </div>
     @endif
 
+    {{-- Filter Card --}}
+    <x-card class="mb-6">
+        <form method="GET" action="{{ route('admin.courses.index') }}" class="space-y-4">
+            <div class="flex items-center gap-2 mb-3 pb-2 border-b border-[#E2E8F0]">
+                <i class="ph-bold ph-funnel text-[#0047AB] text-lg"></i>
+                <h4 class="font-bold text-sm text-[#1A202C]">تصفية الكورسات حسب التصنيف والتخصص</h4>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-xs font-semibold text-[#4A5568] mb-1">التصنيف الرئيسي</label>
+                    <select name="category_id" id="filter-category-select" onchange="onFilterCategoryChange(this.value)" class="w-full bg-[#F8F9FA] border border-[#E2E8F0] rounded-xl px-3 py-2 text-[#1A202C] text-xs focus:outline-none focus:ring-2 focus:ring-[#0047AB]/20 focus:border-[#0047AB]">
+                        <option value="">-- كل التصنيفات --</option>
+                        @foreach($categories as $cat)
+                            <option value="{{ $cat->id }}" {{ request('category_id') == $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-[#4A5568] mb-1">التخصص الفرعي</label>
+                    <select name="subcategory_id" id="filter-subcategory-select" onchange="onFilterSubcategoryChange(this.value)" class="w-full bg-[#F8F9FA] border border-[#E2E8F0] rounded-xl px-3 py-2 text-[#1A202C] text-xs focus:outline-none focus:ring-2 focus:ring-[#0047AB]/20 focus:border-[#0047AB]">
+                        <option value="">-- كل التخصصات الفرعية --</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-[#4A5568] mb-1">التخصص الفرعي الدقيق</label>
+                    <select name="child_subcategory_id" id="filter-child-subcategory-select" class="w-full bg-[#F8F9FA] border border-[#E2E8F0] rounded-xl px-3 py-2 text-[#1A202C] text-xs focus:outline-none focus:ring-2 focus:ring-[#0047AB]/20 focus:border-[#0047AB]">
+                        <option value="">-- كل الفرعي الدقيق --</option>
+                    </select>
+                </div>
+            </div>
+            <div class="flex items-center gap-2 justify-end pt-2">
+                @if(request()->hasAny(['category_id', 'subcategory_id', 'child_subcategory_id']))
+                    <a href="{{ route('admin.courses.index') }}" class="inline-flex items-center gap-1 bg-[#F8F9FA] hover:bg-[#E2E8F0] text-[#718096] text-xs font-semibold px-4 py-2 rounded-xl transition-all">
+                        <i class="ph-bold ph-x text-sm"></i>
+                        إلغاء التصفية
+                    </a>
+                @endif
+                <button type="submit" class="inline-flex items-center gap-1.5 bg-[#0047AB] hover:bg-[#003B91] text-white text-xs font-semibold px-5 py-2 rounded-xl transition-all shadow-sm">
+                    <i class="ph-bold ph-magnifying-glass text-sm"></i>
+                    تطبيق التصفية
+                </button>
+            </div>
+        </form>
+    </x-card>
+
     {{-- Courses Table --}}
     <x-card>
         <div class="flex items-center gap-3 mb-5 pb-4 border-b border-[#E2E8F0]">
@@ -35,7 +80,7 @@
             <h3 class="font-bold text-[#1A202C]">قائمة جميع الكورسات بالمنصة</h3>
         </div>
 
-        <x-data-table :headers="['اسم الكورس', 'المحاضر المسؤول', 'التصنيف', 'النوع والسعر', 'الحالة', 'الإجراءات']">
+        <x-data-table :headers="['اسم الكورس', 'المحاضر المسؤول', 'التصنيف والتخصصات', 'النوع والسعر', 'الحالة', 'الإجراءات']">
             @forelse($courses as $course)
                 <tr class="border-b border-[#E2E8F0] hover:bg-[#F8F9FA] transition-colors">
                     <td class="py-4 px-4 font-semibold text-[#1A202C]">
@@ -61,10 +106,15 @@
                         @endif
                     </td>
                     <td class="py-4 px-4 text-[#718096] text-sm">
-                        <div>{{ $course->category->name ?? '-' }}</div>
-                        @if($course->subcategory)
-                            <span class="inline-block bg-[#F8F9FA] border border-[#E2E8F0] px-2 py-0.5 rounded text-[11px] text-[#00A896] mt-0.5 font-medium">{{ $course->subcategory->name }}</span>
-                        @endif
+                        <div class="font-medium text-[#1A202C]">{{ $course->category->name ?? '-' }}</div>
+                        <div class="flex flex-wrap gap-1 mt-0.5">
+                            @if($course->subcategory)
+                                <span class="inline-block bg-[#00A896]/10 text-[#00A896] border border-[#00A896]/20 px-2 py-0.5 rounded text-[11px] font-medium">{{ $course->subcategory->name }}</span>
+                            @endif
+                            @if($course->childSubcategory)
+                                <span class="inline-block bg-[#0088CC]/10 text-[#0088CC] border border-[#0088CC]/20 px-2 py-0.5 rounded text-[11px] font-medium">{{ $course->childSubcategory->name }}</span>
+                            @endif
+                        </div>
                     </td>
                     <td class="py-4 px-4 text-sm">
                         <div class="font-bold text-[#1A202C]">{{ $course->price }} ج.م</div>
@@ -112,7 +162,7 @@
 
     {{-- Add Course Modal --}}
     <div id="add-course-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(26,32,44,0.6); z-index: 1000; align-items: center; justify-content: center; overflow-y: auto;">
-        <div class="bg-white border border-[#E2E8F0] rounded-2xl w-11/12 max-w-lg p-6 relative shadow-2xl my-8">
+        <div class="bg-white border border-[#E2E8F0] rounded-2xl w-11/12 max-w-xl p-6 relative shadow-2xl my-8">
             <h3 class="text-lg font-bold mb-4 text-right text-[#1A202C] flex items-center gap-2 pb-3 border-b border-[#E2E8F0]">
                 <i class="ph-bold ph-plus-circle text-[#0047AB]"></i>
                 إنشاء كورس وتعيين المحاضر
@@ -131,10 +181,10 @@
                     </select>
                 </div>
 
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                     <div>
-                        <label class="block text-sm font-semibold text-[#4A5568] mb-1.5">التصنيف الرئيسي</label>
-                        <select name="category_id" id="add-category-select" onchange="loadSubcategories(this.value, 'add-subcategory-select')" class="w-full bg-[#F8F9FA] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-[#1A202C] text-sm focus:outline-none focus:ring-2 focus:ring-[#0047AB]/20 focus:border-[#0047AB]">
+                        <label class="block text-xs font-semibold text-[#4A5568] mb-1.5">التصنيف الرئيسي</label>
+                        <select name="category_id" id="add-category-select" onchange="onModalCategoryChange(this.value, 'add-subcategory-select', 'add-child-subcategory-select')" class="w-full bg-[#F8F9FA] border border-[#E2E8F0] rounded-xl px-3 py-2 text-[#1A202C] text-xs focus:outline-none focus:ring-2 focus:ring-[#0047AB]/20 focus:border-[#0047AB]">
                             <option value="">-- بدون تصنيف --</option>
                             @foreach($categories as $cat)
                                 <option value="{{ $cat->id }}">{{ $cat->name }}</option>
@@ -142,9 +192,15 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-[#4A5568] mb-1.5">التخصص الفرعي</label>
-                        <select name="subcategory_id" id="add-subcategory-select" class="w-full bg-[#F8F9FA] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-[#1A202C] text-sm focus:outline-none focus:ring-2 focus:ring-[#0047AB]/20 focus:border-[#0047AB]">
+                        <label class="block text-xs font-semibold text-[#4A5568] mb-1.5">التخصص الفرعي</label>
+                        <select name="subcategory_id" id="add-subcategory-select" onchange="onModalSubcategoryChange(document.getElementById('add-category-select').value, this.value, 'add-child-subcategory-select')" class="w-full bg-[#F8F9FA] border border-[#E2E8F0] rounded-xl px-3 py-2 text-[#1A202C] text-xs focus:outline-none focus:ring-2 focus:ring-[#0047AB]/20 focus:border-[#0047AB]">
                             <option value="">-- اختر الفرعي --</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-[#4A5568] mb-1.5">الفرعي الدقيق</label>
+                        <select name="child_subcategory_id" id="add-child-subcategory-select" class="w-full bg-[#F8F9FA] border border-[#E2E8F0] rounded-xl px-3 py-2 text-[#1A202C] text-xs focus:outline-none focus:ring-2 focus:ring-[#0047AB]/20 focus:border-[#0047AB]">
+                            <option value="">-- اختر الدقيق --</option>
                         </select>
                     </div>
                 </div>
@@ -175,7 +231,7 @@
 
     {{-- Edit Course Modal --}}
     <div id="edit-course-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(26,32,44,0.6); z-index: 1000; align-items: center; justify-content: center; overflow-y: auto;">
-        <div class="bg-white border border-[#E2E8F0] rounded-2xl w-11/12 max-w-lg p-6 relative shadow-2xl my-8">
+        <div class="bg-white border border-[#E2E8F0] rounded-2xl w-11/12 max-w-xl p-6 relative shadow-2xl my-8">
             <h3 class="text-lg font-bold mb-4 text-right text-[#1A202C] flex items-center gap-2 pb-3 border-b border-[#E2E8F0]">
                 <i class="ph-bold ph-pencil-simple text-[#0088CC]"></i>
                 تعديل بيانات الكورس والمحاضر
@@ -194,10 +250,10 @@
                     </select>
                 </div>
 
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                     <div>
-                        <label class="block text-sm font-semibold text-[#4A5568] mb-1.5">التصنيف الرئيسي</label>
-                        <select name="category_id" id="edit-category-select" onchange="loadSubcategories(this.value, 'edit-subcategory-select')" class="w-full bg-[#F8F9FA] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-[#1A202C] text-sm focus:outline-none focus:ring-2 focus:ring-[#0047AB]/20 focus:border-[#0047AB]">
+                        <label class="block text-xs font-semibold text-[#4A5568] mb-1.5">التصنيف الرئيسي</label>
+                        <select name="category_id" id="edit-category-select" onchange="onModalCategoryChange(this.value, 'edit-subcategory-select', 'edit-child-subcategory-select')" class="w-full bg-[#F8F9FA] border border-[#E2E8F0] rounded-xl px-3 py-2 text-[#1A202C] text-xs focus:outline-none focus:ring-2 focus:ring-[#0047AB]/20 focus:border-[#0047AB]">
                             <option value="">-- بدون تصنيف --</option>
                             @foreach($categories as $cat)
                                 <option value="{{ $cat->id }}">{{ $cat->name }}</option>
@@ -205,9 +261,15 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-[#4A5568] mb-1.5">التخصص الفرعي</label>
-                        <select name="subcategory_id" id="edit-subcategory-select" class="w-full bg-[#F8F9FA] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-[#1A202C] text-sm focus:outline-none focus:ring-2 focus:ring-[#0047AB]/20 focus:border-[#0047AB]">
+                        <label class="block text-xs font-semibold text-[#4A5568] mb-1.5">التخصص الفرعي</label>
+                        <select name="subcategory_id" id="edit-subcategory-select" onchange="onModalSubcategoryChange(document.getElementById('edit-category-select').value, this.value, 'edit-child-subcategory-select')" class="w-full bg-[#F8F9FA] border border-[#E2E8F0] rounded-xl px-3 py-2 text-[#1A202C] text-xs focus:outline-none focus:ring-2 focus:ring-[#0047AB]/20 focus:border-[#0047AB]">
                             <option value="">-- اختر الفرعي --</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-[#4A5568] mb-1.5">الفرعي الدقيق</label>
+                        <select name="child_subcategory_id" id="edit-child-subcategory-select" class="w-full bg-[#F8F9FA] border border-[#E2E8F0] rounded-xl px-3 py-2 text-[#1A202C] text-xs focus:outline-none focus:ring-2 focus:ring-[#0047AB]/20 focus:border-[#0047AB]">
+                            <option value="">-- اختر الدقيق --</option>
                         </select>
                     </div>
                 </div>
@@ -240,12 +302,12 @@
     <script>
     const categoriesData = @json($categories);
 
-    function loadSubcategories(categoryId, targetSelectId, selectedSubId = null) {
-        const select = document.getElementById(targetSelectId);
-        select.innerHTML = '<option value="">-- اختر الفرعي --</option>';
-        if (!categoryId) return;
+    function populateSubcategories(catId, targetSubSelectId, selectedSubId = null) {
+        const subSelect = document.getElementById(targetSubSelectId);
+        subSelect.innerHTML = '<option value="">-- اختر الفرعي --</option>';
+        if (!catId) return;
 
-        const category = categoriesData.find(c => c.id == categoryId);
+        const category = categoriesData.find(c => c.id == catId);
         if (category && category.subcategories) {
             category.subcategories.forEach(sub => {
                 const opt = document.createElement('option');
@@ -254,10 +316,65 @@
                 if (selectedSubId && sub.id == selectedSubId) {
                     opt.selected = true;
                 }
-                select.appendChild(opt);
+                subSelect.appendChild(opt);
             });
         }
     }
+
+    function populateChildSubcategories(catId, subId, targetChildSelectId, selectedChildId = null) {
+        const childSelect = document.getElementById(targetChildSelectId);
+        childSelect.innerHTML = '<option value="">-- اختر الفرعي الدقيق --</option>';
+        if (!catId || !subId) return;
+
+        const category = categoriesData.find(c => c.id == catId);
+        if (category && category.subcategories) {
+            const subcategory = category.subcategories.find(s => s.id == subId);
+            if (subcategory) {
+                const children = subcategory.child_subcategories || subcategory.childSubcategories || [];
+                children.forEach(child => {
+                    const opt = document.createElement('option');
+                    opt.value = child.id;
+                    opt.textContent = child.name;
+                    if (selectedChildId && child.id == selectedChildId) {
+                        opt.selected = true;
+                    }
+                    childSelect.appendChild(opt);
+                });
+            }
+        }
+    }
+
+    function onFilterCategoryChange(catId) {
+        populateSubcategories(catId, 'filter-subcategory-select');
+        populateChildSubcategories(null, null, 'filter-child-subcategory-select');
+    }
+
+    function onFilterSubcategoryChange(subId) {
+        const catId = document.getElementById('filter-category-select').value;
+        populateChildSubcategories(catId, subId, 'filter-child-subcategory-select');
+    }
+
+    function onModalCategoryChange(catId, subSelectId, childSelectId) {
+        populateSubcategories(catId, subSelectId);
+        populateChildSubcategories(null, null, childSelectId);
+    }
+
+    function onModalSubcategoryChange(catId, subId, childSelectId) {
+        populateChildSubcategories(catId, subId, childSelectId);
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const selectedCat = "{{ request('category_id') }}";
+        const selectedSub = "{{ request('subcategory_id') }}";
+        const selectedChild = "{{ request('child_subcategory_id') }}";
+
+        if (selectedCat) {
+            populateSubcategories(selectedCat, 'filter-subcategory-select', selectedSub);
+            if (selectedSub) {
+                populateChildSubcategories(selectedCat, selectedSub, 'filter-child-subcategory-select', selectedChild);
+            }
+        }
+    });
 
     function openAddCourseModal() {
         document.getElementById('add-course-modal').style.display = 'flex';
@@ -275,7 +392,8 @@
         document.getElementById('edit-price').value = course.price;
         document.getElementById('edit-description').value = course.description;
 
-        loadSubcategories(course.category_id, 'edit-subcategory-select', course.subcategory_id);
+        populateSubcategories(course.category_id, 'edit-subcategory-select', course.subcategory_id);
+        populateChildSubcategories(course.category_id, course.subcategory_id, 'edit-child-subcategory-select', course.child_subcategory_id);
 
         document.getElementById('edit-course-modal').style.display = 'flex';
     }
