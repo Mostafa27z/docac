@@ -57,7 +57,7 @@ class EnsureCourseEnrollment
         }
 
         if ($courseId) {
-            $isEnrolled = $user->enrollments()->where('course_id', $courseId)->where('status', 'active')->exists();
+            $isEnrolled = $user->enrollments()->where('course_id', $courseId)->whereIn('status', ['active', 'completed'])->exists();
 
             if (!$isEnrolled) {
                 return response()->json([

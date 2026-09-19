@@ -49,7 +49,7 @@ class LessonResource extends JsonResource
             return true;
         }
         $courseId = $this->section->course_id;
-        return $user->enrollments()->where('course_id', $courseId)->where('status', 'active')->exists();
+        return $user->enrollments()->where('course_id', $courseId)->whereIn('status', ['active', 'completed'])->exists();
     }
 }
 

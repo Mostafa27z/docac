@@ -54,7 +54,7 @@ class SendLiveSessionReminders extends Command
 
         foreach ($oneDaySessions as $session) {
             $studentIds = CourseEnrollment::where('course_id', $session->course_id)
-                ->where('status', 'active')
+                ->whereIn('status', ['active', 'completed'])
                 ->pluck('student_id');
 
             $tokens = DeviceToken::whereIn('user_id', $studentIds)->pluck('token')->toArray();
@@ -89,7 +89,7 @@ class SendLiveSessionReminders extends Command
 
         foreach ($oneHourSessions as $session) {
             $studentIds = CourseEnrollment::where('course_id', $session->course_id)
-                ->where('status', 'active')
+                ->whereIn('status', ['active', 'completed'])
                 ->pluck('student_id');
 
             $tokens = DeviceToken::whereIn('user_id', $studentIds)->pluck('token')->toArray();

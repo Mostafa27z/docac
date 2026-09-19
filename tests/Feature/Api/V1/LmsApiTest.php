@@ -180,6 +180,30 @@ class LmsApiTest extends TestCase
     }
 
     /** @test */
+    public function completed_courses_can_be_rewatched_by_student()
+    {
+        $token = $this->student->createToken('test_token')->plainTextToken;
+
+        // Create completed enrollment
+        \App\Models\CourseEnrollment::create([
+            'course_id' => $this->course->id,
+            'student_id' => $this->student->id,
+            'status' => 'completed',
+            'progress_percentage' => 100.00,
+            'completed_at' => now(),
+        ]);
+
+        // Access lecture endpoint - should succeed and return video URL
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $token,
+            'X-Device-ID' => 'device_a_123'
+        ])->getJson("/api/v1/student/lectures/{$this->lesson->id}");
+
+        $response->assertStatus(200)
+                 ->assertJsonPath('success', true);
+    }
+
+    /** @test */
     public function instructor_can_generate_code_and_student_can_activate_it()
     {
         $instructorToken = $this->instructor->createToken('instructor_token')->plainTextToken;
