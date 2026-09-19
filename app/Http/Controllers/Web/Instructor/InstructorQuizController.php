@@ -87,6 +87,40 @@ class InstructorQuizController extends Controller
         return redirect()->back()->with('success', 'تم إنشاء الامتحان بنجاح وربطه بالدرس.');
     }
 
+    public function updateQuiz(Request $request, Quiz $quiz)
+    {
+        if (auth()->user()->role !== 'admin' && $quiz->lesson->section->course->instructor_id !== auth()->id()) {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'pass_percentage' => 'required|numeric|min:0|max:100',
+            'time_limit_minutes' => 'nullable|integer',
+            'attempts_allowed' => 'nullable|integer',
+        ]);
+
+        $quiz->update([
+            'title' => $validated['title'],
+            'pass_percentage' => $validated['pass_percentage'],
+            'time_limit_minutes' => $validated['time_limit_minutes'] ?? null,
+            'attempts_allowed' => $validated['attempts_allowed'] ?? null,
+        ]);
+
+        return redirect()->back()->with('success', 'تم تحديث بيانات الامتحان بنجاح.');
+    }
+
+    public function destroyQuiz(Quiz $quiz)
+    {
+        if (auth()->user()->role !== 'admin' && $quiz->lesson->section->course->instructor_id !== auth()->id()) {
+            abort(403);
+        }
+
+        $quiz->delete();
+
+        return redirect()->back()->with('success', 'تم حذف الامتحان بنجاح.');
+    }
+
     public function storeQuestion(Request $request, Quiz $quiz)
     {
         if (auth()->user()->role !== 'admin' && $quiz->lesson->section->course->instructor_id !== auth()->id()) {
@@ -97,7 +131,7 @@ class InstructorQuizController extends Controller
             'question_text' => 'required|string',
             'points' => 'required|integer|min:1',
             'options' => 'required|array|min:2',
-            'options.*.text' => 'required|string',
+            'options.*.text' => 'nullable|string',
             'correct_option_index' => 'required|integer',
         ]);
 
@@ -107,14 +141,65 @@ class InstructorQuizController extends Controller
             'points' => $validated['points'],
         ]);
 
+        $correctOriginalIndex = (int) $validated['correct_option_index'];
         foreach ($validated['options'] as $index => $opt) {
+            $text = trim($opt['text'] ?? '');
+            if ($text === '') continue;
+
             QuestionOption::create([
                 'question_id' => $question->id,
-                'option_text' => $opt['text'],
-                'is_correct' => ($index === (int)$validated['correct_option_index']),
+                'option_text' => $text,
+                'is_correct' => ($index === $correctOriginalIndex),
             ]);
         }
 
-        return redirect()->back()->with('success', 'MCQ question and options saved.');
+        return redirect()->back()->with('success', 'تم حفظ السؤال والخيارات بنجاح.');
+    }
+
+    public function updateQuestion(Request $request, Question $question)
+    {
+        if (auth()->user()->role !== 'admin' && $question->quiz->lesson->section->course->instructor_id !== auth()->id()) {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'question_text' => 'required|string',
+            'points' => 'required|integer|min:1',
+            'options' => 'required|array|min:2',
+            'options.*.text' => 'nullable|string',
+            'correct_option_index' => 'required|integer',
+        ]);
+
+        $question->update([
+            'question_text' => $validated['question_text'],
+            'points' => $validated['points'],
+        ]);
+
+        $question->options()->delete();
+
+        $correctOriginalIndex = (int) $validated['correct_option_index'];
+        foreach ($validated['options'] as $index => $opt) {
+            $text = trim($opt['text'] ?? '');
+            if ($text === '') continue;
+
+            QuestionOption::create([
+                'question_id' => $question->id,
+                'option_text' => $text,
+                'is_correct' => ($index === $correctOriginalIndex),
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'تم تحديث السؤال والخيارات بنجاح.');
+    }
+
+    public function destroyQuestion(Question $question)
+    {
+        if (auth()->user()->role !== 'admin' && $question->quiz->lesson->section->course->instructor_id !== auth()->id()) {
+            abort(403);
+        }
+
+        $question->delete();
+
+        return redirect()->back()->with('success', 'تم حذف السؤال بنجاح.');
     }
 }

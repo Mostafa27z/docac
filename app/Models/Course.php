@@ -64,6 +64,17 @@ class Course extends Model
         return $this->belongsTo(ChildSubcategory::class);
     }
 
+    public function getCategoryHierarchyAttribute(): ?string
+    {
+        $parts = array_filter([
+            $this->category?->name,
+            $this->subcategory?->name,
+            $this->childSubcategory?->name,
+        ]);
+
+        return !empty($parts) ? implode(' > ', $parts) : null;
+    }
+
     public function sections()
     {
         return $this->hasMany(CourseSection::class)->orderBy('sort_order');

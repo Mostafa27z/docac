@@ -31,7 +31,7 @@ class AdminController extends Controller
 
     public function activationCodesIndex(Request $request)
     {
-        $courses = Course::latest()->get();
+        $courses = Course::with(['category', 'subcategory', 'childSubcategory'])->latest()->get();
         
         $query = CourseActivationCode::with(['course', 'student', 'creator']);
 
@@ -228,7 +228,7 @@ class AdminController extends Controller
         }
 
         $students = $query->latest()->paginate(15);
-        $courses = Course::latest()->get();
+        $courses = Course::with(['category', 'subcategory', 'childSubcategory'])->latest()->get();
 
         return view('admin.students', compact('students', 'courses'));
     }

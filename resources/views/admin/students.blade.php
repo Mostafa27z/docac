@@ -55,7 +55,7 @@
                 <x-form-select label="اختر الكورس المستهدف" name="course_id" :required="true">
                     <option value="">-- اختر الكورس --</option>
                     @foreach($courses as $course)
-                        <option value="{{ $course->id }}">{{ $course->title }} ({{ $course->price }} ج.م)</option>
+                        <option value="{{ $course->id }}">{{ $course->title }}@if($course->category_hierarchy) [{{ $course->category_hierarchy }}]@endif ({{ $course->price }} ج.م)</option>
                     @endforeach
                 </x-form-select>
             </div>

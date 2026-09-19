@@ -32,7 +32,7 @@
                 <x-form-select label="اختر الكورس" name="course_id" :required="true">
                     <option value="">-- اختر الكورس --</option>
                     @foreach($courses as $course)
-                        <option value="{{ $course->id }}">{{ $course->title }}</option>
+                        <option value="{{ $course->id }}">{{ $course->title }}@if($course->category_hierarchy) [{{ $course->category_hierarchy }}]@endif</option>
                     @endforeach
                 </x-form-select>
                 <x-form-input label="الكمية المطلوبة" name="quantity" type="number" :required="true" value="10" />

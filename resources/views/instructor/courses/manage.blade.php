@@ -266,27 +266,73 @@
                                 <x-btn-primary icon="gear" type="submit">إنشاء إعدادات الامتحان</x-btn-primary>
                             </form>
                         @else
-                            <div class="bg-white border border-[#E2E8F0] p-4 rounded-xl mb-4 text-sm text-[#718096] flex items-center gap-4">
-                                <x-badge variant="info">نسبة النجاح: {{ $lesson->quiz->pass_percentage }}%</x-badge>
-                                <x-badge variant="neutral">عدد الأسئلة: {{ $lesson->quiz->questions->count() }}</x-badge>
+                            <div class="bg-white border border-[#E2E8F0] p-4 rounded-xl mb-4 text-sm text-[#718096] flex items-center justify-between flex-wrap gap-4">
+                                <div class="flex items-center gap-3 flex-wrap">
+                                    <x-badge variant="info">نسبة النجاح: {{ $lesson->quiz->pass_percentage }}%</x-badge>
+                                    <x-badge variant="neutral">عدد الأسئلة: {{ $lesson->quiz->questions->count() }}</x-badge>
+                                    @if($lesson->quiz->time_limit_minutes)
+                                        <x-badge variant="neutral">المدة: {{ $lesson->quiz->time_limit_minutes }} دقيقة</x-badge>
+                                    @endif
+                                    @if($lesson->quiz->attempts_allowed)
+                                        <x-badge variant="neutral">المحاولات: {{ $lesson->quiz->attempts_allowed }}</x-badge>
+                                    @endif
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <button type="button" onclick="openEditQuizModal({{ $lesson->quiz->id }}, '{{ addslashes($lesson->quiz->title) }}', {{ $lesson->quiz->pass_percentage }}, {{ $lesson->quiz->time_limit_minutes ?? 'null' }}, {{ $lesson->quiz->attempts_allowed ?? 'null' }})" class="inline-flex items-center gap-1.5 bg-[#0088CC]/10 hover:bg-[#0088CC] text-[#0088CC] hover:text-white text-xs font-semibold px-3 py-1.5 rounded-xl transition-all">
+                                        <i class="ph-bold ph-pencil text-sm"></i>
+                                        تعديل بيانات الامتحان
+                                    </button>
+                                    <form action="{{ route('instructor.quizzes.destroy', $lesson->quiz->id) }}" method="POST" onsubmit="return confirm('هل أنت متأكد من حذف هذا الامتحان بالكامل وجميع أسئلته؟')" class="inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="inline-flex items-center gap-1.5 bg-red-600/10 hover:bg-red-600 text-red-600 hover:text-white text-xs font-semibold px-3 py-1.5 rounded-xl transition-all">
+                                            <i class="ph-bold ph-trash text-sm"></i>
+                                            حذف الامتحان
+                                        </button>
+                                    </form>
+                                </div>
                             </div>
 
                             {{-- Existing Questions --}}
                             <div class="space-y-3 mb-6">
                                 @foreach($lesson->quiz->questions as $qIndex => $question)
                                     <div class="bg-white border border-[#E2E8F0] p-4 rounded-xl shadow-sm">
-                                        <strong class="text-[#1A202C] text-sm flex items-center gap-2">
-                                            <span class="w-6 h-6 rounded-full bg-[#0047AB]/10 text-[#0047AB] flex items-center justify-center text-xs font-bold">{{ $qIndex + 1 }}</span>
-                                            {{ $question->question_text }}
-                                        </strong>
-                                        <ul class="mt-3 space-y-1.5 text-sm text-[#718096] mr-8">
-                                            @foreach($question->options as $opt)
-                                                <li class="flex items-center gap-2 {{ $opt->is_correct ? 'text-[#00A896] font-semibold' : '' }}">
-                                                    <i class="ph-bold ph-{{ $opt->is_correct ? 'check-circle' : 'circle' }} text-sm"></i>
-                                                    {{ $opt->option_text }}
-                                                </li>
-                                            @endforeach
-                                        </ul>
+                                        <div class="flex justify-between items-start gap-4">
+                                            <div class="flex-grow">
+                                                <strong class="text-[#1A202C] text-sm flex items-center gap-2">
+                                                    <span class="w-6 h-6 rounded-full bg-[#0047AB]/10 text-[#0047AB] flex items-center justify-center text-xs font-bold">{{ $qIndex + 1 }}</span>
+                                                    <span>{{ $question->question_text }}</span>
+                                                    <span class="text-xs text-[#718096] font-normal">({{ $question->points }} {{ $question->points == 1 ? 'درجة' : 'درجات' }})</span>
+                                                </strong>
+                                                <ul class="mt-3 space-y-1.5 text-sm text-[#718096] mr-8">
+                                                    @foreach($question->options as $opt)
+                                                        <li class="flex items-center gap-2 {{ $opt->is_correct ? 'text-[#00A896] font-semibold' : '' }}">
+                                                            <i class="ph-bold ph-{{ $opt->is_correct ? 'check-circle' : 'circle' }} text-sm"></i>
+                                                            {{ $opt->option_text }}
+                                                        </li>
+                                                    @endforeach
+                                                </ul>
+                                            </div>
+                                            <div class="flex items-center gap-2 flex-shrink-0">
+                                                @php
+                                                    $optionsList = $question->options->pluck('option_text')->toArray();
+                                                    $correctIdx = $question->options->values()->search(fn($o) => $o->is_correct);
+                                                    if ($correctIdx === false) { $correctIdx = 0; }
+                                                @endphp
+                                                <button type="button" onclick='openEditQuestionModal({{ $question->id }}, @json($question->question_text), {{ $question->points }}, @json($optionsList), {{ $correctIdx }})' class="inline-flex items-center gap-1.5 bg-[#0088CC]/10 hover:bg-[#0088CC] text-[#0088CC] hover:text-white text-xs font-semibold px-3 py-1.5 rounded-xl transition-all">
+                                                    <i class="ph-bold ph-pencil-simple text-sm"></i>
+                                                    تعديل السؤال
+                                                </button>
+                                                <form action="{{ route('instructor.questions.destroy', $question->id) }}" method="POST" onsubmit="return confirm('هل أنت متأكد من رغبتك في حذف هذا السؤال؟')" class="inline">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="inline-flex items-center gap-1.5 bg-red-600/10 hover:bg-red-600 text-red-600 hover:text-white text-xs font-semibold px-3 py-1.5 rounded-xl transition-all">
+                                                        <i class="ph-bold ph-trash text-sm"></i>
+                                                        حذف
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
                                     </div>
                                 @endforeach
                             </div>
@@ -611,6 +657,40 @@
     function closeEditLessonModal() {
         document.getElementById('edit-lesson-modal').style.display = 'none';
     }
+
+    // Quiz & Question Edit Modal Functions
+    function openEditQuizModal(id, title, passPercentage, timeLimit, attemptsAllowed) {
+        document.getElementById('edit-quiz-form').action = `/instructor/quizzes/${id}`;
+        document.getElementById('edit-quiz-title').value = title;
+        document.getElementById('edit-quiz-pass-percentage').value = passPercentage;
+        document.getElementById('edit-quiz-time-limit').value = (timeLimit !== null && timeLimit !== 'null') ? timeLimit : '';
+        document.getElementById('edit-quiz-attempts-allowed').value = (attemptsAllowed !== null && attemptsAllowed !== 'null') ? attemptsAllowed : '';
+        document.getElementById('edit-quiz-modal').style.display = 'flex';
+    }
+    function closeEditQuizModal() {
+        document.getElementById('edit-quiz-modal').style.display = 'none';
+    }
+
+    function openEditQuestionModal(id, text, points, options, correctIndex) {
+        document.getElementById('edit-question-form').action = `/instructor/questions/${id}`;
+        document.getElementById('edit-question-text').value = text;
+        document.getElementById('edit-question-points').value = points;
+
+        for (let i = 0; i < 4; i++) {
+            const textInput = document.getElementById(`edit-option-text-${i}`);
+            const radioInput = document.getElementById(`edit-correct-option-${i}`);
+            if (textInput) {
+                textInput.value = (options && options[i]) ? options[i] : '';
+            }
+            if (radioInput) {
+                radioInput.checked = (i === correctIndex);
+            }
+        }
+        document.getElementById('edit-question-modal').style.display = 'flex';
+    }
+    function closeEditQuestionModal() {
+        document.getElementById('edit-question-modal').style.display = 'none';
+    }
     </script>
     @endpush
 
@@ -707,6 +787,66 @@
                 <div class="flex gap-3 justify-end pt-4 border-t border-[#E2E8F0]">
                     <button type="button" onclick="closeEditLessonModal()" class="bg-[#F8F9FA] hover:bg-[#E2E8F0] text-[#4A5568] font-semibold px-5 py-2.5 rounded-xl transition-colors text-sm">إلغاء</button>
                     <x-btn-primary icon="floppy-disk" type="submit">حفظ</x-btn-primary>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {{-- Edit Quiz Modal --}}
+    <div id="edit-quiz-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(26,32,44,0.6); z-index: 1000; align-items: center; justify-content: center;">
+        <div class="bg-white border border-[#E2E8F0] rounded-2xl w-11/12 max-w-md p-6 relative shadow-2xl">
+            <h3 class="text-lg font-bold mb-4 text-right text-[#1A202C] flex items-center gap-2 pb-3 border-b border-[#E2E8F0]">
+                <i class="ph-bold ph-pencil-simple text-[#0047AB]"></i>
+                تعديل إعدادات الامتحان
+            </h3>
+            <form id="edit-quiz-form" action="" method="POST" class="space-y-4">
+                @csrf
+                @method('PUT')
+                <x-form-input label="عنوان الامتحان" name="title" id="edit-quiz-title" :required="true" />
+                <div class="grid grid-cols-2 gap-4">
+                    <x-form-input label="نسبة النجاح (%)" name="pass_percentage" id="edit-quiz-pass-percentage" type="number" step="0.01" :required="true" />
+                    <x-form-input label="الحد الأقصى للمحاولات" name="attempts_allowed" id="edit-quiz-attempts-allowed" type="number" />
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <x-form-input label="مدة الامتحان (بالدقائق - اختياري)" name="time_limit_minutes" id="edit-quiz-time-limit" type="number" />
+                </div>
+
+                <div class="flex gap-3 justify-end pt-4 border-t border-[#E2E8F0]">
+                    <button type="button" onclick="closeEditQuizModal()" class="bg-[#F8F9FA] hover:bg-[#E2E8F0] text-[#4A5568] font-semibold px-5 py-2.5 rounded-xl transition-colors text-sm">إلغاء</button>
+                    <x-btn-primary icon="floppy-disk" type="submit">حفظ التغييرات</x-btn-primary>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {{-- Edit Question Modal --}}
+    <div id="edit-question-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(26,32,44,0.6); z-index: 1000; align-items: center; justify-content: center; overflow-y: auto;">
+        <div class="bg-white border border-[#E2E8F0] rounded-2xl w-11/12 max-w-lg p-6 relative shadow-2xl my-8">
+            <h3 class="text-lg font-bold mb-4 text-right text-[#1A202C] flex items-center gap-2 pb-3 border-b border-[#E2E8F0]">
+                <i class="ph-bold ph-pencil-simple text-[#0047AB]"></i>
+                تعديل السؤال والخيارات
+            </h3>
+            <form id="edit-question-form" action="" method="POST" class="space-y-4">
+                @csrf
+                @method('PUT')
+                <x-form-input label="نص السؤال" name="question_text" id="edit-question-text" :required="true" />
+                <x-form-input label="درجة السؤال" name="points" id="edit-question-points" type="number" :required="true" min="1" />
+                
+                <div>
+                    <label class="block text-sm font-semibold text-[#4A5568] mb-2">الخيارات المتاحة (حدد الإجابة الصحيحة)</label>
+                    <div class="space-y-2">
+                        @for($i = 0; $i < 4; $i++)
+                        <div class="flex items-center gap-2">
+                            <input type="radio" name="correct_option_index" id="edit-correct-option-{{ $i }}" value="{{ $i }}" class="text-[#0047AB] focus:ring-[#0047AB]">
+                            <input type="text" name="options[{{ $i }}][text]" id="edit-option-text-{{ $i }}" {{ $i < 2 ? 'required' : '' }} class="w-full bg-[#F8F9FA] border border-[#E2E8F0] rounded-xl px-4 py-1.5 text-[#1A202C] text-sm focus:outline-none focus:ring-2 focus:ring-[#0047AB]/20 focus:border-[#0047AB]" placeholder="الخيار {{ $i === 0 ? 'الأول' : ($i === 1 ? 'الثاني' : ($i === 2 ? 'الثالث (اختياري)' : 'الرابع (اختياري)')) }}">
+                        </div>
+                        @endfor
+                    </div>
+                </div>
+
+                <div class="flex gap-3 justify-end pt-4 border-t border-[#E2E8F0]">
+                    <button type="button" onclick="closeEditQuestionModal()" class="bg-[#F8F9FA] hover:bg-[#E2E8F0] text-[#4A5568] font-semibold px-5 py-2.5 rounded-xl transition-colors text-sm">إلغاء</button>
+                    <x-btn-primary icon="floppy-disk" type="submit">حفظ التعديلات</x-btn-primary>
                 </div>
             </form>
         </div>

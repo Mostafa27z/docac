@@ -116,7 +116,11 @@ Route::prefix('instructor')->middleware(['auth', 'role:instructor|admin'])->grou
     Route::get('/quizzes', [InstructorQuizController::class, 'index'])->name('instructor.quizzes.index');
     Route::post('/lessons/{lesson}/quizzes', [InstructorQuizController::class, 'storeQuiz'])->name('instructor.quizzes.store');
     Route::post('/courses/{course}/quizzes', [InstructorQuizController::class, 'storeQuizForCourse'])->name('instructor.quizzes.storeForCourse');
+    Route::put('/quizzes/{quiz}', [InstructorQuizController::class, 'updateQuiz'])->name('instructor.quizzes.update');
+    Route::delete('/quizzes/{quiz}', [InstructorQuizController::class, 'destroyQuiz'])->name('instructor.quizzes.destroy');
     Route::post('/quizzes/{quiz}/questions', [InstructorQuizController::class, 'storeQuestion'])->name('instructor.questions.store');
+    Route::put('/questions/{question}', [InstructorQuizController::class, 'updateQuestion'])->name('instructor.questions.update');
+    Route::delete('/questions/{question}', [InstructorQuizController::class, 'destroyQuestion'])->name('instructor.questions.destroy');
 
     // 5. Chats & Messages
     Route::get('/chats', [InstructorChatController::class, 'index'])->name('instructor.chats.index');
