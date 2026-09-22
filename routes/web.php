@@ -67,11 +67,15 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
     // Student Management Routes
     Route::get('/students', [AdminController::class, 'studentsList'])->name('admin.students.index');
     Route::post('/students', [AdminController::class, 'createStudent'])->name('admin.students.store');
+    Route::get('/students/{user}', [AdminController::class, 'showStudent'])->name('admin.students.show');
     Route::post('/students/{user}/reset-device', [AdminController::class, 'resetDevice'])->name('admin.students.resetDevice');
     Route::post('/students/{user}/toggle-multi-device', [AdminController::class, 'toggleMultiDevice'])->name('admin.students.toggleMultiDevice');
     Route::post('/students/{user}/toggle-status', [AdminController::class, 'toggleStatus'])->name('admin.students.toggleStatus');
     Route::post('/students/{user}/upgrade', [AdminController::class, 'upgradeStudentToInstructor'])->name('admin.students.upgrade');
     Route::post('/students/subscribe', [AdminController::class, 'subscribeStudentToCourse'])->name('admin.students.subscribe');
+    Route::post('/students/{user}/subscribe', [AdminController::class, 'subscribeStudentFromProfile'])->name('admin.students.profileSubscribe');
+    Route::delete('/students/{user}/unsubscribe/{course}', [AdminController::class, 'unsubscribeStudentFromCourse'])->name('admin.students.unsubscribe');
+
 
     // Settings Routes
     Route::get('/settings', [AdminController::class, 'settingsIndex'])->name('admin.settings.index');

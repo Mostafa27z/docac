@@ -135,8 +135,15 @@
                     <td class="py-4 px-4 text-[#718096] text-sm">{{ $student->created_at->format('Y-m-d') }}</td>
                     <td class="py-4 px-4">
                         <div class="flex items-center gap-2">
+                            {{-- View Profile --}}
+                            <a href="{{ route('admin.students.show', $student->id) }}" class="inline-flex items-center gap-1 bg-[#0047AB]/10 hover:bg-[#0047AB]/20 text-[#0047AB] text-xs font-semibold px-3 py-1.5 rounded-xl transition-all">
+                                <i class="ph-bold ph-eye text-sm"></i>
+                                <span>الملف الشخصي</span>
+                            </a>
+
                             {{-- Multi-device quick toggle --}}
                             <form action="{{ route('admin.students.toggleMultiDevice', $student->id) }}" method="POST">
+
                                 @csrf
                                 @if($student->allow_multiple_devices)
                                     <button type="submit" title="تقييد الحساب بجهاز واحد فقط" class="inline-flex items-center gap-1 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-semibold px-2.5 py-1.5 rounded-xl border border-gray-300 transition-all">

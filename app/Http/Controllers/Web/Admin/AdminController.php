@@ -379,4 +379,69 @@ class AdminController extends Controller
 
         return redirect()->back()->with('success', "تم تسجيل الطالب {$student->name} في الكورس {$course->title} بنجاح.");
     }
+
+    public function showStudent(User $user)
+    {
+        if ($user->role !== 'student') {
+            abort(404);
+        }
+
+        $user->load(['enrollments.course.category', 'enrollments.payments']);
+
+        $enrolledCourseIds = $user->enrollments->pluck('course_id')->toArray();
+        $availableCourses = Course::whereNotIn('id', $enrolledCourseIds)->latest()->get();
+
+        return view('admin.students.show', compact('user', 'availableCourses'));
+    }
+
+    public function subscribeStudentFromProfile(Request $request, User $user)
+    {
+        if ($user->role !== 'student') {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'course_id' => 'required|exists:courses,id',
+        ]);
+
+        $course = Course::findOrFail($validated['course_id']);
+
+        $exists = \App\Models\CourseEnrollment::where('student_id', $user->id)
+            ->where('course_id', $course->id)
+            ->exists();
+
+        if ($exists) {
+            return redirect()->back()->with('error', "الطالب مشترك بالفعل في الكورس {$course->title}.");
+        }
+
+        \App\Models\CourseEnrollment::create([
+            'student_id' => $user->id,
+            'course_id' => $course->id,
+            'total_price' => $course->price,
+            'paid_amount' => $course->price,
+            'payment_status' => 'fully_paid',
+            'status' => 'active',
+            'enrolled_at' => now(),
+        ]);
+
+        return redirect()->back()->with('success', "تم إضافة الطالب إلى الكورس {$course->title} بنجاح.");
+    }
+
+    public function unsubscribeStudentFromCourse(User $user, Course $course)
+    {
+        if ($user->role !== 'student') {
+            abort(403);
+        }
+
+        $deleted = \App\Models\CourseEnrollment::where('student_id', $user->id)
+            ->where('course_id', $course->id)
+            ->delete();
+
+        if ($deleted) {
+            return redirect()->back()->with('success', "تم إلغاء اشتراك الطالب من الكورس {$course->title} بنجاح.");
+        }
+
+        return redirect()->back()->with('error', 'الاشتراك غير موجود.');
+    }
 }
+
