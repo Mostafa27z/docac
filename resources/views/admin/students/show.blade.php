@@ -190,8 +190,9 @@
                     <x-form-select label="اختر الكورس المراد إضافته" name="course_id" :required="true">
                         <option value="">-- اختر كورس من القائمة --</option>
                         @foreach($availableCourses as $c)
-                            <option value="{{ $c->id }}">{{ $c->title }} ({{ number_format($c->price, 2) }} ج.م)</option>
+                            <option value="{{ $c->id }}">{{ $c->title }}@if($c->category_hierarchy) [{{ $c->category_hierarchy }}]@endif ({{ number_format($c->price, 2) }} ج.م)</option>
                         @endforeach
+
                     </x-form-select>
                 </div>
                 <div>

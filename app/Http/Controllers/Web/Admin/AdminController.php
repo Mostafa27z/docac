@@ -389,7 +389,11 @@ class AdminController extends Controller
         $user->load(['enrollments.course.category', 'enrollments.payments']);
 
         $enrolledCourseIds = $user->enrollments->pluck('course_id')->toArray();
-        $availableCourses = Course::whereNotIn('id', $enrolledCourseIds)->latest()->get();
+        $availableCourses = Course::with(['category', 'subcategory', 'childSubcategory'])
+            ->whereNotIn('id', $enrolledCourseIds)
+            ->latest()
+            ->get();
+
 
         return view('admin.students.show', compact('user', 'availableCourses'));
     }
