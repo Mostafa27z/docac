@@ -17,12 +17,14 @@ class Course extends Model
         'thumbnail',
         'type',
         'status',
+        'allowed',
         'published_at',
         'price'
     ];
 
     protected $casts = [
-        'published_at' => 'datetime'
+        'published_at' => 'datetime',
+        'allowed' => 'boolean',
     ];
 
     public function getThumbnailUrlAttribute()

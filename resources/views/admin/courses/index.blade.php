@@ -80,7 +80,7 @@
             <h3 class="font-bold text-[#1A202C]">قائمة جميع الكورسات بالمنصة</h3>
         </div>
 
-        <x-data-table :headers="['اسم الكورس', 'المحاضر المسؤول', 'التصنيف والتخصصات', 'النوع والسعر', 'الحالة', 'الإجراءات']">
+        <x-data-table :headers="['اسم الكورس', 'المحاضر المسؤول', 'التصنيف والتخصصات', 'النوع والسعر', 'الحالة', 'السماح (Allowed)', 'الإجراءات']">
             @forelse($courses as $course)
                 <tr class="border-b border-[#E2E8F0] hover:bg-[#F8F9FA] transition-colors">
                     <td class="py-4 px-4 font-semibold text-[#1A202C]">
@@ -130,6 +130,17 @@
                         @endif
                     </td>
                     <td class="py-4 px-4">
+                        @if($course->allowed)
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                                مسموح
+                            </span>
+                        @else
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-100 text-red-800 border border-red-200">
+                                غير مسموح
+                            </span>
+                        @endif
+                    </td>
+                    <td class="py-4 px-4">
                         <div class="flex gap-2 items-center flex-wrap">
                             <a href="{{ route('instructor.courses.manage', $course->id) }}" class="inline-flex items-center gap-1.5 bg-[#0047AB]/10 hover:bg-[#0047AB] text-[#0047AB] hover:text-white text-xs font-semibold px-3 py-1.5 rounded-xl transition-all">
                                 <i class="ph-bold ph-gear text-sm"></i>
@@ -152,7 +163,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="6" class="py-8 text-center text-[#718096]">
+                    <td colspan="7" class="py-8 text-center text-[#718096]">
                         <x-empty-state icon="book-open-text" title="لا توجد كورسات مضافة" description="قم بإنشاء كورس جديد وتعيين المحاضر والتصنيفات." />
                     </td>
                 </tr>
@@ -219,6 +230,12 @@
                 <div>
                     <label class="block text-sm font-semibold text-[#4A5568] mb-1.5">صورة الغلاف (Thumbnail)</label>
                     <input type="file" name="thumbnail_file" accept="image/*" class="w-full text-sm text-[#718096] file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-[#0047AB]/10 file:text-[#0047AB] hover:file:bg-[#0047AB]/20 transition-all">
+                </div>
+
+                <div class="flex items-center gap-2 p-3 bg-[#F8F9FA] rounded-xl border border-[#E2E8F0]">
+                    <input type="checkbox" name="allowed" id="add-allowed" value="1" checked class="w-4 h-4 text-[#0047AB] rounded border-[#E2E8F0] focus:ring-[#0047AB]">
+                    <label for="add-allowed" class="text-xs font-bold text-[#1A202C]">سماح (Allowed)</label>
+                    <span class="text-[11px] text-[#718096]">(تحديد ما إذا كان مسموح به في الواجهة الأمامية)</span>
                 </div>
 
                 <div class="flex gap-3 justify-end pt-4 border-t border-[#E2E8F0]">
@@ -288,6 +305,12 @@
                 <div>
                     <label class="block text-sm font-semibold text-[#4A5568] mb-1.5">صورة الغلاف (Thumbnail)</label>
                     <input type="file" name="thumbnail_file" accept="image/*" class="w-full text-sm text-[#718096] file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-[#0047AB]/10 file:text-[#0047AB] hover:file:bg-[#0047AB]/20 transition-all">
+                </div>
+
+                <div class="flex items-center gap-2 p-3 bg-[#F8F9FA] rounded-xl border border-[#E2E8F0]">
+                    <input type="checkbox" name="allowed" id="edit-allowed" value="1" class="w-4 h-4 text-[#0047AB] rounded border-[#E2E8F0] focus:ring-[#0047AB]">
+                    <label for="edit-allowed" class="text-xs font-bold text-[#1A202C]">سماح (Allowed)</label>
+                    <span class="text-[11px] text-[#718096]">(تحديد ما إذا كان مسموح به في الواجهة الأمامية)</span>
                 </div>
 
                 <div class="flex gap-3 justify-end pt-4 border-t border-[#E2E8F0]">
@@ -391,6 +414,7 @@
         document.getElementById('edit-type').value = course.type;
         document.getElementById('edit-price').value = course.price;
         document.getElementById('edit-description').value = course.description;
+        document.getElementById('edit-allowed').checked = course.allowed == 1 || course.allowed === true;
 
         populateSubcategories(course.category_id, 'edit-subcategory-select', course.subcategory_id);
         populateChildSubcategories(course.category_id, course.subcategory_id, 'edit-child-subcategory-select', course.child_subcategory_id);

@@ -22,6 +22,7 @@ class CourseResource extends JsonResource
             'thumbnail' => $this->thumbnail_url,
             'type' => $this->type,
             'status' => $this->status,
+            'allowed' => (bool) $this->allowed,
             'published_at' => $this->published_at,
             'price' => (float)$this->price,
             'category' => $this->category ? [

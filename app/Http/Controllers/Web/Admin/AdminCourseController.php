@@ -55,6 +55,7 @@ class AdminCourseController extends Controller
             'child_subcategory_id' => 'nullable|exists:child_subcategories,id',
             'thumbnail_file' => 'nullable|image|max:10240',
             'thumbnail' => 'nullable|image|max:10240',
+            'allowed' => 'nullable|boolean',
         ]);
 
         $file = $request->file('thumbnail_file') ?? $request->file('thumbnail') ?? $request->file('image');
@@ -77,6 +78,7 @@ class AdminCourseController extends Controller
             'price' => $validated['price'],
             'thumbnail' => $thumbnail,
             'status' => 'draft',
+            'allowed' => $request->has('allowed') ? $request->boolean('allowed') : true,
         ]);
 
         return redirect()->route('instructor.courses.manage', $course->id)->with('success', 'تم إنشاء الكورس وتعيين المحاضر بنجاح، يمكنك الآن إضافة المنهج والدروس.');
@@ -95,6 +97,7 @@ class AdminCourseController extends Controller
             'child_subcategory_id' => 'nullable|exists:child_subcategories,id',
             'thumbnail_file' => 'nullable|image|max:10240',
             'thumbnail' => 'nullable|image|max:10240',
+            'allowed' => 'nullable|boolean',
         ]);
 
         $updateData = [
@@ -106,6 +109,7 @@ class AdminCourseController extends Controller
             'category_id' => $validated['category_id'] ?? null,
             'subcategory_id' => $validated['subcategory_id'] ?? null,
             'child_subcategory_id' => $validated['child_subcategory_id'] ?? null,
+            'allowed' => $request->boolean('allowed'),
         ];
 
         $file = $request->file('thumbnail_file') ?? $request->file('thumbnail') ?? $request->file('image');
