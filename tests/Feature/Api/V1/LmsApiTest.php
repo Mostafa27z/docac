@@ -342,4 +342,40 @@ class LmsApiTest extends TestCase
                          ->assertJsonCount(1, 'data')
                          ->assertJsonPath('data.0.id', $this->quiz->id);
     }
+
+    /** @test */
+    public function student_can_retrieve_youtube_lesson_with_proper_provider_and_url()
+    {
+        $token = $this->student->createToken('test_token')->plainTextToken;
+
+        \App\Models\CourseEnrollment::create([
+            'course_id' => $this->course->id,
+            'student_id' => $this->student->id,
+            'status' => 'active',
+            'progress_percentage' => 0.00,
+            'enrolled_at' => now(),
+            'total_price' => 0.00,
+        ]);
+
+        $ytLesson = Lesson::create([
+            'section_id' => $this->lesson->section_id,
+            'title' => 'YouTube Physiology Lecture',
+            'type' => 'video',
+            'video_url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+            'video_duration_seconds' => 300,
+            'sort_order' => 2,
+            'is_preview' => false,
+        ]);
+
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $token,
+            'X-Device-ID' => 'device_a_123'
+        ])->getJson("/api/v1/student/lectures/{$ytLesson->id}");
+
+        $response->assertStatus(200)
+                 ->assertJsonPath('success', true)
+                 ->assertJsonPath('data.title', 'YouTube Physiology Lecture')
+                 ->assertJsonPath('data.video_provider', 'youtube')
+                 ->assertJsonPath('data.video_url', 'https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=0&rel=0');
+    }
 }

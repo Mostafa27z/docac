@@ -101,4 +101,75 @@ class AdminStudentProfileTest extends TestCase
             'course_id' => $course->id,
         ]);
     }
+
+    /** @test */
+    public function admin_can_bulk_subscribe_multiple_students_to_multiple_courses_by_ids()
+    {
+        $student2 = User::factory()->create([
+            'role' => 'student',
+            'status' => 'active',
+        ]);
+
+        $course1 = Course::create([
+            'instructor_id' => $this->admin->id,
+            'title' => 'Bulk Course 1',
+            'slug' => 'bulk-course-1',
+            'price' => 100,
+            'status' => 'published',
+        ]);
+
+        $course2 = Course::create([
+            'instructor_id' => $this->admin->id,
+            'title' => 'Bulk Course 2',
+            'slug' => 'bulk-course-2',
+            'price' => 200,
+            'status' => 'published',
+        ]);
+
+        $response = $this->actingAs($this->admin)->post(route('admin.students.bulkSubscribe'), [
+            'student_ids' => [$this->student->id, $student2->id],
+            'course_ids' => [$course1->id, $course2->id],
+        ]);
+
+        $response->assertRedirect();
+        $response->assertSessionHas('success');
+
+        // Check that both students are enrolled in both courses (2 students * 2 courses = 4 enrollments)
+        $this->assertDatabaseHas('course_enrollments', ['student_id' => $this->student->id, 'course_id' => $course1->id]);
+        $this->assertDatabaseHas('course_enrollments', ['student_id' => $this->student->id, 'course_id' => $course2->id]);
+        $this->assertDatabaseHas('course_enrollments', ['student_id' => $student2->id, 'course_id' => $course1->id]);
+        $this->assertDatabaseHas('course_enrollments', ['student_id' => $student2->id, 'course_id' => $course2->id]);
+    }
+
+    /** @test */
+    public function admin_can_bulk_subscribe_students_by_pasted_emails_list()
+    {
+        $student2 = User::factory()->create([
+            'role' => 'student',
+            'status' => 'active',
+            'email' => 'student_pasted_2@test.com',
+        ]);
+
+        $course = Course::create([
+            'instructor_id' => $this->admin->id,
+            'title' => 'Pasted Email Course',
+            'slug' => 'pasted-email-course',
+            'price' => 150,
+            'status' => 'published',
+        ]);
+
+        // Paste formatted emails (comma, new line, spaces, unknown email)
+        $emailsText = "{$this->student->email}, student_pasted_2@test.com\nnon_existent@example.com";
+
+        $response = $this->actingAs($this->admin)->post(route('admin.students.bulkSubscribe'), [
+            'emails' => $emailsText,
+            'course_ids' => [$course->id],
+        ]);
+
+        $response->assertRedirect();
+        $response->assertSessionHas('success');
+
+        $this->assertDatabaseHas('course_enrollments', ['student_id' => $this->student->id, 'course_id' => $course->id]);
+        $this->assertDatabaseHas('course_enrollments', ['student_id' => $student2->id, 'course_id' => $course->id]);
+    }
 }

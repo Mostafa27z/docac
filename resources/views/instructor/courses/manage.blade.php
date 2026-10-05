@@ -107,12 +107,25 @@
                     @forelse($section->lessons as $lesson)
                         <li class="p-4 bg-white border border-[#E2E8F0] rounded-xl flex justify-between items-center shadow-sm">
                             <div class="flex items-center gap-3">
-                                <div class="p-2 rounded-lg {{ $lesson->type === 'video' ? 'bg-[#0088CC]/10 text-[#0088CC]' : 'bg-[#00A896]/10 text-[#00A896]' }}">
-                                    <i class="ph-bold ph-{{ $lesson->type === 'video' ? 'play-circle' : 'clipboard-text' }} text-lg"></i>
+                                <div class="p-2 rounded-lg {{ $lesson->type === 'video' ? ($lesson->is_youtube ? 'bg-red-50 text-red-600' : 'bg-[#0088CC]/10 text-[#0088CC]') : 'bg-[#00A896]/10 text-[#00A896]' }}">
+                                    @if($lesson->type === 'video')
+                                        <i class="ph-bold ph-{{ $lesson->is_youtube ? 'youtube-logo' : 'play-circle' }} text-lg"></i>
+                                    @else
+                                        <i class="ph-bold ph-clipboard-text text-lg"></i>
+                                    @endif
                                 </div>
                                 <div>
                                     <strong class="text-[#1A202C] text-sm">{{ $lesson->title }}</strong>
-                                    <span class="text-xs text-[#718096] mr-2">({{ $lesson->type === 'video' ? 'فيديو مسجل' : 'امتحان MCQ' }})</span>
+                                    <span class="text-xs text-[#718096] mr-2">({{ $lesson->type === 'video' ? ($lesson->is_youtube ? 'فيديو YouTube' : 'فيديو Bunny') : 'امتحان MCQ' }})</span>
+                                    @if($lesson->is_youtube)
+                                        <span class="inline-flex items-center gap-1 text-[11px] font-semibold text-red-600 bg-red-50 border border-red-200 px-2 py-0.5 rounded-lg">
+                                            <i class="ph-bold ph-youtube-logo text-xs"></i> YouTube
+                                        </span>
+                                    @elseif($lesson->type === 'video' && $lesson->video_url)
+                                        <span class="inline-flex items-center gap-1 text-[11px] font-semibold text-[#0088CC] bg-[#0088CC]/10 border border-[#0088CC]/20 px-2 py-0.5 rounded-lg">
+                                            <i class="ph-bold ph-cloud-arrow-up text-xs"></i> Bunny
+                                        </span>
+                                    @endif
                                     @if($lesson->is_preview)
                                         <x-badge variant="success">معاينة مجانية</x-badge>
                                     @endif
@@ -120,7 +133,7 @@
                             </div>
                             <div class="flex gap-2 items-center flex-wrap justify-end">
                                 @if($lesson->type === 'video' && $lesson->video_url)
-                                    <button onclick="previewBunnyVideo('{{ config('services.bunny.stream_library_id') }}', '{{ $lesson->video_url }}')" class="inline-flex items-center gap-1.5 bg-[#2EC4B6]/10 hover:bg-[#2EC4B6] text-[#00A896] hover:text-white text-xs font-semibold px-3 py-1.5 rounded-xl transition-all">
+                                    <button onclick="previewLessonVideo('{{ $lesson->video_url }}', '{{ config('services.bunny.stream_library_id') }}')" class="inline-flex items-center gap-1.5 {{ $lesson->is_youtube ? 'bg-red-50 hover:bg-red-600 text-red-600 hover:text-white' : 'bg-[#2EC4B6]/10 hover:bg-[#2EC4B6] text-[#00A896] hover:text-white' }} text-xs font-semibold px-3 py-1.5 rounded-xl transition-all">
                                         <i class="ph-bold ph-play text-sm"></i>
                                         عرض الفيديو
                                     </button>
@@ -131,7 +144,7 @@
                                         إدارة الأسئلة
                                     </a>
                                 @endif
-                                <button type="button" onclick="openEditLessonModal({{ $lesson->id }}, '{{ addslashes($lesson->title) }}', '{{ addslashes($lesson->description ?? '') }}', {{ $lesson->is_preview ? 1 : 0 }}, {{ $lesson->video_duration_seconds ?? 0 }})" class="inline-flex items-center gap-1.5 bg-[#0088CC]/10 hover:bg-[#0088CC] text-[#0088CC] hover:text-white text-xs font-semibold px-3 py-1.5 rounded-xl transition-all">
+                                <button type="button" onclick="openEditLessonModal({{ $lesson->id }}, '{{ addslashes($lesson->title) }}', '{{ addslashes($lesson->description ?? '') }}', {{ $lesson->is_preview ? 1 : 0 }}, {{ $lesson->video_duration_seconds ?? 0 }}, '{{ addslashes($lesson->video_url ?? '') }}')" class="inline-flex items-center gap-1.5 bg-[#0088CC]/10 hover:bg-[#0088CC] text-[#0088CC] hover:text-white text-xs font-semibold px-3 py-1.5 rounded-xl transition-all">
                                     <i class="ph-bold ph-pencil text-sm"></i>
                                     تعديل
                                 </button>
@@ -154,32 +167,73 @@
                 <details class="bg-white border border-[#E2E8F0] rounded-xl p-4">
                     <summary class="cursor-pointer font-semibold text-[#1A202C] text-sm flex items-center gap-2 select-none">
                         <i class="ph-bold ph-plus-circle text-[#0047AB] text-lg"></i>
-                        <span>إضافة درس أو فيديو لهذا القسم (يدعم أحجام ملفات كبيرة)</span>
+                        <span>إضافة درس أو محاضرة لهذا القسم (Bunny أو YouTube)</span>
                     </summary>
                     <form id="chunk-upload-form-{{ $section->id }}" onsubmit="uploadChunkedLesson(event, {{ $section->id }}, '{{ route('instructor.lessons.chunked', $section->id) }}')" class="mt-4 space-y-4">
                         @csrf
                         <x-form-input label="عنوان الدرس" :name="'title-' . $section->id" :required="true" placeholder="مثال: شرح رسم القلب الدورة الأذينية" />
                         <div>
                             <label class="block text-sm font-semibold text-[#4A5568] mb-1.5">نوع المحتوى</label>
-                            <select id="type-{{ $section->id }}" name="type" required class="w-full bg-[#F8F9FA] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-[#1A202C] text-sm focus:outline-none focus:ring-2 focus:ring-[#0047AB]/20 focus:border-[#0047AB] transition-all">
-                                <option value="video">فيديو مسجل (رفع بالأجزاء Chunked Upload - حجم كبير)</option>
+                            <select id="type-{{ $section->id }}" name="type" required onchange="toggleLessonType({{ $section->id }})" class="w-full bg-[#F8F9FA] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-[#1A202C] text-sm focus:outline-none focus:ring-2 focus:ring-[#0047AB]/20 focus:border-[#0047AB] transition-all">
+                                <option value="video">فيديو محاضرة مسجلة (Bunny أو YouTube)</option>
                                 <option value="quiz">امتحان MCQ واختبار تقييمي</option>
                             </select>
                         </div>
-                        <div id="video-file-group-{{ $section->id }}">
-                            <label class="block text-sm font-semibold text-[#4A5568] mb-1.5">اختر ملف الفيديو (مهما كان الحجم)</label>
-                            <input type="file" id="video-file-{{ $section->id }}" accept="video/mp4,video/quicktime,video/mkv" class="w-full text-sm text-[#718096] file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-[#0047AB]/10 file:text-[#0047AB] hover:file:bg-[#0047AB]/20 transition-all">
+
+                        {{-- Video Source Selector --}}
+                        <div id="video-source-wrapper-{{ $section->id }}" class="space-y-3">
+                            <label class="block text-sm font-semibold text-[#4A5568] mb-1.5">طريقة إضافة الفيديو</label>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <label class="flex items-center gap-2.5 p-3 bg-[#F8F9FA] border border-[#E2E8F0] rounded-xl cursor-pointer hover:border-[#0047AB] transition-all">
+                                    <input type="radio" name="video_source_{{ $section->id }}" value="bunny" checked onchange="toggleVideoSource({{ $section->id }}, 'bunny')" class="text-[#0047AB] focus:ring-[#0047AB]">
+                                    <div class="flex items-center gap-2">
+                                        <i class="ph-bold ph-cloud-arrow-up text-[#0088CC] text-lg"></i>
+                                        <span class="text-sm font-medium text-[#1A202C]">رفع ملف (Bunny Stream)</span>
+                                    </div>
+                                </label>
+                                <label class="flex items-center gap-2.5 p-3 bg-[#F8F9FA] border border-[#E2E8F0] rounded-xl cursor-pointer hover:border-red-500 transition-all">
+                                    <input type="radio" name="video_source_{{ $section->id }}" value="youtube" onchange="toggleVideoSource({{ $section->id }}, 'youtube')" class="text-red-600 focus:ring-red-500">
+                                    <div class="flex items-center gap-2">
+                                        <i class="ph-bold ph-youtube-logo text-red-600 text-lg"></i>
+                                        <span class="text-sm font-medium text-[#1A202C]">رابط يوتيوب (YouTube Link)</span>
+                                    </div>
+                                </label>
+                            </div>
+
+                            {{-- File Upload Group for Bunny --}}
+                            <div id="video-file-group-{{ $section->id }}">
+                                <label class="block text-sm font-semibold text-[#4A5568] mb-1.5">اختر ملف الفيديو (مهما كان الحجم - يدعم الرفع بالأجزاء والضغط التلقائي)</label>
+                                <input type="file" id="video-file-{{ $section->id }}" accept="video/mp4,video/quicktime,video/mkv" onchange="handleVideoFileChange({{ $section->id }})" class="w-full text-sm text-[#718096] file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-[#0047AB]/10 file:text-[#0047AB] hover:file:bg-[#0047AB]/20 transition-all">
+                                
+                                {{-- Compression Alert & Toggle --}}
+                                <div id="compression-container-{{ $section->id }}" style="display: none;" class="mt-3 p-3 bg-indigo-50/80 border border-indigo-200 rounded-xl transition-all">
+                                    <label class="flex items-start gap-2.5 cursor-pointer">
+                                        <input type="checkbox" id="compress-video-{{ $section->id }}" value="1" class="mt-0.5 rounded border-indigo-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer">
+                                        <div class="flex-1">
+                                            <span class="block text-xs font-bold text-indigo-950 flex items-center gap-1.5">
+                                                <i class="ph-bold ph-lightning text-indigo-600 text-sm"></i>
+                                                <span>ضغط وتقليص حجم الفيديو محلياً قبل الرفع (توفير حتى 75% من الحجم وتسريع الرفع)</span>
+                                            </span>
+                                            <p class="text-[11px] text-indigo-700 mt-0.5 leading-relaxed" id="compression-info-{{ $section->id }}">
+                                                حجم الملف: <strong id="file-size-text-{{ $section->id }}">0 MB</strong>. يتم الضغط محلياً عبر المتصفح لتسريع الرفع وحفظ باقة الإنترنت.
+                                            </p>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+
+                            {{-- YouTube Link Group --}}
+                            <div id="youtube-url-group-{{ $section->id }}" style="display: none;">
+                                <label class="block text-sm font-semibold text-[#4A5568] mb-1.5">رابط فيديو YouTube</label>
+                                <input type="url" id="youtube-url-{{ $section->id }}" placeholder="مثال: https://www.youtube.com/watch?v=xxxx أو https://youtu.be/xxxx" class="w-full bg-[#F8F9FA] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-[#1A202C] text-sm focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all text-left dir-ltr">
+                                <p class="text-xs text-[#718096] mt-1">يدعم روابط يوتيوب المباشرة والقصيرة والفيديوهات القصيرة Shorts وقوائم التشغيل.</p>
+                            </div>
                         </div>
+
                         <div class="flex items-center gap-2">
                             <input type="checkbox" id="is-preview-{{ $section->id }}" value="1" class="rounded border-[#E2E8F0] text-[#0047AB] focus:ring-[#0047AB]">
                             <label for="is-preview-{{ $section->id }}" class="text-sm font-medium text-[#4A5568]">السماح بالمعاينة المجانية للدرس قبل الاشتراك</label>
                         </div>
-
-                        <script>
-                            document.getElementById('type-{{ $section->id }}').addEventListener('change', function() {
-                                document.getElementById('video-file-group-{{ $section->id }}').style.display = this.value === 'quiz' ? 'none' : 'block';
-                            });
-                        </script>
 
                         {{-- Progress Bar --}}
                         <div id="progress-container-{{ $section->id }}" class="hidden mt-4">
@@ -192,7 +246,7 @@
                             </div>
                         </div>
 
-                        <x-btn-primary icon="upload-simple" type="submit" :id="'submit-btn-' . $section->id">رفع وحفظ الدرس</x-btn-primary>
+                        <x-btn-primary icon="upload-simple" type="submit" :id="'submit-btn-' . $section->id">حفظ الدرس</x-btn-primary>
                     </form>
                 </details>
             </div>
@@ -500,16 +554,134 @@
         </x-data-table>
     </x-card>
 
-    {{-- Chunked Upload JS --}}
+    {{-- Chunked Upload JS & Video Handlers --}}
     @push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/tus-js-client@2.3.1/dist/tus.min.js"></script>
+    <script src="https://unpkg.com/@ffmpeg/ffmpeg@0.11.6/dist/ffmpeg.min.js"></script>
     <script>
+    let ffmpegInstance = null;
+
+    async function getFFmpeg() {
+        if (!ffmpegInstance) {
+            if (typeof FFmpeg === 'undefined' || !FFmpeg.createFFmpeg) {
+                throw new Error('مكتبة FFmpeg غير متوفرة في المتصفح.');
+            }
+            ffmpegInstance = FFmpeg.createFFmpeg({ log: false });
+            await ffmpegInstance.load();
+        }
+        return ffmpegInstance;
+    }
+
+    function formatBytes(bytes, decimals = 1) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const dm = decimals < 0 ? 0 : decimals;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+    }
+
+    function handleVideoFileChange(sectionId) {
+        const fileInput = document.getElementById(`video-file-${sectionId}`);
+        const compressionContainer = document.getElementById(`compression-container-${sectionId}`);
+        const compressCheckbox = document.getElementById(`compress-video-${sectionId}`);
+        const sizeText = document.getElementById(`file-size-text-${sectionId}`);
+
+        if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
+            if (compressionContainer) compressionContainer.style.display = 'none';
+            return;
+        }
+
+        const file = fileInput.files[0];
+        const sizeBytes = file.size;
+        const sizeFormatted = formatBytes(sizeBytes);
+
+        if (sizeText) sizeText.innerText = sizeFormatted;
+        if (compressionContainer) compressionContainer.style.display = 'block';
+
+        // Automatically check compression if file size exceeds 500 MB
+        const isExceeding500MB = sizeBytes >= (500 * 1024 * 1024);
+        if (compressCheckbox) {
+            compressCheckbox.checked = isExceeding500MB;
+        }
+    }
+
+    async function compressVideoClientSide(file, onProgress) {
+        const ffmpeg = await getFFmpeg();
+        
+        ffmpeg.setProgress(({ ratio }) => {
+            if (onProgress && typeof onProgress === 'function') {
+                const pct = Math.min(100, Math.max(0, Math.round(ratio * 100)));
+                onProgress(pct);
+            }
+        });
+
+        const timestamp = Date.now();
+        const inputName = `input_${timestamp}.mp4`;
+        const outputName = `output_${timestamp}.mp4`;
+
+        const fileData = new Uint8Array(await file.arrayBuffer());
+        ffmpeg.FS('writeFile', inputName, fileData);
+
+        // Ultrafast H.264 compression with CRF 28 and AAC 128k audio
+        await ffmpeg.run(
+            '-i', inputName,
+            '-vcodec', 'libx264',
+            '-crf', '28',
+            '-preset', 'ultrafast',
+            '-acodec', 'aac',
+            '-b:a', '128k',
+            '-movflags', '+faststart',
+            outputName
+        );
+
+        const compressedData = ffmpeg.FS('readFile', outputName);
+        
+        // Clean up virtual filesystem memory
+        try {
+            ffmpeg.FS('unlink', inputName);
+            ffmpeg.FS('unlink', outputName);
+        } catch (e) {}
+
+        const compressedBlob = new Blob([compressedData.buffer], { type: 'video/mp4' });
+        const cleanOriginalName = file.name.replace(/\.[^/.]+$/, "");
+        const compressedFile = new File([compressedBlob], `${cleanOriginalName}_compressed.mp4`, { type: 'video/mp4' });
+
+        return {
+            file: compressedFile,
+            originalSize: file.size,
+            compressedSize: compressedFile.size,
+            ratioPercent: Math.round((1 - (compressedFile.size / file.size)) * 100)
+        };
+    }
+
+    function toggleLessonType(sectionId) {
+        const typeSelect = document.getElementById(`type-${sectionId}`);
+        const videoWrapper = document.getElementById(`video-source-wrapper-${sectionId}`);
+        if (videoWrapper) {
+            videoWrapper.style.display = typeSelect.value === 'quiz' ? 'none' : 'block';
+        }
+    }
+
+    function toggleVideoSource(sectionId, source) {
+        const fileGroup = document.getElementById(`video-file-group-${sectionId}`);
+        const ytGroup = document.getElementById(`youtube-url-group-${sectionId}`);
+        if (source === 'youtube') {
+            if (fileGroup) fileGroup.style.display = 'none';
+            if (ytGroup) ytGroup.style.display = 'block';
+        } else {
+            if (fileGroup) fileGroup.style.display = 'block';
+            if (ytGroup) ytGroup.style.display = 'none';
+        }
+    }
+
     async function uploadChunkedLesson(event, sectionId, endpointUrl) {
         event.preventDefault();
 
         const titleInput = document.getElementById(`title-${sectionId}`);
         const typeSelect = document.getElementById(`type-${sectionId}`);
         const fileInput = document.getElementById(`video-file-${sectionId}`);
+        const youtubeInput = document.getElementById(`youtube-url-${sectionId}`);
         const isPreviewInput = document.getElementById(`is-preview-${sectionId}`);
 
         const progressContainer = document.getElementById(`progress-container-${sectionId}`);
@@ -518,24 +690,91 @@
         const progressStatus = document.getElementById(`progress-status-${sectionId}`);
         const submitBtn = document.getElementById(`submit-btn-${sectionId}`);
 
-        const title = titleInput.value;
+        const title = titleInput.value.trim();
         const type = typeSelect.value;
-        const file = fileInput.files[0];
         const isPreview = isPreviewInput.checked ? 1 : 0;
         const csrfToken = document.querySelector('input[name="_token"]').value;
 
-        if (type === 'video' && !file) {
-            alert('يرجى اختيار ملف الفيديو للرفع.');
+        const videoSourceRadio = document.querySelector(`input[name="video_source_${sectionId}"]:checked`);
+        const videoSource = videoSourceRadio ? videoSourceRadio.value : 'bunny';
+
+        if (!title) {
+            alert('يرجى كتابة عنوان الدرس.');
             return;
         }
 
-        submitBtn.disabled = true;
-        progressContainer.classList.remove('hidden');
+        // Handle YouTube video submission
+        if (type === 'video' && videoSource === 'youtube') {
+            const ytUrl = youtubeInput ? youtubeInput.value.trim() : '';
+            if (!ytUrl) {
+                alert('يرجى إدخال رابط فيديو يوتيوب أو معرّف الفيديو.');
+                return;
+            }
 
-        try {
-            let videoGuid = null;
+            submitBtn.disabled = true;
+            try {
+                const formData = new FormData();
+                formData.append('_token', csrfToken);
+                formData.append('title', title);
+                formData.append('type', 'video');
+                formData.append('video_source', 'youtube');
+                formData.append('youtube_url', ytUrl);
+                formData.append('is_preview', isPreview);
 
-            if (type === 'video') {
+                const res = await fetch(endpointUrl, { method: 'POST', body: formData });
+                const data = await res.json();
+
+                if (data.success) {
+                    alert('تم حفظ الدرس وإضافة رابط اليوتيوب بنجاح!');
+                    window.location.reload();
+                } else {
+                    throw new Error(data.message || 'حدث خطأ أثناء الحفظ');
+                }
+            } catch (err) {
+                alert('خطأ أثناء الحفظ: ' + err.message);
+                submitBtn.disabled = false;
+            }
+            return;
+        }
+
+        // Handle Bunny video upload
+        if (type === 'video') {
+            let file = fileInput ? fileInput.files[0] : null;
+            if (!file) {
+                alert('يرجى اختيار ملف الفيديو للرفع.');
+                return;
+            }
+
+            submitBtn.disabled = true;
+            progressContainer.classList.remove('hidden');
+
+            const compressCheckbox = document.getElementById(`compress-video-${sectionId}`);
+            const shouldCompress = compressCheckbox && compressCheckbox.checked;
+
+            if (shouldCompress) {
+                try {
+                    progressStatus.innerText = `جاري ضغط الفيديو محلياً على جهازك لتسريع الرفع (0%)... [حجم الملف: ${formatBytes(file.size)}]`;
+                    progressBar.style.width = '0%';
+                    progressPercent.innerText = '0%';
+
+                    const compressResult = await compressVideoClientSide(file, (pct) => {
+                        progressBar.style.width = pct + '%';
+                        progressPercent.innerText = pct + '%';
+                        progressStatus.innerText = `جاري ضغط الفيديو محلياً: ${pct}%... (الحجم الأصلي: ${formatBytes(file.size)})`;
+                    });
+
+                    file = compressResult.file;
+                    const savedPct = compressResult.ratioPercent > 0 ? compressResult.ratioPercent : 0;
+                    progressStatus.innerText = `اكتمل الضغط بنجاح! تم تقليص الحجم من (${formatBytes(compressResult.originalSize)}) إلى (${formatBytes(compressResult.compressedSize)}) - توفير ${savedPct}%! جاري الرفع السحابي...`;
+                    await new Promise(r => setTimeout(r, 1000));
+                } catch (compressErr) {
+                    console.warn('Compression skipped or failed on current browser, uploading original:', compressErr);
+                    progressStatus.innerText = 'تنبيه: تم تخطي الضغط المحلي، جاري رفع الملف الأصلي مباشرة عبر Bunny TUS...';
+                    await new Promise(r => setTimeout(r, 1000));
+                }
+            }
+
+            try {
                 progressStatus.innerText = 'جاري إنشاء إدخال الفيديو وطلب صلاحيات الرفع...';
 
                 const initFormData = new FormData();
@@ -543,6 +782,7 @@
                 initFormData.append('init', '1');
                 initFormData.append('title', title);
                 initFormData.append('type', type);
+                initFormData.append('video_source', 'bunny');
 
                 const initRes = await fetch(endpointUrl, { method: 'POST', body: initFormData });
                 const contentType = initRes.headers.get("content-type");
@@ -555,7 +795,7 @@
                     throw new Error(initData.message || 'فشل إنشاء إدخال الفيديو على Bunny Stream.');
                 }
 
-                videoGuid = initData.video_guid;
+                const videoGuid = initData.video_guid;
 
                 if (typeof tus === 'undefined' || !tus.Upload) {
                     throw new Error('مكتبة الرفع (tus) لم يتم تحميلها بشكل صحيح. يرجى تحديث الصفحة.');
@@ -577,52 +817,113 @@
                             const pct = Math.round((bytesUploaded / bytesTotal) * 95);
                             progressBar.style.width = pct + '%';
                             progressPercent.innerText = pct + '%';
-                            progressStatus.innerText = `جاري الرفع: ${pct}% (${(bytesUploaded / 1024 / 1024).toFixed(1)}MB / ${(bytesTotal / 1024 / 1024).toFixed(1)}MB)`;
+                            progressStatus.innerText = `جاري الرفع إلى Bunny Stream: ${pct}% (${(bytesUploaded / 1024 / 1024).toFixed(1)}MB / ${(bytesTotal / 1024 / 1024).toFixed(1)}MB)`;
                         },
                         onSuccess: () => resolve()
                     });
                     upload.start();
                 });
+
+                progressStatus.innerText = 'جاري حفظ بيانات المحاضرة...';
+                progressBar.style.width = '100%';
+                progressPercent.innerText = '100%';
+
+                const finalFormData = new FormData();
+                finalFormData.append('_token', csrfToken);
+                finalFormData.append('title', title);
+                finalFormData.append('type', type);
+                finalFormData.append('video_source', 'bunny');
+                finalFormData.append('video_guid', videoGuid);
+                finalFormData.append('is_preview', isPreview);
+
+                const finalRes = await fetch(endpointUrl, { method: 'POST', body: finalFormData });
+                const finalData = await finalRes.json();
+
+                if (finalData.success) {
+                    alert('تم حفظ ورفع المحاضرة بنجاح!');
+                    window.location.reload();
+                } else {
+                    throw new Error(finalData.message || 'حدث خطأ أثناء التخزين');
+                }
+            } catch (err) {
+                alert('خطأ أثناء الرفع: ' + err.message);
+                submitBtn.disabled = false;
+                progressContainer.classList.add('hidden');
             }
+            return;
+        }
 
-            progressStatus.innerText = 'جاري حفظ بيانات المحاضرة...';
-            progressBar.style.width = '100%';
-            progressPercent.innerText = '100%';
-
+        // Quiz type
+        submitBtn.disabled = true;
+        try {
             const finalFormData = new FormData();
             finalFormData.append('_token', csrfToken);
             finalFormData.append('title', title);
             finalFormData.append('type', type);
-            if (videoGuid) finalFormData.append('video_guid', videoGuid);
             finalFormData.append('is_preview', isPreview);
 
             const finalRes = await fetch(endpointUrl, { method: 'POST', body: finalFormData });
             const finalData = await finalRes.json();
 
             if (finalData.success) {
-                alert('تم حفظ ورفع المحاضرة بنجاح!');
+                alert('تم حفظ الدرس بنجاح!');
                 window.location.reload();
             } else {
-                throw new Error(finalData.message || 'حدث خطأ أثناء التخزين');
+                throw new Error(finalData.message || 'حدث خطأ أثناء الحفظ');
             }
-
         } catch (err) {
-            alert('خطأ أثناء الرفع: ' + err.message);
+            alert('خطأ: ' + err.message);
             submitBtn.disabled = false;
-            progressContainer.classList.add('hidden');
         }
     }
 
-    function previewBunnyVideo(libraryId, videoGuid) {
+    function extractYouTubeId(url) {
+        if (!url) return null;
+        const regExp = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?|shorts|live)\/|.*[?&]v=)|youtu\.be\/|youtube-nocookie\.com\/embed\/)([a-zA-Z0-9_-]{11})/i;
+        const match = url.match(regExp);
+        if (match && match[1]) return match[1];
+        if (/^[a-zA-Z0-9_-]{11}$/.test(url)) return url;
+        return null;
+    }
+
+    function previewLessonVideo(videoUrl, libraryId) {
         const modal = document.getElementById('bunny-video-modal');
         const container = document.getElementById('bunny-video-container');
 
-        const iframeUrl = `https://iframe.mediadelivery.net/embed/${libraryId}/${videoGuid}?autoplay=true&loop=false&muted=false&preload=true&responsive=true`;
+        const ytId = extractYouTubeId(videoUrl);
+        if (ytId) {
+            const embedUrl = `https://www.youtube.com/embed/${ytId}?autoplay=1&rel=0`;
+            container.innerHTML = `
+                <div style="position: relative; padding-top: 56.25%; border-radius: 12px; overflow: hidden; background: #000;">
+                    <iframe src="${embedUrl}" loading="lazy" style="border: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                </div>`;
+            modal.style.display = 'flex';
+            return;
+        }
+
+        // Check if Bunny Stream GUID (UUID)
+        const isBunnyGuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(videoUrl);
+        if (isBunnyGuid) {
+            const iframeUrl = `https://iframe.mediadelivery.net/embed/${libraryId}/${videoUrl}?autoplay=true&loop=false&muted=false&preload=true&responsive=true`;
+            container.innerHTML = `
+                <div style="position: relative; padding-top: 56.25%; border-radius: 12px; overflow: hidden; background: #000;">
+                    <iframe src="${iframeUrl}" loading="lazy" style="border: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%;" allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;" allowfullscreen="true"></iframe>
+                </div>`;
+            modal.style.display = 'flex';
+            return;
+        }
+
+        // Direct URL or Signed Bunny CDN Path
+        const videoSrc = videoUrl.startsWith('http') ? videoUrl : videoUrl;
         container.innerHTML = `
-            <div style="position: relative; padding-top: 56.25%;">
-                <iframe src="${iframeUrl}" loading="lazy" style="border: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%;" allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;" allowfullscreen="true"></iframe>
+            <div style="position: relative; padding-top: 56.25%; border-radius: 12px; overflow: hidden; background: #000;">
+                <video controls autoplay style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" src="${videoSrc}"></video>
             </div>`;
         modal.style.display = 'flex';
+    }
+
+    function previewBunnyVideo(libraryId, videoGuid) {
+        previewLessonVideo(videoGuid, libraryId);
     }
 
     function closeVideoModal() {
@@ -646,12 +947,17 @@
     }
 
     // Lesson Edit Modal Function
-    function openEditLessonModal(id, title, description, isPreview, duration) {
+    function openEditLessonModal(id, title, description, isPreview, duration, videoUrl = '') {
         document.getElementById('edit-lesson-form').action = `/instructor/lessons/${id}`;
         document.getElementById('edit-lesson-title').value = title;
         document.getElementById('edit-lesson-description').value = description;
         document.getElementById('edit-lesson-preview').checked = isPreview == 1;
         document.getElementById('edit-lesson-duration').value = duration;
+        
+        const videoUrlInput = document.getElementById('edit-lesson-video-url');
+        if (videoUrlInput) {
+            videoUrlInput.value = videoUrl;
+        }
         document.getElementById('edit-lesson-modal').style.display = 'flex';
     }
     function closeEditLessonModal() {
@@ -777,6 +1083,12 @@
                 @method('PUT')
                 <x-form-input label="عنوان الدرس" name="title" id="edit-lesson-title" :required="true" />
                 <x-form-textarea label="الوصف" name="description" id="edit-lesson-description" rows="3"></x-form-textarea>
+                
+                <div>
+                    <label class="block text-sm font-semibold text-[#4A5568] mb-1.5">رابط الفيديو أو معرّف Bunny (YouTube Link / Video GUID)</label>
+                    <input type="text" name="video_url" id="edit-lesson-video-url" placeholder="رابط YouTube أو معرّف Bunny Stream" class="w-full bg-[#F8F9FA] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-[#1A202C] text-sm focus:outline-none focus:ring-2 focus:ring-[#0047AB]/20 focus:border-[#0047AB] transition-all text-left dir-ltr">
+                </div>
+
                 <x-form-input label="مدة الفيديو (بالثواني)" name="video_duration_seconds" id="edit-lesson-duration" type="number" min="0" />
                 
                 <div class="flex items-center gap-2">
@@ -786,7 +1098,7 @@
 
                 <div class="flex gap-3 justify-end pt-4 border-t border-[#E2E8F0]">
                     <button type="button" onclick="closeEditLessonModal()" class="bg-[#F8F9FA] hover:bg-[#E2E8F0] text-[#4A5568] font-semibold px-5 py-2.5 rounded-xl transition-colors text-sm">إلغاء</button>
-                    <x-btn-primary icon="floppy-disk" type="submit">حفظ</x-btn-primary>
+                    <x-btn-primary icon="floppy-disk" type="submit">حفظ التغييرات</x-btn-primary>
                 </div>
             </form>
         </div>

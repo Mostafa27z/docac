@@ -22,6 +22,7 @@ class LessonResource extends JsonResource
             'title' => $this->title,
             'description' => $this->description,
             'type' => $this->type,
+            'video_provider' => $this->when($this->type === 'video', $this->video_provider),
             'video_duration_seconds' => $this->video_duration_seconds,
             'sort_order' => $this->sort_order,
             'is_preview' => $this->is_preview,

@@ -45,4 +45,45 @@ class Lesson extends Model
     {
         return $this->hasMany(CourseFile::class);
     }
+
+    /**
+     * Determine the video provider (youtube, bunny_stream, bunny_storage, or null).
+     */
+    public function getVideoProviderAttribute(): ?string
+    {
+        if ($this->type !== 'video' || empty($this->video_url)) {
+            return null;
+        }
+
+        $bunnyCdn = app(\App\Services\BunnyCdnService::class);
+        if ($bunnyCdn->isYouTubeUrl($this->video_url) || preg_match('/^[a-zA-Z0-9_-]{11}$/', $this->video_url)) {
+            return 'youtube';
+        }
+
+        if ($bunnyCdn->isBunnyStreamGuid($this->video_url)) {
+            return 'bunny_stream';
+        }
+
+        return 'bunny_storage';
+    }
+
+    /**
+     * Check if the lesson video is a YouTube video.
+     */
+    public function getIsYoutubeAttribute(): bool
+    {
+        return $this->video_provider === 'youtube';
+    }
+
+    /**
+     * Get YouTube embed URL if applicable.
+     */
+    public function getYoutubeEmbedUrlAttribute(): ?string
+    {
+        if (!$this->is_youtube) {
+            return null;
+        }
+
+        return app(\App\Services\BunnyCdnService::class)->getYouTubeEmbedUrl($this->video_url);
+    }
 }

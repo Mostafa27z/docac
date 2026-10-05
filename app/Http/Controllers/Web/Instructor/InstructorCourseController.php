@@ -220,15 +220,21 @@ class InstructorCourseController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'type' => 'required|in:video,quiz',
+            'video_source' => 'nullable|in:bunny,youtube',
+            'youtube_url' => 'nullable|string|max:500',
             'video_file' => 'nullable|file|mimetypes:video/mp4,video/quicktime|max:102400', // 100MB limit
-            'video_duration_seconds' => 'nullable|integer',
+            'video_duration_seconds' => 'nullable|integer|min:0',
             'is_preview' => 'nullable|boolean',
         ]);
 
         $videoPath = null;
-        if ($request->hasFile('video_file') && $validated['type'] === 'video') {
-            // Push video directly to Bunny Stream
-            $videoPath = $this->bunnyStorage->uploadVideo($request->file('video_file'), $validated['title']);
+        if ($validated['type'] === 'video') {
+            if ($request->input('video_source') === 'youtube' || !empty($request->input('youtube_url'))) {
+                $videoPath = $request->input('youtube_url');
+            } elseif ($request->hasFile('video_file')) {
+                // Push video directly to Bunny Stream
+                $videoPath = $this->bunnyStorage->uploadVideo($request->file('video_file'), $validated['title']);
+            }
         }
 
         Lesson::create([
@@ -252,12 +258,16 @@ class InstructorCourseController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'type' => 'required|in:video,quiz',
-            'video_guid' => 'nullable|string',
+            'video_source' => 'nullable|in:bunny,youtube',
+            'youtube_url' => 'nullable|string|max:500',
+            'video_guid' => 'nullable|string|max:500',
+            'video_duration_seconds' => 'nullable|integer|min:0',
             'is_preview' => 'nullable|boolean',
         ]);
 
         // Step 1: Initialize Video object in Bunny Stream and generate TUS credentials
-        if ($request->has('init') && $validated['type'] === 'video') {
+        // Only initialize Bunny Stream when uploading a Bunny video
+        if ($request->has('init') && $validated['type'] === 'video' && $request->input('video_source') !== 'youtube') {
             \Illuminate\Support\Facades\Log::info("Controller: Initializing TUS upload credentials for: {$validated['title']}");
             
             $videoGuid = $this->bunnyStorage->createStreamVideo($validated['title']);
@@ -284,13 +294,23 @@ class InstructorCourseController extends Controller
             ]);
         }
 
-        // Step 2: Finalize lesson metadata creation once upload completes
+        // Determine video_url to store
+        $videoUrl = null;
+        if ($validated['type'] === 'video') {
+            if ($request->input('video_source') === 'youtube' || !empty($request->input('youtube_url'))) {
+                $videoUrl = $request->input('youtube_url');
+            } else {
+                $videoUrl = $validated['video_guid'] ?? null;
+            }
+        }
+
+        // Step 2: Finalize lesson metadata creation once upload completes or when saving YouTube/quiz lesson
         $lesson = Lesson::create([
             'section_id' => $section->id,
             'title' => $validated['title'],
             'description' => $request->input('description'),
             'type' => $validated['type'],
-            'video_url' => $validated['video_guid'] ?? null,
+            'video_url' => $videoUrl,
             'video_duration_seconds' => $request->input('video_duration_seconds', 0),
             'sort_order' => $section->lessons()->count() + 1,
             'is_preview' => $request->boolean('is_preview'),
@@ -298,7 +318,7 @@ class InstructorCourseController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'تم حفظ الكورس والدرس بنجاح',
+            'message' => 'تم حفظ الدرس بنجاح',
             'lesson' => $lesson
         ]);
     }
@@ -471,16 +491,23 @@ class InstructorCourseController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
+            'video_url' => 'nullable|string|max:500',
             'is_preview' => 'nullable|boolean',
             'video_duration_seconds' => 'nullable|integer|min:0',
         ]);
 
-        $lesson->update([
+        $updateData = [
             'title' => $validated['title'],
             'description' => $validated['description'] ?? null,
             'is_preview' => $request->boolean('is_preview'),
             'video_duration_seconds' => $validated['video_duration_seconds'] ?? 0,
-        ]);
+        ];
+
+        if ($request->has('video_url')) {
+            $updateData['video_url'] = $validated['video_url'];
+        }
+
+        $lesson->update($updateData);
 
         return redirect()->back()->with('success', 'تم تحديث بيانات الدرس بنجاح.');
     }

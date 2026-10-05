@@ -73,6 +73,7 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
     Route::post('/students/{user}/toggle-status', [AdminController::class, 'toggleStatus'])->name('admin.students.toggleStatus');
     Route::post('/students/{user}/upgrade', [AdminController::class, 'upgradeStudentToInstructor'])->name('admin.students.upgrade');
     Route::post('/students/subscribe', [AdminController::class, 'subscribeStudentToCourse'])->name('admin.students.subscribe');
+    Route::post('/students/bulk-subscribe', [AdminController::class, 'bulkSubscribeStudents'])->name('admin.students.bulkSubscribe');
     Route::post('/students/{user}/subscribe', [AdminController::class, 'subscribeStudentFromProfile'])->name('admin.students.profileSubscribe');
     Route::delete('/students/{user}/unsubscribe/{course}', [AdminController::class, 'unsubscribeStudentFromCourse'])->name('admin.students.unsubscribe');
 

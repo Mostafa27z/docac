@@ -380,6 +380,115 @@ class AdminController extends Controller
         return redirect()->back()->with('success', "تم تسجيل الطالب {$student->name} في الكورس {$course->title} بنجاح.");
     }
 
+    public function bulkSubscribeStudents(Request $request)
+    {
+        $validated = $request->validate([
+            'course_ids' => 'required|array|min:1',
+            'course_ids.*' => 'exists:courses,id',
+            'student_ids' => 'nullable|array',
+            'student_ids.*' => 'exists:users,id',
+            'emails' => 'nullable|string',
+        ]);
+
+        $courseIds = $validated['course_ids'];
+        $courses = Course::whereIn('id', $courseIds)->get();
+
+        // 1. Gather all target students
+        $students = collect();
+
+        // From student_ids
+        if (!empty($validated['student_ids'])) {
+            $studentsById = User::where('role', 'student')->whereIn('id', $validated['student_ids'])->get();
+            $students = $students->merge($studentsById);
+        }
+
+        // From raw emails text (separated by newlines, commas, semicolons, or spaces)
+        $missingEmails = [];
+        if (!empty($validated['emails'])) {
+            $rawEmails = preg_split('/[\r\n,; \t]+/', $validated['emails'], -1, PREG_SPLIT_NO_EMPTY);
+            $cleanEmails = array_unique(array_filter(array_map('trim', $rawEmails)));
+
+            foreach ($cleanEmails as $email) {
+                if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                    $student = User::where('email', $email)->where('role', 'student')->first();
+                    if ($student) {
+                        $students->push($student);
+                    } else {
+                        $missingEmails[] = $email;
+                    }
+                } else {
+                    $missingEmails[] = $email;
+                }
+            }
+        }
+
+        $students = $students->unique('id');
+
+        if ($students->isEmpty()) {
+            return redirect()->back()->withErrors([
+                'emails' => 'لم يتم العثور على أي طلاب مسجلين بالبيانات المدخلة.'
+            ])->with('error', 'فشل الاشتراك الجماعي: لم يتم تحديد أو العثور على أي طلاب مسجلين.');
+        }
+
+        $newEnrollmentsCount = 0;
+        $reactivatedCount = 0;
+        $alreadyEnrolledCount = 0;
+
+        \Illuminate\Support\Facades\DB::transaction(function() use ($students, $courses, &$newEnrollmentsCount, &$reactivatedCount, &$alreadyEnrolledCount) {
+            foreach ($students as $student) {
+                foreach ($courses as $course) {
+                    $enrollment = \App\Models\CourseEnrollment::where('student_id', $student->id)
+                        ->where('course_id', $course->id)
+                        ->first();
+
+                    if ($enrollment) {
+                        if ($enrollment->status !== 'active') {
+                            $enrollment->update([
+                                'status' => 'active',
+                                'payment_status' => 'fully_paid',
+                            ]);
+                            $reactivatedCount++;
+                        } else {
+                            $alreadyEnrolledCount++;
+                        }
+                    } else {
+                        \App\Models\CourseEnrollment::create([
+                            'student_id' => $student->id,
+                            'course_id' => $course->id,
+                            'total_price' => $course->price ?? 0.00,
+                            'paid_amount' => $course->price ?? 0.00,
+                            'payment_status' => 'fully_paid',
+                            'status' => 'active',
+                            'progress_percentage' => 0.00,
+                            'enrolled_at' => now(),
+                        ]);
+                        $newEnrollmentsCount++;
+                    }
+                }
+            }
+        });
+
+        $studentsCount = $students->count();
+        $coursesCount = $courses->count();
+
+        $message = "تمت عملية الاشتراك الجماعي بنجاح: تفعيل {$newEnrollmentsCount} اشتراك جديد لـ {$studentsCount} طالب في {$coursesCount} كورس.";
+        if ($reactivatedCount > 0) {
+            $message .= " (تمت إعادة تنشيط {$reactivatedCount} اشتراك سابق).";
+        }
+        if ($alreadyEnrolledCount > 0) {
+            $message .= " (تم تخطي {$alreadyEnrolledCount} اشتراك قائم بالفعل).";
+        }
+        if (!empty($missingEmails)) {
+            $missingList = implode(', ', array_slice($missingEmails, 0, 5));
+            if (count($missingEmails) > 5) {
+                $missingList .= ' ...وغيرهم (' . count($missingEmails) . ' إيميل)';
+            }
+            $message .= " ⚠️ تنبيه: تعذر العثور على الإيميلات التالية: [{$missingList}].";
+        }
+
+        return redirect()->back()->with('success', $message);
+    }
+
     public function showStudent(User $user)
     {
         if ($user->role !== 'student') {

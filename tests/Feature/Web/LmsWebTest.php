@@ -266,4 +266,53 @@ class LmsWebTest extends TestCase
         $logoutResponse->assertHeader('Cache-Control');
         $this->assertStringContainsString('no-store', $logoutResponse->headers->get('Cache-Control'));
     }
+
+    /** @test */
+    public function instructor_can_add_and_update_lesson_with_youtube_link()
+    {
+        $section = \App\Models\CourseSection::create([
+            'course_id' => $this->course->id,
+            'title' => 'Cardiology Chapter',
+            'sort_order' => 1
+        ]);
+
+        // 1. Add YouTube lesson via chunked/async endpoint
+        $response = $this->actingAs($this->instructor)->postJson("/instructor/sections/{$section->id}/lessons/chunked", [
+            'title' => 'ECG Interpretation YouTube',
+            'type' => 'video',
+            'video_source' => 'youtube',
+            'youtube_url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+            'is_preview' => true,
+        ]);
+
+        $response->assertStatus(200);
+        $response->assertJson(['success' => true]);
+
+        $this->assertDatabaseHas('lessons', [
+            'section_id' => $section->id,
+            'title' => 'ECG Interpretation YouTube',
+            'video_url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+            'is_preview' => 1,
+        ]);
+
+        $lesson = \App\Models\Lesson::where('title', 'ECG Interpretation YouTube')->first();
+        $this->assertEquals('youtube', $lesson->video_provider);
+
+        // 2. Update YouTube lesson URL
+        $updateResponse = $this->actingAs($this->instructor)->put("/instructor/lessons/{$lesson->id}", [
+            'title' => 'ECG Interpretation Advanced',
+            'video_url' => 'https://youtu.be/abcdefghijk',
+            'video_duration_seconds' => 600,
+            'is_preview' => false,
+        ]);
+
+        $updateResponse->assertRedirect();
+        $this->assertDatabaseHas('lessons', [
+            'id' => $lesson->id,
+            'title' => 'ECG Interpretation Advanced',
+            'video_url' => 'https://youtu.be/abcdefghijk',
+            'video_duration_seconds' => 600,
+            'is_preview' => 0,
+        ]);
+    }
 }

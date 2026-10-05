@@ -24,8 +24,60 @@ class BunnyCdnService
     }
 
     /**
+     * Check if a video_url value is a YouTube URL.
+     */
+    public function isYouTubeUrl(?string $value): bool
+    {
+        if (empty($value)) {
+            return false;
+        }
+
+        return (bool) preg_match('/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?|shorts|live)\/|.*[?&]v=)|youtu\.be\/|youtube-nocookie\.com\/embed\/)/i', $value);
+    }
+
+    /**
+     * Extract YouTube Video ID from a YouTube URL.
+     */
+    public function extractYouTubeId(?string $url): ?string
+    {
+        if (empty($url)) {
+            return null;
+        }
+
+        if (preg_match('/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?|shorts|live)\/|.*[?&]v=)|youtu\.be\/|youtube-nocookie\.com\/embed\/)([a-zA-Z0-9_-]{11})/i', $url, $matches)) {
+            return $matches[1];
+        }
+
+        return null;
+    }
+
+    /**
+     * Get YouTube Embed URL from a URL or video ID.
+     */
+    public function getYouTubeEmbedUrl(?string $url): ?string
+    {
+        if (empty($url)) {
+            return null;
+        }
+
+        $videoId = $this->extractYouTubeId($url);
+        if ($videoId) {
+            return "https://www.youtube.com/embed/{$videoId}";
+        }
+
+        // If user entered a plain 11-character youtube id
+        if (preg_match('/^[a-zA-Z0-9_-]{11}$/', $url)) {
+            return "https://www.youtube.com/embed/{$url}";
+        }
+
+        return $url;
+    }
+
+    /**
      * Build the full playback URL for a video.
+     * - If the value is a YouTube URL or ID → returns YouTube embed URL.
      * - If the value is a Bunny Stream GUID → returns the iframe embed URL.
+     * - If the value is already a full URL → returns as-is.
      * - If the value is a file path → returns a CDN signed URL.
      */
     public function buildVideoPlaybackUrl(?string $videoUrl): ?string
@@ -34,8 +86,18 @@ class BunnyCdnService
             return null;
         }
 
+        if ($this->isYouTubeUrl($videoUrl) || preg_match('/^[a-zA-Z0-9_-]{11}$/', $videoUrl)) {
+            $embed = $this->getYouTubeEmbedUrl($videoUrl);
+            return $embed ? "{$embed}?autoplay=0&rel=0" : $videoUrl;
+        }
+
         if ($this->isBunnyStreamGuid($videoUrl)) {
             return "https://iframe.mediadelivery.net/embed/{$this->streamLibraryId}/{$videoUrl}?autoplay=false&preload=true&responsive=true";
+        }
+
+        // If it's already an absolute URL (e.g. external or already signed)
+        if (preg_match('/^https?:\/\//i', $videoUrl)) {
+            return $videoUrl;
         }
 
         return $this->generateSignedUrl($videoUrl);
