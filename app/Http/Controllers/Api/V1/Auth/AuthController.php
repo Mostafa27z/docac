@@ -131,7 +131,7 @@ class AuthController extends Controller
                 'email' => $user->email,
                 'phone' => $user->phone,
                 'role' => $user->role,
-                'avatar' => $user->avatar,
+                'avatar' => $user->avatar_url ?? $user->avatar,
                 'status' => $user->status,
                 'active_device_id' => $user->active_device_id,
                 'allow_multiple_devices' => (bool)$user->allow_multiple_devices,
@@ -145,7 +145,10 @@ class AuthController extends Controller
 
         $validated = $request->validate([
             'name' => 'sometimes|required|string|max:255',
-            'avatar' => 'sometimes|nullable|string|max:2048', // accepts photo URL or base64 etc.
+            'avatar' => 'sometimes|nullable',
+            'avatar_file' => 'sometimes|nullable|image|max:10240',
+            'image' => 'sometimes|nullable|image|max:10240',
+            'photo' => 'sometimes|nullable|image|max:10240',
             'password' => 'sometimes|required|string|min:8|confirmed',
         ]);
 
@@ -153,8 +156,16 @@ class AuthController extends Controller
             $user->name = $validated['name'];
         }
 
-        if (isset($validated['avatar'])) {
-            $user->avatar = $validated['avatar'];
+        // Support uploading an actual image file (multipart/form-data)
+        $file = $request->file('avatar') ?? $request->file('avatar_file') ?? $request->file('image') ?? $request->file('photo');
+        if ($file) {
+            $bunnyStorage = app(\App\Services\BunnyStorageService::class);
+            $avatarPath = $bunnyStorage->uploadFile($file, 'avatars');
+            if ($avatarPath) {
+                $user->avatar = $avatarPath;
+            }
+        } elseif ($request->filled('avatar') && is_string($request->input('avatar'))) {
+            $user->avatar = $request->input('avatar');
         }
 
         if (isset($validated['password'])) {
@@ -172,7 +183,7 @@ class AuthController extends Controller
                 'email' => $user->email,
                 'phone' => $user->phone,
                 'role' => $user->role,
-                'avatar' => $user->avatar,
+                'avatar' => $user->avatar_url ?? $user->avatar,
                 'status' => $user->status,
                 'active_device_id' => $user->active_device_id,
                 'allow_multiple_devices' => (bool)$user->allow_multiple_devices,
