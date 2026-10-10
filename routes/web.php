@@ -103,6 +103,8 @@ Route::prefix('instructor')->middleware(['auth', 'role:instructor|admin'])->grou
     Route::delete('/courses/{course}', [InstructorCourseController::class, 'destroyCourse'])->name('instructor.courses.destroy');
     Route::post('/courses/{course}/publish', [InstructorCourseController::class, 'togglePublish'])->name('instructor.courses.publish');
     Route::post('/courses/{course}/sections', [InstructorCourseController::class, 'addSection'])->name('instructor.sections.store');
+    Route::put('/sections/{section}', [InstructorCourseController::class, 'updateSection'])->name('instructor.sections.update');
+    Route::delete('/sections/{section}', [InstructorCourseController::class, 'destroySection'])->name('instructor.sections.destroy');
     Route::post('/sections/{section}/lessons/chunked', [InstructorCourseController::class, 'uploadChunkedLesson'])->name('instructor.lessons.chunked');
     Route::put('/lessons/{lesson}', [InstructorCourseController::class, 'updateLesson'])->name('instructor.lessons.update');
     Route::delete('/lessons/{lesson}', [InstructorCourseController::class, 'destroyLesson'])->name('instructor.lessons.destroy');
@@ -124,6 +126,7 @@ Route::prefix('instructor')->middleware(['auth', 'role:instructor|admin'])->grou
     Route::put('/quizzes/{quiz}', [InstructorQuizController::class, 'updateQuiz'])->name('instructor.quizzes.update');
     Route::delete('/quizzes/{quiz}', [InstructorQuizController::class, 'destroyQuiz'])->name('instructor.quizzes.destroy');
     Route::post('/quizzes/{quiz}/questions', [InstructorQuizController::class, 'storeQuestion'])->name('instructor.questions.store');
+    Route::post('/quizzes/{quiz}/questions/bulk', [InstructorQuizController::class, 'storeBulkQuestions'])->name('instructor.questions.bulk');
     Route::put('/questions/{question}', [InstructorQuizController::class, 'updateQuestion'])->name('instructor.questions.update');
     Route::delete('/questions/{question}', [InstructorQuizController::class, 'destroyQuestion'])->name('instructor.questions.destroy');
 

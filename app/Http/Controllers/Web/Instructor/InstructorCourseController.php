@@ -210,6 +210,30 @@ class InstructorCourseController extends Controller
         return redirect()->back()->with('success', 'تم إضافة قسم جديد بنجاح.');
     }
 
+    public function updateSection(Request $request, CourseSection $section)
+    {
+        $this->checkCourseAccess($section->course);
+
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+        ]);
+
+        $section->update([
+            'title' => $validated['title'],
+        ]);
+
+        return redirect()->back()->with('success', 'تم تحديث بيانات القسم بنجاح.');
+    }
+
+    public function destroySection(CourseSection $section)
+    {
+        $this->checkCourseAccess($section->course);
+
+        $section->delete();
+
+        return redirect()->back()->with('success', 'تم حذف القسم وجميع محتوياته بنجاح.');
+    }
+
     public function storeLesson(Request $request, CourseSection $section)
     {
         if (auth()->user()->role !== 'admin' && $section->course->instructor_id !== auth()->id()) {

@@ -97,10 +97,26 @@
         {{-- Sections & Lessons List --}}
         @forelse($course->sections as $section)
             <div class="bg-[#F8F9FA] border border-[#E2E8F0] rounded-2xl p-5 mb-5">
-                <h3 class="text-base font-bold text-[#0047AB] mb-4 flex items-center gap-2">
-                    <i class="ph-bold ph-folder-open text-lg"></i>
-                    {{ $section->title }}
-                </h3>
+                <div class="flex items-center justify-between mb-4 flex-wrap gap-2 pb-3 border-b border-[#E2E8F0]">
+                    <h3 class="text-base font-bold text-[#0047AB] flex items-center gap-2">
+                        <i class="ph-bold ph-folder-open text-lg"></i>
+                        {{ $section->title }}
+                    </h3>
+                    <div class="flex items-center gap-2">
+                        <button type="button" onclick="openEditSectionModal({{ $section->id }}, '{{ addslashes($section->title) }}')" class="inline-flex items-center gap-1.5 bg-[#0088CC]/10 hover:bg-[#0088CC] text-[#0088CC] hover:text-white text-xs font-semibold px-3 py-1.5 rounded-xl transition-all">
+                            <i class="ph-bold ph-pencil text-sm"></i>
+                            تعديل القسم
+                        </button>
+                        <form action="{{ route('instructor.sections.destroy', $section->id) }}" method="POST" onsubmit="return confirm('هل أنت متأكد من رغبتك في حذف هذا القسم بجميع دروسه ومحتوياته؟ لا يمكن التراجع عن هذا الإجراء.')" class="inline">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="inline-flex items-center gap-1.5 bg-red-600/10 hover:bg-red-600 text-red-600 hover:text-white text-xs font-semibold px-3 py-1.5 rounded-xl transition-all">
+                                <i class="ph-bold ph-trash text-sm"></i>
+                                حذف القسم
+                            </button>
+                        </form>
+                    </div>
+                </div>
 
                 {{-- Lessons --}}
                 <ul class="space-y-3 mb-4">
@@ -331,7 +347,11 @@
                                         <x-badge variant="neutral">المحاولات: {{ $lesson->quiz->attempts_allowed }}</x-badge>
                                     @endif
                                 </div>
-                                <div class="flex items-center gap-2">
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <button type="button" onclick="openBulkQuestionsModal({{ $lesson->quiz->id }}, '{{ addslashes($lesson->quiz->title) }}')" class="inline-flex items-center gap-1.5 bg-[#00A896] hover:bg-[#00A896]/90 text-white text-xs font-semibold px-3 py-1.5 rounded-xl transition-all shadow-sm">
+                                        <i class="ph-bold ph-list-plus text-sm"></i>
+                                        إضافة أسئلة دفعة واحدة (Bulk)
+                                    </button>
                                     <button type="button" onclick="openEditQuizModal({{ $lesson->quiz->id }}, '{{ addslashes($lesson->quiz->title) }}', {{ $lesson->quiz->pass_percentage }}, {{ $lesson->quiz->time_limit_minutes ?? 'null' }}, {{ $lesson->quiz->attempts_allowed ?? 'null' }})" class="inline-flex items-center gap-1.5 bg-[#0088CC]/10 hover:bg-[#0088CC] text-[#0088CC] hover:text-white text-xs font-semibold px-3 py-1.5 rounded-xl transition-all">
                                         <i class="ph-bold ph-pencil text-sm"></i>
                                         تعديل بيانات الامتحان
@@ -932,6 +952,16 @@
         modal.style.display = 'none';
     }
 
+    // Section Edit Modal Functions
+    function openEditSectionModal(id, title) {
+        document.getElementById('edit-section-form').action = `/instructor/sections/${id}`;
+        document.getElementById('edit-section-title').value = title;
+        document.getElementById('edit-section-modal').style.display = 'flex';
+    }
+    function closeEditSectionModal() {
+        document.getElementById('edit-section-modal').style.display = 'none';
+    }
+
     // Course Edit & Delete Modal Functions
     function openEditCourseModal() {
         document.getElementById('edit-course-modal').style.display = 'flex';
@@ -996,6 +1026,277 @@
     }
     function closeEditQuestionModal() {
         document.getElementById('edit-question-modal').style.display = 'none';
+    }
+
+    // Bulk Questions Modal Functions & State
+    let parsedQuestionsList = [];
+
+    function openBulkQuestionsModal(quizId, quizTitle) {
+        document.getElementById('bulk-questions-form').action = `/instructor/quizzes/${quizId}/questions/bulk`;
+        document.getElementById('bulk-quiz-title').innerText = quizTitle;
+        document.getElementById('bulk-raw-text').value = '';
+        parsedQuestionsList = [];
+        renderBulkPreview();
+        document.getElementById('bulk-questions-modal').style.display = 'flex';
+    }
+
+    function closeBulkQuestionsModal() {
+        document.getElementById('bulk-questions-modal').style.display = 'none';
+    }
+
+    function fillArabicSampleBulkQuestions() {
+        const sample = `1. ما هي الخلية المسؤولة عن نقل الأكسجين في الدم؟
+أ) كرات الدم البيضاء
+*ب) كرات الدم الحمراء
+ج) الصفائح الدموية
+د) بلازما الدم
+
+2. ما هو العضو المسؤول عن ضخ الدم إلى جميع أنحاء الجسم؟
+*أ) القلب
+ب) الرئتين
+ج) الكبد
+د) الكلى
+
+3. ما هي الوحدة الوظيفية الأساسية في الكلية؟
+أ) الحويصلة الهوائية
+ب) النيورون
+*ج) النفرون
+د) الخلية الكبدية`;
+        document.getElementById('bulk-raw-text').value = sample;
+        parseBulkQuestionsClientSide();
+    }
+
+    function fillEnglishSampleBulkQuestions() {
+        const sample = `1. What is the normal resting heart rate for a healthy adult?
+A) 40-50 bpm
+*B) 60-100 bpm
+C) 110-130 bpm
+D) 140-160 bpm
+
+2. Which organ is primarily responsible for detoxifying chemicals in the body?
+*A) Liver
+B) Kidneys
+C) Pancreas
+D) Spleen
+
+3. Which vitamin is synthesized when the skin is exposed to sunlight?
+A) Vitamin A
+B) Vitamin C
+*C) Vitamin D
+D) Vitamin K`;
+        document.getElementById('bulk-raw-text').value = sample;
+        parseBulkQuestionsClientSide();
+    }
+
+    function clearBulkQuestionsText() {
+        document.getElementById('bulk-raw-text').value = '';
+        parsedQuestionsList = [];
+        renderBulkPreview();
+    }
+
+    function parseBulkQuestionsClientSide() {
+        const rawText = document.getElementById('bulk-raw-text').value.trim();
+        const defaultPoints = parseInt(document.getElementById('bulk-default-points').value) || 1;
+
+        if (!rawText) {
+            parsedQuestionsList = [];
+            renderBulkPreview();
+            return;
+        }
+
+        const lines = rawText.split(/\r\n|\r|\n/);
+        const questions = [];
+        let currentQuestion = null;
+
+        const arabicMap = { 'أ': 0, 'ا': 0, 'ب': 1, 'ج': 2, 'د': 3, 'ه': 4, 'و': 5 };
+        const latinMap = { 'a': 0, 'b': 1, 'c': 2, 'd': 3, 'e': 4, 'f': 5 };
+
+        for (let i = 0; i < lines.length; i++) {
+            const line = lines[i].trim();
+            if (!line) continue;
+
+            // 1. Check for Answer line: e.g. Answer: B, الجواب: ب, الإجابة: 2
+            const ansMatch = line.match(/^(?:answer|ans|الجواب|الإجابة|الاجابة|الصحيح)\s*[:=\-]\s*([a-zA-Z0-9\u0621-\u064A]+)/i);
+            if (ansMatch) {
+                if (currentQuestion && currentQuestion.options.length > 0) {
+                    const key = ansMatch[1].toLowerCase();
+                    let ansIdx = null;
+                    if (arabicMap[key] !== undefined) ansIdx = arabicMap[key];
+                    else if (latinMap[key] !== undefined) ansIdx = latinMap[key];
+                    else if (!isNaN(parseInt(key))) {
+                        const num = parseInt(key);
+                        if (num >= 1 && num <= currentQuestion.options.length) ansIdx = num - 1;
+                    }
+                    if (ansIdx === null) {
+                        ansIdx = currentQuestion.options.findIndex(o => o.key === key);
+                    }
+                    if (ansIdx !== null && ansIdx >= 0 && ansIdx < currentQuestion.options.length) {
+                        currentQuestion.correct_option_index = ansIdx;
+                        currentQuestion.options.forEach((opt, idx) => opt.is_correct = (idx === ansIdx));
+                    }
+                }
+                continue;
+            }
+
+            // 2. Check for Question start: e.g. "1. Question", "1) Question", "Q1: Question", "س1: ..."
+            const qMatch = line.match(/^(?:Q\s*\d+|\d+|س\s*\d+|سؤال\s*\d+)[\.\)\-\:\s]\s*(.+)$/i);
+            if (qMatch) {
+                if (currentQuestion && currentQuestion.options.length > 0) {
+                    questions.push(currentQuestion);
+                }
+                currentQuestion = {
+                    question_text: qMatch[1].trim(),
+                    points: defaultPoints,
+                    options: [],
+                    correct_option_index: null
+                };
+                continue;
+            }
+
+            // 3. Check for Option: e.g. *A) ..., [x] A) ..., A) ..., أ) ..., *ب) ...
+            const optMatch = line.match(/^(\*|\[x\]|\(x\))?\s*([A-Za-z\u0621-\u064A])[\.\)\-\:\/\]]\s*(.+)$/);
+            if (optMatch && currentQuestion) {
+                const isCorrect = Boolean(optMatch[1]);
+                const optText = optMatch[3].trim();
+                const optionObj = {
+                    key: optMatch[2].toLowerCase(),
+                    text: optText,
+                    is_correct: isCorrect
+                };
+                currentQuestion.options.push(optionObj);
+                if (isCorrect) {
+                    currentQuestion.correct_option_index = currentQuestion.options.length - 1;
+                }
+                continue;
+            }
+
+            // 4. Default Line Handler
+            if (!currentQuestion) {
+                currentQuestion = {
+                    question_text: line,
+                    points: defaultPoints,
+                    options: [],
+                    correct_option_index: null
+                };
+            } else {
+                if (currentQuestion.options.length === 0) {
+                    currentQuestion.question_text += ' ' + line;
+                } else {
+                    questions.push(currentQuestion);
+                    currentQuestion = {
+                        question_text: line,
+                        points: defaultPoints,
+                        options: [],
+                        correct_option_index: null
+                    };
+                }
+            }
+        }
+
+        if (currentQuestion && currentQuestion.options.length > 0) {
+            questions.push(currentQuestion);
+        }
+
+        // Ensure each question has a correct option fallback if none was flagged
+        questions.forEach(q => {
+            if (q.options.length > 0 && !q.options.some(o => o.is_correct)) {
+                q.options[0].is_correct = true;
+                q.correct_option_index = 0;
+            }
+        });
+
+        parsedQuestionsList = questions;
+        renderBulkPreview();
+    }
+
+    function removeParsedQuestion(index) {
+        if (index >= 0 && index < parsedQuestionsList.length) {
+            parsedQuestionsList.splice(index, 1);
+            renderBulkPreview();
+        }
+    }
+
+    function setParsedCorrectOption(qIdx, optIdx) {
+        if (parsedQuestionsList[qIdx] && parsedQuestionsList[qIdx].options[optIdx]) {
+            parsedQuestionsList[qIdx].options.forEach((o, i) => o.is_correct = (i === optIdx));
+            parsedQuestionsList[qIdx].correct_option_index = optIdx;
+            renderBulkPreview();
+        }
+    }
+
+    function renderBulkPreview() {
+        const previewContainer = document.getElementById('bulk-parsed-preview');
+        const jsonInput = document.getElementById('bulk-questions-json');
+        const countBadge = document.getElementById('bulk-questions-count-badge');
+        const footerCount = document.getElementById('bulk-footer-summary');
+        const submitBtn = document.getElementById('bulk-submit-btn');
+
+        if (!parsedQuestionsList || parsedQuestionsList.length === 0) {
+            previewContainer.innerHTML = `
+                <div class="flex flex-col items-center justify-center py-10 text-center px-4">
+                    <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-500 flex items-center justify-center text-2xl mb-3 shadow-inner">
+                        <i class="ph-bold ph-magic-wand"></i>
+                    </div>
+                    <p class="text-[#1A202C] text-sm font-bold">بانتظار لصق الأسئلة</p>
+                    <p class="text-[#718096] text-xs mt-1 max-w-sm">الصق نص الأسئلة أو اضغط على أحد النماذج التجريبية بالأعلى لمعاينتها وتحليلها فورياً هنا.</p>
+                </div>
+            `;
+            jsonInput.value = '';
+            countBadge.innerText = '0 أسئلة مكتشفة';
+            if (footerCount) footerCount.innerText = 'لم يتم اكتشاف أسئلة بعد';
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `<i class="ph-bold ph-check-circle text-base"></i> حفظ وإضافة جميع الأسئلة`;
+            return;
+        }
+
+        jsonInput.value = JSON.stringify(parsedQuestionsList);
+        const totalPoints = parsedQuestionsList.reduce((acc, q) => acc + (parseInt(q.points) || 1), 0);
+        countBadge.innerText = `${parsedQuestionsList.length} أسئلة مكتشفة (${totalPoints} درجة)`;
+        if (footerCount) footerCount.innerText = `${parsedQuestionsList.length} سؤال جاهز للحفظ • إجمالي الدرجات: ${totalPoints}`;
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `<i class="ph-bold ph-check-circle text-base"></i> حفظ وإضافة (${parsedQuestionsList.length}) سؤال بنجاح`;
+
+        let html = `<div class="space-y-3.5 max-h-[360px] overflow-y-auto pr-1">`;
+        parsedQuestionsList.forEach((q, qIdx) => {
+            html += `
+                <div class="bg-white border border-[#E2E8F0] hover:border-[#0047AB]/30 rounded-2xl p-4 shadow-sm transition-all relative group">
+                    <div class="flex items-start justify-between gap-3 mb-3">
+                        <div class="flex items-start gap-2.5 flex-1">
+                            <span class="w-6 h-6 rounded-full bg-[#0047AB] text-white flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5 shadow-sm">${qIdx + 1}</span>
+                            <span class="font-bold text-sm text-[#1A202C] leading-snug" dir="auto">${escapeHtml(q.question_text)}</span>
+                        </div>
+                        <div class="flex items-center gap-1.5 flex-shrink-0">
+                            <span class="text-xs bg-indigo-50 text-indigo-700 font-semibold px-2.5 py-0.5 rounded-lg border border-indigo-100">${q.points} درجة</span>
+                            <button type="button" onclick="removeParsedQuestion(${qIdx})" title="حذف هذا السؤال" class="p-1 text-[#718096] hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                                <i class="ph-bold ph-trash text-sm"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mr-8">
+            `;
+            q.options.forEach((opt, oIdx) => {
+                const isCorrect = opt.is_correct;
+                html += `
+                    <div onclick="setParsedCorrectOption(${qIdx}, ${oIdx})" class="flex items-center justify-between p-2.5 rounded-xl cursor-pointer transition-all border ${isCorrect ? 'bg-emerald-50/90 border-emerald-300 text-emerald-950 font-bold shadow-sm ring-1 ring-emerald-400/20' : 'bg-[#F8F9FA] border-[#E2E8F0] text-[#4A5568] hover:bg-gray-100'}">
+                        <div class="flex items-center gap-2 flex-1" dir="auto">
+                            <i class="ph-bold ph-${isCorrect ? 'check-circle text-emerald-600' : 'circle text-gray-400'} text-base"></i>
+                            <span class="text-xs">${escapeHtml(opt.text)}</span>
+                        </div>
+                        ${isCorrect ? '<span class="text-[10px] bg-emerald-600 text-white font-semibold px-2 py-0.5 rounded-md flex-shrink-0 mr-1 shadow-sm">صحيح</span>' : ''}
+                    </div>
+                `;
+            });
+            html += `</div></div>`;
+        });
+        html += `</div>`;
+        previewContainer.innerHTML = html;
+    }
+
+    function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
     }
     </script>
     @endpush
@@ -1161,6 +1462,168 @@
                     <x-btn-primary icon="floppy-disk" type="submit">حفظ التعديلات</x-btn-primary>
                 </div>
             </form>
+        </div>
+    </div>
+
+    {{-- Edit Section Modal --}}
+    <div id="edit-section-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(26,32,44,0.6); z-index: 1000; align-items: center; justify-content: center;">
+        <div class="bg-white border border-[#E2E8F0] rounded-2xl w-11/12 max-w-md p-6 relative shadow-2xl">
+            <h3 class="text-lg font-bold mb-4 text-right text-[#1A202C] flex items-center gap-2 pb-3 border-b border-[#E2E8F0]">
+                <i class="ph-bold ph-pencil-simple text-[#0047AB]"></i>
+                تعديل عنوان القسم
+            </h3>
+            <form id="edit-section-form" action="" method="POST" class="space-y-4">
+                @csrf
+                @method('PUT')
+                <x-form-input label="عنوان القسم (Section)" name="title" id="edit-section-title" :required="true" placeholder="مثال: الفصل الأول - مقدمة تشريح الجهاز الدوري" />
+                
+                <div class="flex gap-3 justify-end pt-4 border-t border-[#E2E8F0]">
+                    <button type="button" onclick="closeEditSectionModal()" class="bg-[#F8F9FA] hover:bg-[#E2E8F0] text-[#4A5568] font-semibold px-5 py-2.5 rounded-xl transition-colors text-sm">إلغاء</button>
+                    <x-btn-primary icon="floppy-disk" type="submit">حفظ التغييرات</x-btn-primary>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {{-- Bulk Add Questions Modal --}}
+    <div id="bulk-questions-modal" style="display: none; position: fixed; inset: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(6px); z-index: 1000; align-items: center; justify-content: center; padding: 1.25rem;">
+        <div class="bg-white border border-[#E2E8F0] rounded-3xl w-full max-w-4xl max-h-[92vh] flex flex-col shadow-2xl relative overflow-hidden">
+            
+            {{-- Modal Header --}}
+            <div class="flex items-center justify-between px-6 py-4 border-b border-[#E2E8F0] bg-gradient-to-r from-slate-50 to-white flex-shrink-0">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#0047AB] to-[#00A896] text-white flex items-center justify-center text-xl shadow-md">
+                        <i class="ph-bold ph-lightning"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h3 class="text-base font-bold text-[#1A202C]">استيراد وإضافة أسئلة دفعة واحدة (Bulk AI Import)</h3>
+                            <span class="text-[11px] font-semibold bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full border border-emerald-200">تحليل فوري ومعاينة مباشرة</span>
+                        </div>
+                        <p class="text-xs text-[#718096] mt-0.5">امتحان: <span id="bulk-quiz-title" class="font-bold text-[#0047AB]"></span></p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeBulkQuestionsModal()" class="w-8 h-8 rounded-xl bg-gray-100 hover:bg-red-50 text-gray-500 hover:text-red-600 flex items-center justify-center transition-colors">
+                    <i class="ph-bold ph-x text-lg"></i>
+                </button>
+            </div>
+
+            {{-- Modal Scrollable Body --}}
+            <div class="flex-1 overflow-y-auto p-6 space-y-5">
+                
+                {{-- Quick Sample Fillers & Toolbar --}}
+                <div class="flex items-center justify-between gap-2 flex-wrap bg-gradient-to-r from-indigo-50/70 via-blue-50/50 to-emerald-50/50 border border-indigo-100/80 rounded-2xl p-3.5">
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <span class="text-xs font-bold text-[#1A202C] flex items-center gap-1">
+                            <i class="ph-bold ph-sparkle text-indigo-600"></i>
+                            نماذج سريعة للتجربة:
+                        </span>
+                        <button type="button" onclick="fillArabicSampleBulkQuestions()" class="text-xs font-semibold bg-white hover:bg-indigo-600 hover:text-white text-indigo-700 px-3 py-1.5 rounded-xl border border-indigo-200 shadow-sm transition-all flex items-center gap-1">
+                            <span>🇸🇦 نموذج عربي</span>
+                        </button>
+                        <button type="button" onclick="fillEnglishSampleBulkQuestions()" class="text-xs font-semibold bg-white hover:bg-indigo-600 hover:text-white text-indigo-700 px-3 py-1.5 rounded-xl border border-indigo-200 shadow-sm transition-all flex items-center gap-1">
+                            <span>🇬🇧 English Sample</span>
+                        </button>
+                    </div>
+                    <button type="button" onclick="clearBulkQuestionsText()" class="text-xs text-red-600 hover:text-red-700 font-semibold px-2.5 py-1 rounded-lg hover:bg-red-50 transition-colors flex items-center gap-1 mr-auto">
+                        <i class="ph-bold ph-trash text-sm"></i>
+                        مسح النص
+                    </button>
+                </div>
+
+                {{-- Guide / Format hint --}}
+                <details class="bg-[#F8F9FA] border border-[#E2E8F0] rounded-2xl p-3.5 text-xs">
+                    <summary class="cursor-pointer font-bold text-[#0047AB] flex items-center justify-between select-none">
+                        <div class="flex items-center gap-1.5">
+                            <i class="ph-bold ph-info text-sm text-[#0088CC]"></i>
+                            <span>دليل وطريقة كتابة الخيارات لتحديد الإجابة الصحيحة تلقائياً</span>
+                        </div>
+                        <span class="text-[11px] text-[#718096] underline">عرض الأمثلة والصيغ</span>
+                    </summary>
+                    <div class="mt-3 pt-3 border-t border-[#E2E8F0] grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div class="bg-white p-3 rounded-xl border border-[#E2E8F0] text-[11px] leading-relaxed" dir="rtl">
+                            <span class="text-emerald-700 font-bold block mb-1">✅ الطريقة الأولى (نجمة * قبل الخيار الصحيح):</span>
+                            1. ما هو العضو المسؤول عن ضخ الدم؟<br>
+                            أ) الرئتين<br>
+                            *ب) القلب<br>
+                            ج) الكبد<br>
+                            د) الكلى
+                        </div>
+                        <div class="bg-white p-3 rounded-xl border border-[#E2E8F0] text-[11px] leading-relaxed" dir="ltr">
+                            <span class="text-emerald-700 font-bold block mb-1">✅ Option 2 (Answer line at bottom):</span>
+                            1. What is the powerhouse of the cell?<br>
+                            A) Mitochondria<br>
+                            B) Ribosome<br>
+                            C) Nucleus<br>
+                            Answer: A
+                        </div>
+                    </div>
+                </details>
+
+                <form id="bulk-questions-form" action="" method="POST" class="space-y-5">
+                    @csrf
+                    <input type="hidden" name="questions_json" id="bulk-questions-json">
+
+                    {{-- Textarea Area --}}
+                    <div>
+                        <div class="flex items-center justify-between gap-4 mb-2">
+                            <label class="text-xs font-bold text-[#1A202C] flex items-center gap-1.5">
+                                <i class="ph-bold ph-pencil-simple text-[#0047AB]"></i>
+                                الصق نص الأسئلة والخيارات هنا:
+                            </label>
+                            <div class="flex items-center gap-2 bg-[#F8F9FA] px-2.5 py-1 rounded-xl border border-[#E2E8F0]">
+                                <label for="bulk-default-points" class="text-[11px] font-semibold text-[#718096]">الدرجة الافتراضية لكل سؤال:</label>
+                                <input type="number" id="bulk-default-points" value="1" min="1" onchange="parseBulkQuestionsClientSide()" class="w-12 bg-white border border-[#E2E8F0] rounded-lg px-1.5 py-0.5 text-center text-xs font-bold text-[#0047AB] focus:ring-1 focus:ring-[#0047AB] outline-none">
+                            </div>
+                        </div>
+
+                        <textarea name="raw_text" id="bulk-raw-text" rows="7" dir="auto" oninput="parseBulkQuestionsClientSide()" placeholder="1. ما هي الخلية المسؤولة عن نقل الأكسجين في الدم؟
+أ) كرات الدم البيضاء
+*ب) كرات الدم الحمراء
+ج) الصفائح الدموية
+د) بلازما الدم
+
+2. Which organ is responsible for pumping blood?
+*A) Heart
+B) Lungs
+C) Liver" class="w-full bg-[#F8F9FA] hover:bg-white focus:bg-white border border-[#E2E8F0] focus:border-[#0047AB] rounded-2xl p-4 text-[#1A202C] text-sm focus:outline-none focus:ring-4 focus:ring-[#0047AB]/10 leading-relaxed font-sans transition-all resize-y"></textarea>
+                    </div>
+
+                    {{-- Actions & Counter Badge --}}
+                    <div class="flex items-center justify-between gap-3 flex-wrap pt-1">
+                        <button type="button" onclick="parseBulkQuestionsClientSide()" class="inline-flex items-center gap-2 bg-gradient-to-r from-[#0047AB] to-[#0088CC] hover:from-[#0047AB]/90 hover:to-[#0088CC]/90 text-white font-bold px-5 py-2.5 rounded-xl transition-all text-xs shadow-md shadow-blue-500/10">
+                            <i class="ph-bold ph-magic-wand text-sm"></i>
+                            إعادة تحليل وتحديث المعاينة
+                        </button>
+                        <span id="bulk-questions-count-badge" class="text-xs font-bold px-3.5 py-1.5 bg-indigo-50 text-indigo-800 rounded-xl border border-indigo-200 shadow-sm">0 أسئلة مكتشفة</span>
+                    </div>
+
+                    {{-- Live Preview Box --}}
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold text-[#718096] flex items-center gap-1.5">
+                            <i class="ph-bold ph-eye text-emerald-600"></i>
+                            المعاينة المباشرة للأسئلة المكتشفة (يمكنك الضغط على أي خيار لتغيير الإجابة الصحيحة):
+                        </label>
+                        <div id="bulk-parsed-preview" class="p-4 bg-[#F8F9FA] border border-[#E2E8F0] rounded-2xl min-h-[120px]">
+                            {{-- Content loaded by JS --}}
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            {{-- Sticky Modal Footer --}}
+            <div class="flex items-center justify-between px-6 py-4 border-t border-[#E2E8F0] bg-gradient-to-r from-slate-50 to-white flex-shrink-0">
+                <div class="text-xs text-[#718096] font-medium hidden sm:block" id="bulk-footer-summary">
+                    لم يتم اكتشاف أسئلة بعد
+                </div>
+                <div class="flex gap-2.5 items-center mr-auto sm:mr-0">
+                    <button type="button" onclick="closeBulkQuestionsModal()" class="bg-[#F8F9FA] hover:bg-[#E2E8F0] text-[#4A5568] font-bold px-5 py-2.5 rounded-xl transition-colors text-xs">إلغاء</button>
+                    <button type="button" onclick="document.getElementById('bulk-questions-form').submit()" id="bulk-submit-btn" disabled class="inline-flex items-center gap-2 bg-gradient-to-r from-[#00A896] to-[#028090] hover:from-[#00A896]/90 hover:to-[#028090]/90 disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold px-6 py-2.5 rounded-xl transition-all text-xs shadow-lg shadow-teal-500/20">
+                        <i class="ph-bold ph-check-circle text-base"></i>
+                        حفظ وإضافة جميع الأسئلة
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 @endsection

@@ -232,9 +232,10 @@ class CourseController extends Controller
     {
         $user = $request->user();
 
+        $perPage = (int) $request->input('per_page', 1000);
         $courses = Course::whereHas('enrollments', function($q) use ($user) {
             $q->where('student_id', $user->id);
-        })->with('instructor')->paginate(15);
+        })->with('instructor')->paginate($perPage);
 
         // Map to standard details with overall progress %
         $items = $courses->map(function($course) use ($user) {
