@@ -66,3 +66,13 @@ Verified and confirmed automated push notification delivery for live events.
   - **FCM Service:** Modern FCM HTTP v1 implementation via [`FirebaseNotificationService.php`](file:///c:/Users/workstation/Documents/docac/app/Services/FirebaseNotificationService.php) with OAuth2 JWT bearer authentication.
   - **Timing:** Sends automated reminders **24 hours** and **1 hour** prior to scheduled live events.
   - **Credentials:** Verified `storage/app/firebase-credentials.json` securely protected in `.gitignore`.
+
+---
+
+## 6. 🌐 Dual Base URL Support (`v1` and `v2`)
+Enabled seamless routing for both API versions (`/api/v1` and `/api/v2`) pointing to the unified controller handlers.
+
+* **Route File:** [`routes/api.php`](file:///c:/Users/workstation/Documents/docac/routes/api.php)
+* **Key Enhancements:**
+  - All public and protected API routes are registered under both `v1` and `v2` prefixes.
+  - Full backward and forward compatibility for mobile app releases calling either `https://domain.com/api/v1/...` or `https://domain.com/api/v2/...`.

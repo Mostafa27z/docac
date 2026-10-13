@@ -17,7 +17,7 @@ use App\Http\Controllers\Api\V1\AdApiController;
 |--------------------------------------------------------------------------
 */
 
-Route::prefix('v1')->group(function () {
+$apiRoutes = function () {
 
     // 1. Public Authentication Routes
     Route::post('student/register', [AuthController::class, 'register']);
@@ -82,4 +82,9 @@ Route::prefix('v1')->group(function () {
 
     });
 
-});
+};
+
+// Support both v1 and v2 base URLs
+foreach (['v1', 'v2'] as $version) {
+    Route::prefix($version)->group($apiRoutes);
+}
