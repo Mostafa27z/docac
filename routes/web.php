@@ -91,6 +91,14 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
 
 // Instructor Panel Routes
 Route::prefix('instructor')->middleware(['auth', 'role:instructor|admin'])->group(function () {
+    // Keep-alive route for long background uploads
+    Route::get('/keep-alive', function () {
+        return response()->json([
+            'status' => 'ok',
+            'csrf_token' => csrf_token(),
+        ]);
+    })->name('instructor.keep-alive');
+
     // 1. Dashboard Overview
     Route::get('/dashboard', [InstructorCourseController::class, 'dashboard'])->name('instructor.dashboard');
 

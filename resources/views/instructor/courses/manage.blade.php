@@ -616,13 +616,27 @@
         const sizeBytes = file.size;
         const sizeFormatted = formatBytes(sizeBytes);
 
+        const compressionInfo = document.getElementById(`compression-info-${sectionId}`);
+
         if (sizeText) sizeText.innerText = sizeFormatted;
         if (compressionContainer) compressionContainer.style.display = 'block';
 
-        // Automatically check compression if file size exceeds 500 MB
-        const isExceeding500MB = sizeBytes >= (500 * 1024 * 1024);
+        // NOTE: Large files (>= 250MB) should NOT be compressed in-browser via WebAssembly,
+        // because 32-bit WASM memory will exhaust RAM and crash.
+        // Direct TUS chunked upload to Bunny Stream handles large files natively.
+        const isVeryLarge = sizeBytes >= (250 * 1024 * 1024);
         if (compressCheckbox) {
-            compressCheckbox.checked = isExceeding500MB;
+            if (isVeryLarge) {
+                compressCheckbox.checked = false;
+                if (compressionInfo) {
+                    compressionInfo.innerHTML = `حجم الملف: <strong>${sizeFormatted}</strong>. <span class="text-amber-800 font-semibold block mt-1">💡 تنبيه: للملفات الكبيرة يُنصح بعدم الضغط محلياً والاعتماد على الرفع المباشر والسريع عبر السحابة (TUS) لتجنب استهلاك ذاكرة المتصفح.</span>`;
+                }
+            } else {
+                compressCheckbox.checked = true;
+                if (compressionInfo) {
+                    compressionInfo.innerHTML = `حجم الملف: <strong>${sizeFormatted}</strong>. يتم الضغط محلياً عبر المتصفح لتسريع الرفع وحفظ باقة الإنترنت.`;
+                }
+            }
         }
     }
 
@@ -741,7 +755,19 @@
                 formData.append('youtube_url', ytUrl);
                 formData.append('is_preview', isPreview);
 
-                const res = await fetch(endpointUrl, { method: 'POST', body: formData });
+                const res = await fetch(endpointUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: formData
+                });
+                const resType = res.headers.get("content-type");
+                if (!res.ok || !resType || !resType.includes("application/json")) {
+                    const txt = await res.text();
+                    throw new Error(`استجابة غير صالحة من السيرفر (${res.status}): ${txt.substring(0, 100)}`);
+                }
                 const data = await res.json();
 
                 if (data.success) {
@@ -794,20 +820,32 @@
                 }
             }
 
+            let heartbeatInterval = null;
+            let currentCsrfToken = csrfToken;
+            let videoGuid = null;
+
             try {
                 progressStatus.innerText = 'جاري إنشاء إدخال الفيديو وطلب صلاحيات الرفع...';
 
                 const initFormData = new FormData();
-                initFormData.append('_token', csrfToken);
+                initFormData.append('_token', currentCsrfToken);
                 initFormData.append('init', '1');
                 initFormData.append('title', title);
                 initFormData.append('type', type);
                 initFormData.append('video_source', 'bunny');
 
-                const initRes = await fetch(endpointUrl, { method: 'POST', body: initFormData });
+                const initRes = await fetch(endpointUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: initFormData
+                });
+
                 const contentType = initRes.headers.get("content-type");
-                if (!contentType || !contentType.includes("application/json")) {
-                    throw new Error('فشل الحصول على تصريح الرفع من الخادم.');
+                if (!initRes.ok || !contentType || !contentType.includes("application/json")) {
+                    throw new Error('فشل الحصول على تصريح الرفع من الخادم (رمز الخطأ: ' + initRes.status + ')');
                 }
                 const initData = await initRes.json();
 
@@ -815,11 +853,33 @@
                     throw new Error(initData.message || 'فشل إنشاء إدخال الفيديو على Bunny Stream.');
                 }
 
-                const videoGuid = initData.video_guid;
+                videoGuid = initData.video_guid;
 
                 if (typeof tus === 'undefined' || !tus.Upload) {
                     throw new Error('مكتبة الرفع (tus) لم يتم تحميلها بشكل صحيح. يرجى تحديث الصفحة.');
                 }
+
+                // Heartbeat to keep the Laravel/Hostinger session active during long file uploads (e.g. 700MB+)
+                const keepAliveUrl = "{{ route('instructor.keep-alive') }}";
+                heartbeatInterval = setInterval(async () => {
+                    try {
+                        const pingRes = await fetch(keepAliveUrl, {
+                            headers: {
+                                'Accept': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest'
+                            },
+                            cache: 'no-store'
+                        });
+                        if (pingRes.ok) {
+                            const pingData = await pingRes.json();
+                            if (pingData.csrf_token) {
+                                currentCsrfToken = pingData.csrf_token;
+                            }
+                        }
+                    } catch (pingErr) {
+                        console.warn('Keep-alive ping failed (connection busy uploading):', pingErr);
+                    }
+                }, 30000); // Ping every 30 seconds
 
                 await new Promise((resolve, reject) => {
                     const upload = new tus.Upload(file, {
@@ -844,19 +904,42 @@
                     upload.start();
                 });
 
-                progressStatus.innerText = 'جاري حفظ بيانات المحاضرة...';
+                if (heartbeatInterval) {
+                    clearInterval(heartbeatInterval);
+                    heartbeatInterval = null;
+                }
+
+                progressStatus.innerText = 'جاري حفظ بيانات المحاضرة في النظام...';
                 progressBar.style.width = '100%';
                 progressPercent.innerText = '100%';
 
                 const finalFormData = new FormData();
-                finalFormData.append('_token', csrfToken);
+                finalFormData.append('_token', currentCsrfToken);
                 finalFormData.append('title', title);
                 finalFormData.append('type', type);
                 finalFormData.append('video_source', 'bunny');
                 finalFormData.append('video_guid', videoGuid);
                 finalFormData.append('is_preview', isPreview);
 
-                const finalRes = await fetch(endpointUrl, { method: 'POST', body: finalFormData });
+                const finalRes = await fetch(endpointUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN': currentCsrfToken
+                    },
+                    body: finalFormData
+                });
+
+                const finalContentType = finalRes.headers.get("content-type");
+                if (!finalRes.ok || !finalContentType || !finalContentType.includes("application/json")) {
+                    if (finalRes.status === 419) {
+                        throw new Error(`انتهت جلسة العمل بسبب طول مدة الرفع (CSRF 419). ملاحظة هامة: تم رفع الفيديو بنجاح على Bunny Stream بمعرّف [${videoGuid}].`);
+                    }
+                    const textErr = await finalRes.text();
+                    throw new Error(`استجابة غير صالحة من السيرفر (${finalRes.status}): ${textErr.substring(0, 100)}`);
+                }
+
                 const finalData = await finalRes.json();
 
                 if (finalData.success) {
@@ -866,7 +949,11 @@
                     throw new Error(finalData.message || 'حدث خطأ أثناء التخزين');
                 }
             } catch (err) {
-                alert('خطأ أثناء الرفع: ' + err.message);
+                if (heartbeatInterval) {
+                    clearInterval(heartbeatInterval);
+                    heartbeatInterval = null;
+                }
+                alert('خطأ أثناء الرفع أو الحفظ: ' + err.message);
                 submitBtn.disabled = false;
                 progressContainer.classList.add('hidden');
             }
@@ -882,7 +969,19 @@
             finalFormData.append('type', type);
             finalFormData.append('is_preview', isPreview);
 
-            const finalRes = await fetch(endpointUrl, { method: 'POST', body: finalFormData });
+            const finalRes = await fetch(endpointUrl, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: finalFormData
+            });
+            const qType = finalRes.headers.get("content-type");
+            if (!finalRes.ok || !qType || !qType.includes("application/json")) {
+                const txt = await finalRes.text();
+                throw new Error(`استجابة غير صالحة من السيرفر (${finalRes.status}): ${txt.substring(0, 100)}`);
+            }
             const finalData = await finalRes.json();
 
             if (finalData.success) {
