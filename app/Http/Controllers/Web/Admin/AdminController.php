@@ -352,6 +352,35 @@ class AdminController extends Controller
         return redirect()->back()->with('success', 'تم تحديث الإعدادات بنجاح.');
     }
 
+    public function toggleAppSetting(Request $request)
+    {
+        $appSetting = \App\Models\AppSetting::getSettings();
+        $appSetting->enable = !$appSetting->enable;
+        $appSetting->save();
+
+        $statusText = $appSetting->enable ? 'تفعيل (True)' : 'تعطيل (False)';
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => "تم {$statusText} ميزات التطبيق بنجاح.",
+                'enable' => (bool) $appSetting->enable,
+            ]);
+        }
+
+        return redirect()->back()->with('success', "تم {$statusText} ميزات التطبيق بنجاح.");
+    }
+
+    public function appSettingsUpdate(Request $request)
+    {
+        $appSetting = \App\Models\AppSetting::getSettings();
+        $appSetting->update([
+            'enable' => $request->boolean('enable'),
+        ]);
+
+        return redirect()->back()->with('success', 'تم حفظ إعدادات التطبيق بنجاح.');
+    }
+
     public function subscribeStudentToCourse(Request $request)
     {
         $validated = $request->validate([

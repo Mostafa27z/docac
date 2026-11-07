@@ -25,29 +25,6 @@ Future platform settings will also be delivered through this same endpoint.
 
 ---
 
-## 🔄 Quick Browser Toggle Endpoint (One-Click)
-
-You can toggle the `enable` boolean value directly from any web browser URL bar without authentication or payload:
-
-* **Direct Browser URL:**
-  * `http://YOUR_DOMAIN/settings/toggle`
-  * or `http://YOUR_DOMAIN/api/v1/settings/toggle`
-* **HTTP Methods:** `GET` / `POST`
-* **Behavior:** Every time this URL is visited / entered in the browser, the `enable` flag automatically flips (`false` ⇄ `true`) and returns the updated state immediately.
-
-#### Example Response after clicking/visiting in browser:
-```json
-{
-  "success": true,
-  "message": "Setting 'enable' successfully toggled to true (enabled).",
-  "data": {
-    "enable": true
-  }
-}
-```
-
----
-
 ## 📥 Request Headers
 
 ```http

@@ -20,10 +20,6 @@ Route::get('/login', [HomeController::class, 'index'])->name('login');
 Route::post('/login', [HomeController::class, 'login'])->name('web.login');
 Route::post('/logout', [HomeController::class, 'logout'])->name('web.logout');
 
-// Public Browser Toggle Endpoints
-Route::match(['get', 'post'], '/settings/toggle', [\App\Http\Controllers\Api\V1\SettingApiController::class, 'toggleEnable'])->name('settings.toggle');
-Route::match(['get', 'post'], '/settings/toggle-enable', [\App\Http\Controllers\Api\V1\SettingApiController::class, 'toggleEnable']);
-
 // Admin Panel Routes
 Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
@@ -85,6 +81,8 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
     // Settings Routes
     Route::get('/settings', [AdminController::class, 'settingsIndex'])->name('admin.settings.index');
     Route::post('/settings', [AdminController::class, 'settingsUpdate'])->name('admin.settings.update');
+    Route::post('/settings/app-toggle', [AdminController::class, 'toggleAppSetting'])->name('admin.settings.appToggle');
+    Route::post('/settings/app-settings', [AdminController::class, 'appSettingsUpdate'])->name('admin.settings.appUpdate');
 
     // Admin Management Routes
     Route::get('/admins', [AdminController::class, 'adminsList'])->name('admin.admins.index');

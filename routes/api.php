@@ -28,9 +28,6 @@ $apiRoutes = function () {
     Route::get('student/ads', [AdApiController::class, 'index']);
     Route::get('settings', [SettingApiController::class, 'index']);
     Route::get('app-settings', [SettingApiController::class, 'index']);
-    Route::match(['get', 'post'], 'settings/toggle', [SettingApiController::class, 'toggleEnable']);
-    Route::match(['get', 'post'], 'settings/toggle-enable', [SettingApiController::class, 'toggleEnable']);
-    Route::match(['get', 'post'], 'app-settings/toggle', [SettingApiController::class, 'toggleEnable']);
 
     // 2. Protected routes by Sanctum
     Route::middleware('auth:sanctum')->group(function () {
@@ -95,7 +92,5 @@ foreach (['v1', 'v2'] as $version) {
     Route::prefix($version)->group($apiRoutes);
 }
 
-// Direct unversioned convenience endpoints
-Route::match(['get', 'post'], 'settings/toggle', [SettingApiController::class, 'toggleEnable']);
-Route::match(['get', 'post'], 'settings/toggle-enable', [SettingApiController::class, 'toggleEnable']);
+// Direct unversioned convenience endpoint
 Route::get('settings', [SettingApiController::class, 'index']);

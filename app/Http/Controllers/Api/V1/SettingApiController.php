@@ -33,25 +33,4 @@ class SettingApiController extends Controller
             'data' => $data,
         ], 200, [], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
     }
-
-    /**
-     * Toggle the 'enable' setting flag.
-     * Public endpoint accessible directly via browser (GET) or via API (POST/GET).
-     */
-    public function toggleEnable(Request $request): JsonResponse
-    {
-        $settings = AppSetting::getSettings();
-        $settings->enable = !$settings->enable;
-        $settings->save();
-
-        $stateText = $settings->enable ? 'true (enabled)' : 'false (disabled)';
-
-        return response()->json([
-            'success' => true,
-            'message' => "Setting 'enable' successfully toggled to {$stateText}.",
-            'data' => [
-                'enable' => (bool) $settings->enable,
-            ]
-        ], 200, ['Content-Type' => 'application/json; charset=utf-8'], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
-    }
 }

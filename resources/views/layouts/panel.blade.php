@@ -154,7 +154,7 @@
                 <li>
                     <a class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->routeIs('admin.settings.index') ? 'bg-white/15 text-white shadow-sm' : 'text-white/70 hover:text-white hover:bg-white/8' }}" href="{{ route('admin.settings.index') }}">
                         <i class="ph-bold ph-gear text-lg"></i>
-                        <span>بيانات الاتصال</span>
+                        <span>إعدادات المنصة</span>
                     </a>
                 </li>
                 <li>

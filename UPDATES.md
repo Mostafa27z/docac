@@ -90,6 +90,8 @@ Introduced a dedicated application settings schema and public API endpoint for m
 * **Migration:** [`2026_11_07_130128_create_app_settings_table.php`](file:///c:/Users/workstation/Documents/docac/database/migrations/2026_11_07_130128_create_app_settings_table.php)
 * **Key Enhancements:**
   - **Single Source of Truth:** `app_settings` table storing extensible application-level flags, starting with boolean `enable` (default: `false`).
+  - **Admin Dashboard Management:** Full UI in the Admin Dashboard (`/admin/settings`) featuring a live pulse status badge, instant 1-click toggle action (`POST /admin/settings/app-toggle`), and JSON response preview.
+  - **Secure Control:** Settings toggle is strictly restricted to authenticated administrators and completely protected against unauthenticated access.
   - **Dynamic Forwarding:** Automatically exposes new settings columns added in future migrations without requiring controller code changes.
   - **Public Access:** Unauthenticated access allows client apps to check flags immediately on startup or splash screen.
   - **Frontend Handover:** Full documentation with integration examples for Web, Axios, and Flutter provided in [`API_SETTINGS_FRONTEND.md`](file:///c:/Users/workstation/Documents/docac/API_SETTINGS_FRONTEND.md).
