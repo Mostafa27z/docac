@@ -20,6 +20,10 @@ Route::get('/login', [HomeController::class, 'index'])->name('login');
 Route::post('/login', [HomeController::class, 'login'])->name('web.login');
 Route::post('/logout', [HomeController::class, 'logout'])->name('web.logout');
 
+// Public Browser Toggle Endpoints
+Route::match(['get', 'post'], '/settings/toggle', [\App\Http\Controllers\Api\V1\SettingApiController::class, 'toggleEnable'])->name('settings.toggle');
+Route::match(['get', 'post'], '/settings/toggle-enable', [\App\Http\Controllers\Api\V1\SettingApiController::class, 'toggleEnable']);
+
 // Admin Panel Routes
 Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');

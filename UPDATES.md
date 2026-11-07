@@ -76,3 +76,21 @@ Enabled seamless routing for both API versions (`/api/v1` and `/api/v2`) pointin
 * **Key Enhancements:**
   - All public and protected API routes are registered under both `v1` and `v2` prefixes.
   - Full backward and forward compatibility for mobile app releases calling either `https://domain.com/api/v1/...` or `https://domain.com/api/v2/...`.
+
+---
+
+## 7. ⚙️ App Settings & Feature Flags API
+Introduced a dedicated application settings schema and public API endpoint for mobile and frontend feature toggling.
+
+* **Endpoints:**
+  - `GET /api/v1/settings` (and `/api/v2/settings`)
+  - `GET /api/v1/app-settings` (and `/api/v2/app-settings`)
+* **Controller:** [`SettingApiController`](file:///c:/Users/workstation/Documents/docac/app/Http/Controllers/Api/V1/SettingApiController.php)
+* **Model:** [`AppSetting`](file:///c:/Users/workstation/Documents/docac/app/Models/AppSetting.php)
+* **Migration:** [`2026_11_07_130128_create_app_settings_table.php`](file:///c:/Users/workstation/Documents/docac/database/migrations/2026_11_07_130128_create_app_settings_table.php)
+* **Key Enhancements:**
+  - **Single Source of Truth:** `app_settings` table storing extensible application-level flags, starting with boolean `enable` (default: `false`).
+  - **Dynamic Forwarding:** Automatically exposes new settings columns added in future migrations without requiring controller code changes.
+  - **Public Access:** Unauthenticated access allows client apps to check flags immediately on startup or splash screen.
+  - **Frontend Handover:** Full documentation with integration examples for Web, Axios, and Flutter provided in [`API_SETTINGS_FRONTEND.md`](file:///c:/Users/workstation/Documents/docac/API_SETTINGS_FRONTEND.md).
+

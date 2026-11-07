@@ -48,4 +48,44 @@ class SettingApiTest extends TestCase
         $responseAlias = $this->getJson('/api/v1/app-settings');
         $responseAlias->assertStatus(200);
     }
+
+    public function test_browser_public_toggle_endpoint_switches_value(): void
+    {
+        // 1. Initial state is false
+        $this->assertFalse(AppSetting::getSettings()->enable);
+
+        // 2. Hit toggle in browser (GET request)
+        $response1 = $this->get('/settings/toggle');
+        $response1->assertStatus(200)
+            ->assertJson([
+                'success' => true,
+                'data' => [
+                    'enable' => true,
+                ]
+            ]);
+        $this->assertTrue(AppSetting::getSettings()->fresh()->enable);
+
+        // 3. Hit toggle again (GET request)
+        $response2 = $this->get('/settings/toggle');
+        $response2->assertStatus(200)
+            ->assertJson([
+                'success' => true,
+                'data' => [
+                    'enable' => false,
+                ]
+            ]);
+        $this->assertFalse(AppSetting::getSettings()->fresh()->enable);
+    }
+
+    public function test_api_settings_toggle_route(): void
+    {
+        $response = $this->get('/api/v1/settings/toggle');
+        $response->assertStatus(200)
+            ->assertJson([
+                'success' => true,
+                'data' => [
+                    'enable' => true,
+                ]
+            ]);
+    }
 }

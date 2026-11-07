@@ -322,7 +322,9 @@ class AdminController extends Controller
             'telegram_username' => Setting::getValue('telegram_username', ''),
         ];
 
-        return view('admin.settings', compact('settings'));
+        $appSetting = \App\Models\AppSetting::getSettings();
+
+        return view('admin.settings', compact('settings', 'appSetting'));
     }
 
     public function settingsUpdate(Request $request)
@@ -333,13 +335,21 @@ class AdminController extends Controller
             'whatsapp_number' => 'nullable|string|max:20',
             'telegram_number' => 'nullable|string|max:20',
             'telegram_username' => 'nullable|string|max:100',
+            'enable' => 'nullable|boolean',
         ]);
 
-        foreach ($validated as $key => $value) {
-            Setting::setValue($key, $value);
+        foreach (['facebook_url', 'youtube_url', 'whatsapp_number', 'telegram_number', 'telegram_username'] as $key) {
+            if (array_key_exists($key, $validated)) {
+                Setting::setValue($key, $validated[$key]);
+            }
         }
 
-        return redirect()->back()->with('success', 'تم تحديث بيانات الاتصال بنجاح.');
+        $appSetting = \App\Models\AppSetting::getSettings();
+        $appSetting->update([
+            'enable' => $request->boolean('enable'),
+        ]);
+
+        return redirect()->back()->with('success', 'تم تحديث الإعدادات بنجاح.');
     }
 
     public function subscribeStudentToCourse(Request $request)

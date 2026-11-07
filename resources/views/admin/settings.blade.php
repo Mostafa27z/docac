@@ -19,6 +19,20 @@
             <form action="{{ route('admin.settings.update') }}" method="POST" class="space-y-5">
                 @csrf
 
+                <!-- App Settings (Feature Flags) -->
+                <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                    <div class="flex items-center justify-between gap-4">
+                        <div>
+                            <span class="block text-sm font-bold text-[#1A202C]">تفعيل ميزات التطبيق (Enable Flag)</span>
+                            <span class="text-[12px] text-[#718096]">التحكم في خاصية (enable) بالـ API لتفعيل أو تعطيل الميزات لدى تطبيق الطلاب والواجهة الأمامية.</span>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer flex-shrink-0">
+                            <input type="checkbox" name="enable" value="1" class="sr-only peer" {{ ($appSetting->enable ?? false) ? 'checked' : '' }}>
+                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#0047AB]"></div>
+                        </label>
+                    </div>
+                </div>
+
                 <div>
                     <x-form-input label="رابط الفيسبوك (Facebook URL)" name="facebook_url" type="url" placeholder="https://facebook.com/..." value="{{ $settings['facebook_url'] }}" />
                     <span class="text-[11px] text-[#718096] mt-1 block">رابط الصفحة أو المجموعة الرسمية على فيسبوك.</span>
