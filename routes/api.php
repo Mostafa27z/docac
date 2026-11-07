@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\V1\Chat\ChatController;
 use App\Http\Controllers\Api\V1\Files\FileController;
 use App\Http\Controllers\Api\V1\BannerApiController;
 use App\Http\Controllers\Api\V1\AdApiController;
+use App\Http\Controllers\Api\V1\SettingApiController;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,6 +26,8 @@ $apiRoutes = function () {
     Route::get('contacts', [\App\Http\Controllers\Api\V1\ContactApiController::class, 'index']);
     Route::get('student/banners', [BannerApiController::class, 'index']);
     Route::get('student/ads', [AdApiController::class, 'index']);
+    Route::get('settings', [SettingApiController::class, 'index']);
+    Route::get('app-settings', [SettingApiController::class, 'index']);
 
     // 2. Protected routes by Sanctum
     Route::middleware('auth:sanctum')->group(function () {
