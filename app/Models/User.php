@@ -26,6 +26,7 @@ class User extends Authenticatable
         'status',
         'active_device_id',
         'allow_multiple_devices',
+        'stripe_customer_id',
     ];
 
     /**

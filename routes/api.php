@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\Auth\AuthController;
 use App\Http\Controllers\Api\V1\Courses\CourseController;
+use App\Http\Controllers\Api\V1\Courses\StripePaymentController;
 use App\Http\Controllers\Api\V1\Lessons\LessonController;
 use App\Http\Controllers\Api\V1\Quizzes\QuizController;
 use App\Http\Controllers\Api\V1\Live\LiveController;
@@ -28,6 +29,7 @@ $apiRoutes = function () {
     Route::get('student/ads', [AdApiController::class, 'index']);
     Route::get('settings', [SettingApiController::class, 'index']);
     Route::get('app-settings', [SettingApiController::class, 'index']);
+    Route::post('stripe/webhook', [StripePaymentController::class, 'handleWebhook']);
 
     // 2. Protected routes by Sanctum
     Route::middleware('auth:sanctum')->group(function () {
@@ -49,6 +51,8 @@ $apiRoutes = function () {
             Route::get('student/courses', [CourseController::class, 'index']);
             Route::get('student/courses/{course}', [CourseController::class, 'show']);
             Route::post('student/courses/{course}/enroll', [CourseController::class, 'enroll']);
+            Route::post('student/courses/{course}/payment-sheet', [StripePaymentController::class, 'initPaymentSheet']);
+            Route::post('student/courses/{course}/confirm-payment', [StripePaymentController::class, 'confirmPayment']);
             Route::get('student/my-courses', [CourseController::class, 'myCourses']);
             Route::get('student/installments', [CourseController::class, 'installments']);
         });
@@ -94,3 +98,4 @@ foreach (['v1', 'v2'] as $version) {
 
 // Direct unversioned convenience endpoint
 Route::get('settings', [SettingApiController::class, 'index']);
+Route::post('stripe/webhook', [StripePaymentController::class, 'handleWebhook']);

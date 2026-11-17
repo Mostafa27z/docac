@@ -9,6 +9,8 @@ class CoursePayment extends Model
     protected $fillable = [
         'course_enrollment_id',
         'amount',
+        'payment_method',
+        'transaction_id',
         'notes',
     ];
 
